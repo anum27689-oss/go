@@ -4,6 +4,14 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Switch } from '@/components/ui/switch';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+
 
 const prayerTimesData: { [city: string]: { [prayer: string]: string } } = {
     'New York': { Fajr: '04:30 AM', Dhuhr: '01:00 PM', Asr: '04:45 PM', Maghrib: '07:30 PM', Isha: '09:00 PM' },
@@ -51,28 +59,27 @@ export default function PrayerTimesPage() {
         const calculateNextPrayer = () => {
             const now = new Date();
             const cityPrayerTimes = prayerTimesData[selectedCity];
+            if (!cityPrayerTimes) return;
             
-            let nextPrayerDetails = null;
-            let nextPrayerTime = new Date(now.getTime() + 24 * 60 * 60 * 1000); // a day from now
+            const sortedPrayers = prayers.map(p => ({
+                ...p,
+                time: parseTime(cityPrayerTimes[p.name])
+            })).sort((a,b) => a.time.getTime() - b.time.getTime());
 
-            for (const prayer of prayers) {
-                const prayerTime = parseTime(cityPrayerTimes[prayer.name]);
-                if (prayerTime > now && prayerTime < nextPrayerTime) {
-                    nextPrayerTime = prayerTime;
-                    nextPrayerDetails = prayer;
-                }
-            }
+            let nextPrayer = sortedPrayers.find(p => p.time > now);
 
-            if (!nextPrayerDetails) {
-                nextPrayerDetails = prayers[0]; // Fajr next day
-                nextPrayerTime = parseTime(cityPrayerTimes[nextPrayerDetails.name]);
-                nextPrayerTime.setDate(nextPrayerTime.getDate() + 1);
+            if (!nextPrayer) {
+                // If no prayer is found for today, it must be Fajr tomorrow.
+                nextPrayer = sortedPrayers[0];
+                const nextDayTime = new Date(nextPrayer.time);
+                nextDayTime.setDate(nextDayTime.getDate() + 1);
+                nextPrayer.time = nextDayTime;
             }
             
-            const minutesUntil = Math.max(0, Math.round((nextPrayerTime.getTime() - now.getTime()) / (1000 * 60)));
+            const minutesUntil = Math.max(0, Math.round((nextPrayer.time.getTime() - now.getTime()) / (1000 * 60)));
             
             setNextPrayerInfo({
-                name: nextPrayerDetails!.name,
+                name: nextPrayer.name,
                 minutesUntil: minutesUntil
             });
         };
@@ -83,7 +90,7 @@ export default function PrayerTimesPage() {
         return () => clearInterval(interval);
     }, [selectedCity]);
     
-    const cityPrayerTimes = prayerTimesData[selectedCity];
+    const cityPrayerTimes = prayerTimesData[selectedCity] || {};
 
     return (
         <div className="bg-surface font-body text-on-surface antialiased">
@@ -108,13 +115,19 @@ export default function PrayerTimesPage() {
                 <section className="mb-10">
                     <div className="flex flex-col gap-1">
                         <span className="text-label-md font-medium text-secondary tracking-widest uppercase opacity-80">Current Location</span>
-                        <div className="flex items-center justify-between bg-surface-container-lowest p-4 rounded-lg shadow-sm group cursor-pointer active:scale-[0.98] transition-all">
-                            <div className="flex items-center gap-3">
-                                <span className="material-symbols-outlined text-primary">location_on</span>
-                                <span className="font-headline font-bold text-lg">{selectedCity}</span>
-                            </div>
-                             <span className="material-symbols-outlined text-on-surface-variant group-hover:translate-y-0.5 transition-transform">expand_more</span>
-                        </div>
+                        <Select onValueChange={setSelectedCity} value={selectedCity}>
+                            <SelectTrigger className="w-full bg-surface-container-lowest p-4 rounded-lg shadow-sm group cursor-pointer active:scale-[0.98] transition-all border-0 focus:ring-0">
+                                <div className="flex items-center gap-3">
+                                    <span className="material-symbols-outlined text-primary">location_on</span>
+                                    <span className="font-headline font-bold text-lg"><SelectValue /></span>
+                                </div>
+                            </SelectTrigger>
+                            <SelectContent>
+                                {Object.keys(prayerTimesData).map(city => (
+                                    <SelectItem key={city} value={city}>{city}</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
                     </div>
                 </section>
 
@@ -132,9 +145,9 @@ export default function PrayerTimesPage() {
                 
                 <div className="space-y-4">
                     {prayers.map(prayer => {
-                        const time = cityPrayerTimes[prayer.name];
+                        const time = cityPrayerTimes[prayer.name] || '...';
                         const [hour, minutePeriod] = time.split(':');
-                        const [minute, period] = minutePeriod.split(' ');
+                        const [minute, period] = minutePeriod ? minutePeriod.split(' ') : ['', ''];
                         const isActive = nextPrayerInfo.name === prayer.name;
 
                         return (
@@ -149,7 +162,7 @@ export default function PrayerTimesPage() {
                                     </div>
                                 </div>
                                 <div className="text-right z-10">
-                                    <span className={`font-headline font-extrabold text-lg ${isActive ? 'text-on-primary' : 'text-on-surface'}`}>{`${hour}:${minute}`}</span>
+                                    <span className={`font-headline font-extrabold text-lg ${isActive ? 'text-on-primary' : 'text-on-surface'}`}>{`${hour}${minute ? `:${minute}`: ''}`}</span>
                                     <p className={`text-xs ${isActive ? 'text-on-primary/80' : 'text-on-surface-variant'}`}>{period}</p>
                                 </div>
                                 {isActive && <div className="absolute inset-0 bg-gradient-to-r from-primary to-primary-container"></div>}
@@ -180,7 +193,7 @@ export default function PrayerTimesPage() {
                     <span className="material-symbols-outlined">adjust</span>
                     <span className="font-label text-sm font-medium tracking-wide">Tasbeeh</span>
                 </Link>
-                <Link href="#" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 tap-highlight-none active:scale-90 transition-transform">
+                <Link href="/settings" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 tap-highlight-none active:scale-90 transition-transform">
                     <span className="material-symbols-outlined">settings</span>
                     <span className="font-label text-sm font-medium tracking-wide">Settings</span>
                 </Link>

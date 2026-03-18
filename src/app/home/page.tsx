@@ -101,7 +101,7 @@ export default function HomePage() {
             <span className="font-label text-sm font-medium tracking-wide">Tasbeeh</span>
         </Link>
         {/* Settings */}
-        <Link href="#" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90">
+        <Link href="/settings" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90">
             <span className="material-symbols-outlined">settings</span>
             <span className="font-label text-sm font-medium tracking-wide">Settings</span>
         </Link>

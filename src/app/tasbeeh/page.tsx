@@ -46,7 +46,7 @@ export default function TasbeehCounterPage() {
     localStorage.setItem(TASBEEH_COUNT_KEY, String(count));
     
     // If user starts tapping (count becomes 1) and there is no streak, start one.
-    if (count === 1 && streak === 0) {
+    if (count > 0 && streak === 0) {
       const today = new Date().toISOString();
       localStorage.setItem(STREAK_START_DATE_KEY, today);
       setStreak(1);
@@ -104,7 +104,7 @@ export default function TasbeehCounterPage() {
                 {/* Digital Number Display */}
                 <div className="mb-12 text-center">
                     <div className="font-headline font-extrabold text-[120px] leading-none text-primary tracking-tighter">
-                        {String(count % 1000).padStart(3, '0')}
+                        {String(count).padStart(3, '0')}
                     </div>
                     <div className="text-on-surface-variant font-body text-sm tracking-[0.2em] uppercase opacity-60">Current Count</div>
                 </div>
@@ -165,7 +165,7 @@ export default function TasbeehCounterPage() {
                 <span className="material-symbols-outlined" style={{fontVariationSettings: "'FILL' 1"}}>adjust</span>
                 <span className="font-inter text-label-md font-medium tracking-wide">Tasbeeh</span>
             </Link>
-            <Link href="#" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 tap-highlight-none active:scale-90 transition-transform">
+            <Link href="/settings" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 tap-highlight-none active:scale-90 transition-transform">
                 <span className="material-symbols-outlined">settings</span>
                 <span className="font-inter text-label-md font-medium tracking-wide mt-1">Settings</span>
             </Link>
