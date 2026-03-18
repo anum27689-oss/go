@@ -5,15 +5,39 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 const TASBEEH_COUNT_KEY = 'tasbeeh_count';
+const STREAK_START_DATE_KEY = 'tasbeeh_streak_start_date';
+const LAST_SESSION_TAPS_KEY = 'tasbeeh_last_session_taps';
 
 export default function TasbeehCounterPage() {
   const [count, setCount] = useState(0);
+  const [streak, setStreak] = useState(0);
+  const [lastSessionTaps, setLastSessionTaps] = useState(0);
+  const [showHistory, setShowHistory] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
     const savedCount = localStorage.getItem(TASBEEH_COUNT_KEY);
     if (savedCount) {
       setCount(parseInt(savedCount, 10));
+    }
+
+    const savedLastSessionTaps = localStorage.getItem(LAST_SESSION_TAPS_KEY);
+    if (savedLastSessionTaps) {
+      setLastSessionTaps(parseInt(savedLastSessionTaps, 10));
+    }
+
+    const streakStartDate = localStorage.getItem(STREAK_START_DATE_KEY);
+    if (streakStartDate) {
+      const startDate = new Date(streakStartDate);
+      const today = new Date();
+      const diffTime = Math.abs(today.getTime() - startDate.getTime());
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      setStreak(diffDays);
+      if (diffDays >= 12) {
+        setShowHistory(true);
+      }
+    } else {
+        localStorage.setItem(STREAK_START_DATE_KEY, new Date().toISOString());
     }
   }, []);
 
@@ -22,10 +46,16 @@ export default function TasbeehCounterPage() {
         localStorage.setItem(TASBEEH_COUNT_KEY, String(count));
     }
   }, [count]);
-
+  
   const increment = () => setCount(prev => prev + 1);
-  const reset = () => setCount(0);
 
+  const reset = () => {
+    const currentCount = count;
+    setLastSessionTaps(currentCount);
+    localStorage.setItem(LAST_SESSION_TAPS_KEY, String(currentCount));
+    setCount(0);
+  };
+  
   const dailyGoal = 100;
   const goalProgress = count % dailyGoal;
   const progressPercentage = (goalProgress / dailyGoal) * 100;
@@ -100,18 +130,20 @@ export default function TasbeehCounterPage() {
             </div>
 
             {/* Secondary Info Cards (Bento Style) */}
-            <section className="grid grid-cols-2 gap-4 w-full mt-16">
-                <div className="bg-surface-container-low p-5 rounded-lg border border-outline-variant/15">
-                    <span className="material-symbols-outlined text-secondary mb-3" style={{fontVariationSettings: "'FILL' 1"}}>history</span>
-                    <p className="text-on-surface-variant text-xs font-medium mb-1">Last Session</p>
-                    <p className="text-on-surface font-headline font-bold text-lg">562 Taps</p>
-                </div>
-                <div className="bg-surface-container-low p-5 rounded-lg border border-outline-variant/15">
-                    <span className="material-symbols-outlined text-secondary mb-3" style={{fontVariationSettings: "'FILL' 1"}}>stars</span>
-                    <p className="text-on-surface-variant text-xs font-medium mb-1">Streak</p>
-                    <p className="text-on-surface font-headline font-bold text-lg">12 Days</p>
-                </div>
-            </section>
+            {showHistory && (
+              <section className="grid grid-cols-2 gap-4 w-full mt-16">
+                  <div className="bg-surface-container-low p-5 rounded-lg border border-outline-variant/15">
+                      <span className="material-symbols-outlined text-secondary mb-3" style={{fontVariationSettings: "'FILL' 1"}}>history</span>
+                      <p className="text-on-surface-variant text-xs font-medium mb-1">Last Session</p>
+                      <p className="text-on-surface font-headline font-bold text-lg">{lastSessionTaps} Taps</p>
+                  </div>
+                  <div className="bg-surface-container-low p-5 rounded-lg border border-outline-variant/15">
+                      <span className="material-symbols-outlined text-secondary mb-3" style={{fontVariationSettings: "'FILL' 1"}}>stars</span>
+                      <p className="text-on-surface-variant text-xs font-medium mb-1">Streak</p>
+                      <p className="text-on-surface font-headline font-bold text-lg">{streak} Days</p>
+                  </div>
+              </section>
+            )}
         </main>
         
         {/* BottomNavBar */}
