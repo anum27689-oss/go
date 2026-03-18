@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
@@ -45,13 +45,15 @@ export default function QiblaDirectionPage() {
                 if (typeof savedCity === 'object' && savedCity !== null && 'lat' in savedCity && 'lng' in savedCity) {
                     setSelectedCity(savedCity);
                 } else {
+                     // Default to a major city if saved data is invalid
                     setSelectedCity(pakistanCities.find(c => c.city === "Islamabad") || null);
                 }
             } catch (e) {
-                console.error("Failed to parse saved city:", e);
+                console.error("Failed to parse saved city, defaulting to Islamabad:", e);
                 setSelectedCity(pakistanCities.find(c => c.city === "Islamabad") || null);
             }
         } else {
+            // Default to a major city if none is saved
             setSelectedCity(pakistanCities.find(c => c.city === "Islamabad") || null);
         }
 
@@ -61,33 +63,39 @@ export default function QiblaDirectionPage() {
                 setError('Your device or browser does not support compass direction.');
                 return;
             }
+            // For iOS
             if (typeof (event as any).webkitCompassHeading !== 'undefined') {
                 alpha = (event as any).webkitCompassHeading;
             }
             setDirection(alpha);
+            setError(''); // Clear previous errors
         };
-
-        if (typeof window !== 'undefined' && 'DeviceOrientationEvent' in window) {
-            const requestPermission = (DeviceOrientationEvent as any).requestPermission;
-            if (typeof requestPermission === 'function') {
-                requestPermission()
-                    .then((permissionState: 'granted' | 'denied') => {
+        
+        const requestPermissions = async () => {
+             if (typeof window !== 'undefined' && 'DeviceOrientationEvent' in window) {
+                const requestPermission = (DeviceOrientationEvent as any).requestPermission;
+                if (typeof requestPermission === 'function') {
+                    try {
+                        const permissionState = await requestPermission();
                         if (permissionState === 'granted') {
                             window.addEventListener('deviceorientation', handleOrientation);
                         } else {
                             setError('Permission to access device orientation was denied.');
                         }
-                    })
-                    .catch((e: any) => {
-                        console.error(e);
-                        setError('Error requesting device orientation permission.');
-                    });
+                    } catch (e: any) {
+                         console.error(e);
+                         setError('Error requesting device orientation permission. Please grant permission in your browser settings.');
+                    }
+                } else {
+                    // For non-iOS 13+ browsers
+                    window.addEventListener('deviceorientation', handleOrientation);
+                }
             } else {
-                window.addEventListener('deviceorientation', handleOrientation);
+                setError('Your device or browser does not support Device Orientation events.');
             }
-        } else {
-            setError('Your device or browser does not support Device Orientation events.');
         }
+
+        requestPermissions();
 
         return () => {
             window.removeEventListener('deviceorientation', handleOrientation);
@@ -113,9 +121,10 @@ export default function QiblaDirectionPage() {
         const y = Math.sin(deltaLng);
         const x = Math.cos(userLatRad) * Math.tan(kaabaLatRad) - Math.sin(userLatRad) * Math.cos(deltaLng);
         let qibla = Math.atan2(y, x) * (180 / Math.PI);
-        qibla = (qibla + 360) % 360;
+        qibla = (qibla + 360) % 360; // Normalize to 0-360
         setQiblaDirection(qibla);
 
+        // Haversine formula for distance
         const R = 6371; // Earth's radius in km
         const dLat = kaabaLatRad - userLatRad;
         const dLng = deltaLng;
@@ -138,13 +147,12 @@ export default function QiblaDirectionPage() {
             setSelectedCity(city);
             setIsGpsLoading(false);
         }, () => {
-            setError('Unable to retrieve your location. Please enable location services.');
+            setError('Unable to retrieve your location. Please enable location services and grant permission.');
             setIsGpsLoading(false);
         });
     };
     
     const compassRotationStyle = { transform: `rotate(${qiblaDirection - direction}deg)` };
-    const magneticDeclination = 1.2; // Example fixed value
 
     const getCardinalDirection = (angle: number) => {
         const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
@@ -156,17 +164,22 @@ export default function QiblaDirectionPage() {
             <header className="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl flex justify-between items-center px-6 h-16 max-w-2xl mx-auto left-0 right-0">
                 <div className="flex items-center gap-4">
                     <button onClick={() => router.back()} className="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-high transition-colors p-2 rounded-full active:scale-95 duration-200">arrow_back</button>
-                    <Link href="/home">
+                     <Link href="/home">
                       <h1 className="font-manrope font-extrabold tracking-tighter text-primary text-xl">Islamic Companion</h1>
                     </Link>
                 </div>
                 <div className="flex items-center">
-                    <span className="material-symbols-outlined text-on-surface-variant p-2 hover:bg-surface-container-high transition-colors rounded-full active:scale-95 duration-200" data-icon="account_circle">account_circle</span>
+                     <button className="flex items-center justify-center p-2 rounded-full hover:bg-surface-container-high transition-colors active:scale-95 duration-200">
+                        <span className="material-symbols-outlined text-on-surface">brightness_3</span>
+                    </button>
+                    <button className="flex items-center justify-center p-2 rounded-full hover:bg-surface-container-high transition-colors active:scale-95 duration-200">
+                        <span className="material-symbols-outlined text-on-surface-variant" data-icon="account_circle">account_circle</span>
+                    </button>
                 </div>
             </header>
 
             <main className="min-h-screen pt-24 pb-32 px-6 flex flex-col items-center max-w-xl mx-auto">
-                <section className="w-full mb-8">
+                 <section className="w-full mb-8">
                      <div className="flex flex-col gap-1">
                         <span className="text-label-md font-medium text-secondary tracking-widest uppercase opacity-80">Location</span>
                          <Popover open={open} onOpenChange={setOpen}>
@@ -270,14 +283,10 @@ export default function QiblaDirectionPage() {
                     </Alert>
                 )}
 
-                <div className="w-full mt-8 grid grid-cols-2 gap-4">
+                <div className="w-full mt-8 grid grid-cols-1 gap-4">
                     <div className="bg-surface-container-high/50 p-4 rounded-lg flex flex-col items-center">
                         <span className="font-label text-[10px] uppercase tracking-widest text-secondary mb-1">Distance</span>
                         <span className="font-headline font-bold text-on-surface">{Math.round(distance)} km</span>
-                    </div>
-                    <div className="bg-surface-container-high/50 p-4 rounded-lg flex flex-col items-center">
-                        <span className="font-label text-[10px] uppercase tracking-widest text-secondary mb-1">Magnetic</span>
-                        <span className="font-headline font-bold text-on-surface">+{magneticDeclination.toFixed(1)}° Decl.</span>
                     </div>
                 </div>
             </main>
