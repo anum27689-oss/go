@@ -1,14 +1,30 @@
-import { AppHeader } from "@/components/app-header";
+"use client";
+
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function PrivacyPolicyPage() {
+  const router = useRouter();
+
   return (
-    <div className="flex flex-col h-screen">
-      <AppHeader title="Privacy Policy" />
-      <main className="flex-1 container mx-auto p-4 md:p-6 overflow-y-auto">
+    <div className="bg-surface text-on-surface min-h-screen">
+      <header className="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl flex justify-between items-center px-6 h-16 max-w-2xl mx-auto left-0 right-0">
+          <div className="flex items-center gap-4">
+              <button onClick={() => router.back()} className="flex items-center justify-center p-2 rounded-full hover:bg-surface-container-high transition-colors active:scale-95 duration-200">
+                  <span className="material-symbols-outlined text-on-surface">arrow_back</span>
+              </button>
+              <Link href="/home" className="text-primary font-manrope font-extrabold tracking-tighter text-xl">Islamic Companion</Link>
+          </div>
+            <button className="flex items-center justify-center p-2 rounded-full hover:bg-surface-container-high transition-colors active:scale-95 duration-200">
+              <span className="material-symbols-outlined text-on-surface">account_circle</span>
+          </button>
+      </header>
+
+      <main className="pt-24 pb-12 px-6 max-w-2xl mx-auto">
         <Card>
           <CardHeader>
-            <CardTitle>Privacy Policy for Islamic Daily Companion</CardTitle>
+            <CardTitle>Privacy Policy</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 prose dark:prose-invert max-w-none">
             <p>Last updated: {new Date().toLocaleDateString()}</p>
