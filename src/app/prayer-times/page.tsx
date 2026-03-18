@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
@@ -29,9 +28,15 @@ const prayerTimesData: { [city: string]: { [prayer: string]: string } } = {
     'Dubai': { Fajr: '04:45 AM', Dhuhr: '12:20 PM', Asr: '03:45 PM', Maghrib: '07:00 PM', Isha: '08:30 PM' },
     'Kuala Lumpur': { Fajr: '05:50 AM', Dhuhr: '01:15 PM', Asr: '04:30 PM', Maghrib: '07:20 PM', Isha: '08:35 PM' },
     'Karachi': { Fajr: '04:55 AM', Dhuhr: '12:35 PM', Asr: '04:00 PM', Maghrib: '07:05 PM', Isha: '08:35 PM' },
-    'Dhaka': { Fajr: '04:30 AM', Dhuhr: '12:05 PM', Asr: '03:20 PM', Maghrib: '06:20 PM', Isha: '07:45 PM' },
     'Lahore': { Fajr: '04:00 AM', Dhuhr: '12:10 PM', Asr: '03:45 PM', Maghrib: '06:50 PM', Isha: '08:20 PM' },
     'Islamabad': { Fajr: '03:50 AM', Dhuhr: '12:15 PM', Asr: '03:55 PM', Maghrib: '07:00 PM', Isha: '08:30 PM' },
+    'Faisalabad': { Fajr: '04:05 AM', Dhuhr: '12:15 PM', Asr: '03:50 PM', Maghrib: '06:55 PM', Isha: '08:25 PM' },
+    'Rawalpindi': { Fajr: '03:50 AM', Dhuhr: '12:15 PM', Asr: '03:55 PM', Maghrib: '07:00 PM', Isha: '08:30 PM' },
+    'Multan': { Fajr: '04:20 AM', Dhuhr: '12:20 PM', Asr: '03:50 PM', Maghrib: '06:50 PM', Isha: '08:20 PM' },
+    'Peshawar': { Fajr: '03:55 AM', Dhuhr: '12:20 PM', Asr: '04:05 PM', Maghrib: '07:10 PM', Isha: '08:40 PM' },
+    'Quetta': { Fajr: '04:30 AM', Dhuhr: '12:30 PM', Asr: '04:00 PM', Maghrib: '07:00 PM', Isha: '08:30 PM' },
+    'Dera Ghazi Khan': { Fajr: '04:25 AM', Dhuhr: '12:25 PM', Asr: '03:55 PM', Maghrib: '06:55 PM', Isha: '08:25 PM' },
+    'Dhaka': { Fajr: '04:30 AM', Dhuhr: '12:05 PM', Asr: '03:20 PM', Maghrib: '06:20 PM', Isha: '07:45 PM' },
     'Delhi': { Fajr: '04:20 AM', Dhuhr: '12:25 PM', Asr: '03:55 PM', Maghrib: '07:00 PM', Isha: '08:30 PM' },
     'Lagos': { Fajr: '05:15 AM', Dhuhr: '12:45 PM', Asr: '04:10 PM', Maghrib: '06:55 PM', Isha: '08:10 PM' },
     'Tehran': { Fajr: '04:40 AM', Dhuhr: '12:50 PM', Asr: '04:30 PM', Maghrib: '07:50 PM', Isha: '09:10 PM' },
@@ -295,4 +300,3 @@ export default function PrayerTimesPage() {
         </div>
     );
 }
-
