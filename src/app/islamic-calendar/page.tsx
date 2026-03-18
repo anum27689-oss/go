@@ -6,17 +6,6 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { cn } from "@/lib/utils";
 
-// Important Islamic events with day-month mapping in the Hijri calendar
-const islamicEvents: { [key: string]: string } = {
-    '1-1': 'Islamic New Year',
-    '10-1': 'Day of Ashura',
-    '12-3': 'Mawlid al-Nabi',
-    '1-9': 'Start of Ramadan',
-    '27-9': 'Laylat al-Qadr',
-    '1-10': 'Eid al-Fitr',
-    '10-12': 'Eid al-Adha',
-};
-
 export default function IslamicCalendarPage() {
     const router = useRouter();
     const [viewedDate, setViewedDate] = useState(new Date());
@@ -65,13 +54,11 @@ export default function IslamicCalendarPage() {
         const isToday = day === todayDayOfMonth;
         const dateForDay = new Date(viewedDate.getFullYear(), viewedDate.getMonth(), day);
         
-        let hijriDay, eventName, isMonthEnd = false;
+        let hijriDay, isMonthEnd = false;
 
         try {
             hijriDay = hijriDayFormatter.format(dateForDay);
             const hijriMonthNum = hijriMonthFormatterNum.format(dateForDay);
-            const eventKey = `${parseInt(hijriDay, 10)}-${parseInt(hijriMonthNum, 10)}`;
-            eventName = islamicEvents[eventKey];
 
             const nextGregorianDay = new Date(dateForDay);
             nextGregorianDay.setDate(dateForDay.getDate() + 1);
@@ -93,8 +80,7 @@ export default function IslamicCalendarPage() {
                     'aspect-square rounded-lg p-1.5 flex flex-col justify-between group cursor-pointer transition-all border-2 border-transparent',
                     {
                         'bg-primary text-on-primary shadow-xl shadow-primary/20': isToday,
-                        'bg-surface-container-lowest hover:bg-surface-container': !isToday && !eventName,
-                        'bg-secondary-container/50 hover:bg-secondary-container/80': eventName && !isToday,
+                        'bg-surface-container-lowest hover:bg-surface-container': !isToday,
                         'border-secondary/50 border-dashed': isMonthEnd && !isToday,
                     }
                 )}
@@ -109,12 +95,7 @@ export default function IslamicCalendarPage() {
                 </div>
 
                 <div className="flex items-end justify-center text-center">
-                    {eventName && (
-                        <p className={cn("text-[10px] font-bold leading-tight", isToday ? 'text-on-primary/90' : 'text-on-secondary-container')}>
-                            {eventName}
-                        </p>
-                    )}
-                    {isMonthEnd && !eventName && (
+                    {isMonthEnd && (
                         <p className="text-[10px] font-bold text-secondary">
                             Month End
                         </p>
@@ -200,5 +181,3 @@ export default function IslamicCalendarPage() {
         </div>
     );
 }
-
-    
