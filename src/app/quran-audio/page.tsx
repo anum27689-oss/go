@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useRef, useMemo } from 'react';
@@ -315,13 +316,13 @@ export default function QuranAudioPage() {
                     <span className="material-symbols-outlined">schedule</span>
                     <span className="font-label text-sm font-medium tracking-wide">Prayer</span>
                 </Link>
-                 <Link href="/quran-audio" className="flex flex-col items-center justify-center bg-primary text-on-primary rounded-full px-5 py-1.5 transition-all tap-highlight-none active:scale-90">
-                    <span className="material-symbols-outlined" style={{fontVariationSettings: "'FILL' 1"}}>volume_up</span>
-                    <span className="font-label text-sm font-medium tracking-wide">Quran</span>
-                </Link>
                 <Link href="/tasbeeh" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 tap-highlight-none active:scale-90 transition-transform">
                     <span className="material-symbols-outlined">adjust</span>
                     <span className="font-label text-sm font-medium tracking-wide">Tasbeeh</span>
+                </Link>
+                <Link href="/islamic-calendar" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90">
+                    <span className="material-symbols-outlined">calendar_month</span>
+                    <span className="font-label text-sm font-medium tracking-wide">Calendar</span>
                 </Link>
                 <Link href="/settings" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 tap-highlight-none active:scale-90 transition-transform">
                     <span className="material-symbols-outlined">settings</span>

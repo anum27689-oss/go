@@ -60,7 +60,7 @@ export default function HomePage() {
 
             {/* 5. Islamic Calendar */}
             <Link href="/islamic-calendar" className="flex flex-col items-center justify-center p-6 bg-surface-container-low rounded-lg h-44 hover:bg-surface-container-high transition-colors active:scale-95 duration-200">
-                <span className="material-symbols-outlined text-secondary text-3xl mb-4">calendar_today</span>
+                <span className="material-symbols-outlined text-secondary text-3xl mb-4">calendar_month</span>
                 <span className="font-headline font-bold text-lg text-on-surface">Calendar</span>
             </Link>
         </div>
@@ -86,27 +86,22 @@ export default function HomePage() {
 
       {/* BottomNavBar */}
       <nav className="fixed bottom-0 w-full z-50 pb-safe bg-surface/80 backdrop-blur-2xl flex justify-around items-center h-20 px-4 max-w-2xl mx-auto left-0 right-0">
-        {/* Home (Active) */}
         <Link href="/home" className="flex flex-col items-center justify-center bg-primary text-on-primary rounded-full px-5 py-1.5 transition-all active:scale-90">
             <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>home</span>
             <span className="font-label text-sm font-medium tracking-wide">Home</span>
         </Link>
-        {/* Prayer */}
         <Link href="/prayer-times" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90">
             <span className="material-symbols-outlined">schedule</span>
             <span className="font-label text-sm font-medium tracking-wide">Prayer</span>
         </Link>
-        {/* Qibla */}
-        <Link href="/qibla" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90">
-            <span className="material-symbols-outlined">explore</span>
-            <span className="font-label text-sm font-medium tracking-wide">Qibla</span>
+        <Link href="/tasbeeh" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90">
+            <span className="material-symbols-outlined">adjust</span>
+            <span className="font-label text-sm font-medium tracking-wide">Tasbeeh</span>
         </Link>
-        {/* Quran */}
-        <Link href="/quran-audio" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90">
-            <span className="material-symbols-outlined">volume_up</span>
-            <span className="font-label text-sm font-medium tracking-wide">Quran</span>
+        <Link href="/islamic-calendar" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90">
+            <span className="material-symbols-outlined">calendar_month</span>
+            <span className="font-label text-sm font-medium tracking-wide">Calendar</span>
         </Link>
-        {/* Settings */}
         <Link href="/settings" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90">
             <span className="material-symbols-outlined">settings</span>
             <span className="font-label text-sm font-medium tracking-wide">Settings</span>

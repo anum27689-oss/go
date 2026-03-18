@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -33,7 +34,7 @@ export default function TasbeehCounterPage() {
       // Add 1 to include the start day
       const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1; 
       setStreak(diffDays);
-      if (diffDays >= 12) {
+      if (diffDays >= 1) { // Show history if streak is 1 or more
         setShowHistory(true);
       }
     } else {
@@ -50,6 +51,7 @@ export default function TasbeehCounterPage() {
       const today = new Date().toISOString();
       localStorage.setItem(STREAK_START_DATE_KEY, today);
       setStreak(1);
+      setShowHistory(true);
     }
   }, [count, streak]);
 
@@ -161,13 +163,13 @@ export default function TasbeehCounterPage() {
                 <span className="material-symbols-outlined">schedule</span>
                 <span className="font-label text-sm font-medium tracking-wide">Prayer</span>
             </Link>
-            <Link href="/quran-audio" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 tap-highlight-none active:scale-90 transition-transform">
-                <span className="material-symbols-outlined">volume_up</span>
-                <span className="font-label text-sm font-medium tracking-wide">Quran</span>
-            </Link>
             <Link href="/tasbeeh" className="flex flex-col items-center justify-center bg-primary text-on-primary rounded-full px-5 py-1.5 transition-all tap-highlight-none active:scale-90">
                 <span className="material-symbols-outlined" style={{fontVariationSettings: "'FILL' 1"}}>adjust</span>
                 <span className="font-label text-sm font-medium tracking-wide">Tasbeeh</span>
+            </Link>
+            <Link href="/islamic-calendar" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90">
+                <span className="material-symbols-outlined">calendar_month</span>
+                <span className="font-label text-sm font-medium tracking-wide">Calendar</span>
             </Link>
             <Link href="/settings" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 tap-highlight-none active:scale-90 transition-transform">
                 <span className="material-symbols-outlined">settings</span>

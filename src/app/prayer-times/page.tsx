@@ -397,13 +397,13 @@ export default function PrayerTimesPage() {
                     <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>schedule</span>
                     <span className="font-label text-sm font-medium tracking-wide">Prayer</span>
                 </Link>
-                <Link href="/qibla" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90">
-                    <span className="material-symbols-outlined">explore</span>
-                    <span className="font-label text-sm font-medium tracking-wide">Qibla</span>
+                <Link href="/tasbeeh" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90">
+                    <span className="material-symbols-outlined">adjust</span>
+                    <span className="font-label text-sm font-medium tracking-wide">Tasbeeh</span>
                 </Link>
-                <Link href="/quran-audio" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 tap-highlight-none active:scale-90 transition-transform">
-                    <span className="material-symbols-outlined">volume_up</span>
-                    <span className="font-label text-sm font-medium tracking-wide">Quran</span>
+                <Link href="/islamic-calendar" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90">
+                    <span className="material-symbols-outlined">calendar_month</span>
+                    <span className="font-label text-sm font-medium tracking-wide">Calendar</span>
                 </Link>
                 <Link href="/settings" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 tap-highlight-none active:scale-90 transition-transform">
                     <span className="material-symbols-outlined">settings</span>
@@ -413,4 +413,3 @@ export default function PrayerTimesPage() {
         </div>
     );
 }
-

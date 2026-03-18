@@ -297,17 +297,17 @@ export default function QiblaDirectionPage() {
                     <span className="material-symbols-outlined">home</span>
                     <span className="font-label text-sm font-medium tracking-wide">Home</span>
                 </Link>
-                <Link href="/prayer-times" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90 tap-highlight-none">
-                     <span className="material-symbols-outlined">schedule</span>
+                <Link href="/prayer-times" className="flex flex-col items-center justify-center bg-primary text-on-primary rounded-full px-5 py-1.5 transition-all tap-highlight-none active:scale-90">
+                     <span className="material-symbols-outlined" style={{fontVariationSettings: "'FILL' 1"}}>schedule</span>
                     <span className="font-label text-sm font-medium tracking-wide">Prayer</span>
                 </Link>
-                 <Link href="/qibla" className="flex flex-col items-center justify-center bg-primary text-on-primary rounded-full px-5 py-1.5 transition-all tap-highlight-none active:scale-90">
-                    <span className="material-symbols-outlined" style={{fontVariationSettings: "'FILL' 1"}}>explore</span>
-                    <span className="font-label text-sm font-medium tracking-wide">Qibla</span>
+                <Link href="/tasbeeh" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90 tap-highlight-none">
+                    <span className="material-symbols-outlined">adjust</span>
+                    <span className="font-label text-sm font-medium tracking-wide">Tasbeeh</span>
                 </Link>
-                <Link href="/quran-audio" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90 tap-highlight-none">
-                    <span className="material-symbols-outlined">volume_up</span>
-                    <span className="font-label text-sm font-medium tracking-wide">Quran</span>
+                <Link href="/islamic-calendar" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90 tap-highlight-none">
+                    <span className="material-symbols-outlined">calendar_month</span>
+                    <span className="font-label text-sm font-medium tracking-wide">Calendar</span>
                 </Link>
                 <Link href="/settings" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90 tap-highlight-none">
                     <span className="material-symbols-outlined">settings</span>
@@ -317,5 +317,3 @@ export default function QiblaDirectionPage() {
         </div>
     );
 }
-
-    
