@@ -79,7 +79,7 @@ export default function IslamicCalendarPage() {
         const isToday = day === todayDayOfMonth;
         calendarDays.push(
             <div key={day} className={`aspect-square rounded-lg p-2 flex flex-col justify-between group cursor-pointer transition-all ${isToday ? 'bg-primary text-on-primary shadow-xl shadow-primary/10' : 'bg-surface-container-lowest hover:bg-secondary-container'}`}>
-                <span className={`font-manrope font-medium text-xs ${isToday ? 'text-primary-fixed-dim' : 'text-on-surface-variant'}`}>{gregorianMonthName.substring(0, 3)} {day}</span>
+                <span className={`font-manrope font-medium text-xs self-start ${isToday ? 'text-primary-fixed-dim' : 'text-on-surface-variant'}`}>{day}</span>
                  {isToday && <div className="text-[10px] absolute bottom-2 left-2 font-bold uppercase tracking-tighter opacity-70">Today</div>}
                  <span className={`font-manrope font-extrabold text-lg self-end ${isToday ? '' : 'text-primary'}`}>
                     {
@@ -127,7 +127,9 @@ export default function IslamicCalendarPage() {
                             <button onClick={handlePrevMonth} className="p-2 hover:bg-surface-container-high rounded-full transition-colors" aria-label="Previous month">
                                 <span className="material-symbols-outlined text-on-surface">chevron_left</span>
                             </button>
-                            <span className="px-4 font-manrope font-bold text-sm text-center w-28">{gregorianMonthName} {gregorianYear}</span>
+                            <span className="px-4 font-manrope font-bold text-sm text-center w-40">
+                                {hijriHeaderParts ? `${hijriHeaderParts.month} ${hijriHeaderParts.year}` : "Loading..."}
+                            </span>
                             <button onClick={handleNextMonth} className="p-2 hover:bg-surface-container-high rounded-full transition-colors" aria-label="Next month">
                                 <span className="material-symbols-outlined text-on-surface">chevron_right</span>
                             </button>
