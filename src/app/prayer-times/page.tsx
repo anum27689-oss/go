@@ -73,8 +73,17 @@ export default function PrayerTimesPage() {
         // Load saved city
         const savedCityJSON = localStorage.getItem('selectedCity');
         if (savedCityJSON) {
-            const savedCity = JSON.parse(savedCityJSON);
-            setSelectedCity(savedCity);
+            try {
+                const savedCity = JSON.parse(savedCityJSON);
+                if (typeof savedCity === 'object' && savedCity !== null && 'lat' in savedCity && 'lng' in savedCity) {
+                    setSelectedCity(savedCity);
+                } else {
+                    setSelectedCity(pakistanCities.find(c => c.city === "Karachi") || null);
+                }
+            } catch (e) {
+                console.error("Failed to parse selectedCity from localStorage", e);
+                setSelectedCity(pakistanCities.find(c => c.city === "Karachi") || null);
+            }
         } else {
             // Default to a major city if none is saved
             setSelectedCity(pakistanCities.find(c => c.city === "Karachi") || null);
