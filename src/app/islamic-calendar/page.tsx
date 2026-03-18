@@ -4,26 +4,31 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { cn } from "@/lib/utils";
 
-const islamicMonths = [
-    "Muharram", "Safar", "Rabi' al-awwal", "Rabi' al-thani",
-    "Jumada al-ula", "Jumada al-ukhra", "Rajab", "Sha'ban",
-    "Ramadan", "Shawwal", "Dhu al-Qi'dah", "Dhu al-Hijjah"
-];
+// Important Islamic events with day-month mapping in the Hijri calendar
+const islamicEvents: { [key: string]: string } = {
+    '1-1': 'Islamic New Year',
+    '10-1': 'Day of Ashura',
+    '12-3': 'Mawlid al-Nabi',
+    '1-9': 'Start of Ramadan',
+    '27-9': 'Laylat al-Qadr',
+    '1-10': 'Eid al-Fitr',
+    '10-12': 'Eid al-Adha',
+};
 
 export default function IslamicCalendarPage() {
     const router = useRouter();
     const [viewedDate, setViewedDate] = useState(new Date());
     const [hijriHeaderParts, setHijriHeaderParts] = useState<{ month: string; year: string } | null>(null);
-    const [todayHijriParts, setTodayHijriParts] = useState<{ day: string; month: string; year: string } | null>(null);
 
     const today = new Date();
     
     useEffect(() => {
         const firstDayOfViewedMonth = new Date(viewedDate.getFullYear(), viewedDate.getMonth(), 1);
         try {
-            const hijriMonthFormatter = new Intl.DateTimeFormat('en-u-ca-islamic', { month: 'long' });
-            const hijriYearFormatter = new Intl.DateTimeFormat('en-u-ca-islamic', { year: 'numeric' });
+            const hijriMonthFormatter = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', { month: 'long' });
+            const hijriYearFormatter = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', { year: 'numeric' });
             setHijriHeaderParts({
                 month: hijriMonthFormatter.format(firstDayOfViewedMonth),
                 year: hijriYearFormatter.format(firstDayOfViewedMonth).split(' ')[0],
@@ -33,24 +38,6 @@ export default function IslamicCalendarPage() {
             setHijriHeaderParts(null);
         }
     }, [viewedDate]);
-
-    useEffect(() => {
-        try {
-            const hijriDayFormatter = new Intl.DateTimeFormat('en-u-ca-islamic', { day: 'numeric' });
-            const hijriMonthFormatter = new Intl.DateTimeFormat('en-u-ca-islamic', { month: 'long' });
-            const hijriYearFormatter = new Intl.DateTimeFormat('en-u-ca-islamic', { year: 'numeric' });
-
-            setTodayHijriParts({
-                day: hijriDayFormatter.format(today),
-                month: hijriMonthFormatter.format(today),
-                year: hijriYearFormatter.format(today).split(' ')[0],
-            });
-        } catch (e) {
-            console.error("Could not format today's Hijri date:", e);
-            setTodayHijriParts(null);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
 
     const handlePrevMonth = () => {
         setViewedDate(current => new Date(current.getFullYear(), current.getMonth() - 1, 1));
@@ -64,30 +51,75 @@ export default function IslamicCalendarPage() {
     const todayDayOfMonth = isCurrentMonthViewed ? today.getDate() : -1;
 
     const daysInMonth = new Date(viewedDate.getFullYear(), viewedDate.getMonth() + 1, 0).getDate();
-    const firstDayOfMonth = new Date(viewedDate.getFullYear(), viewedDate.getMonth(), 1).getDay();
+    const firstDayOfWeek = new Date(viewedDate.getFullYear(), viewedDate.getMonth(), 1).getDay();
 
     const calendarDays = [];
-    const hijriDayFormatter = new Intl.DateTimeFormat('en-u-ca-islamic', { day: 'numeric' });
+    const hijriDayFormatter = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', { day: 'numeric' });
+    const hijriMonthFormatterNum = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', { month: 'numeric' });
     
-    for (let i = 0; i < firstDayOfMonth; i++) {
+    for (let i = 0; i < firstDayOfWeek; i++) {
         calendarDays.push(<div key={`empty-${i}`} className="aspect-square"></div>);
     }
 
     for (let day = 1; day <= daysInMonth; day++) {
         const isToday = day === todayDayOfMonth;
         const dateForDay = new Date(viewedDate.getFullYear(), viewedDate.getMonth(), day);
-        let hijriDay;
+        
+        let hijriDay, eventName, isMonthEnd = false;
+
         try {
             hijriDay = hijriDayFormatter.format(dateForDay);
+            const hijriMonthNum = hijriMonthFormatterNum.format(dateForDay);
+            const eventKey = `${parseInt(hijriDay, 10)}-${parseInt(hijriMonthNum, 10)}`;
+            eventName = islamicEvents[eventKey];
+
+            const nextGregorianDay = new Date(dateForDay);
+            nextGregorianDay.setDate(dateForDay.getDate() + 1);
+            const currentHijriMonth = hijriMonthFormatterNum.format(dateForDay);
+            const nextHijriMonth = hijriMonthFormatterNum.format(nextGregorianDay);
+
+            if (currentHijriMonth !== nextHijriMonth) {
+                isMonthEnd = true;
+            }
+
         } catch {
             hijriDay = '-';
         }
 
         calendarDays.push(
-            <div key={day} className={`aspect-square rounded-lg p-2 flex flex-col justify-between group cursor-pointer transition-all ${isToday ? 'bg-primary text-on-primary shadow-xl shadow-primary/10' : 'bg-surface-container-lowest hover:bg-secondary-container'}`}>
-                <span className={`font-manrope font-medium text-xs self-start ${isToday ? 'text-primary-fixed-dim' : 'text-on-surface-variant'}`}>{day}</span>
-                 {isToday && <div className="text-[10px] absolute bottom-2 left-2 font-bold uppercase tracking-tighter opacity-70">Today</div>}
-                 <span className={`font-manrope font-extrabold text-lg self-end ${isToday ? '' : 'text-primary'}`}>{hijriDay}</span>
+            <div
+                key={day}
+                className={cn(
+                    'aspect-square rounded-lg p-2 flex flex-col justify-between group cursor-pointer transition-all border-2 border-transparent',
+                    {
+                        'bg-primary text-on-primary shadow-xl shadow-primary/20': isToday,
+                        'bg-surface-container-lowest hover:bg-surface-container': !isToday && !eventName,
+                        'bg-secondary-container/50 hover:bg-secondary-container/80': eventName && !isToday,
+                        'border-secondary/50 border-dashed': isMonthEnd && !isToday,
+                    }
+                )}
+            >
+                <div className="w-full flex justify-between items-start">
+                    <span className={cn('font-manrope font-medium text-xs', isToday ? 'text-on-primary/70' : 'text-on-surface-variant/80')}>
+                        {day}
+                    </span>
+                    <span className={cn('font-manrope font-extrabold text-xl', isToday ? 'text-on-primary' : 'text-primary')}>
+                        {hijriDay}
+                    </span>
+                </div>
+
+                <div className="h-6 flex items-end justify-center text-center">
+                    {eventName && (
+                        <p className={cn("text-[9px] font-bold leading-tight", isToday ? 'text-on-primary/90' : 'text-on-secondary-container')}>
+                            {eventName}
+                        </p>
+                    )}
+                    {isMonthEnd && !eventName && (
+                        <p className="text-[9px] font-bold text-secondary">
+                            Month End
+                        </p>
+                    )}
+                </div>
             </div>
         );
     }
@@ -112,7 +144,7 @@ export default function IslamicCalendarPage() {
                         <div>
                             <span className="text-secondary font-semibold tracking-wider text-sm uppercase">Lunar Cycle</span>
                             {hijriHeaderParts ? (
-                                <h2 className="font-manrope font-extrabold text-4xl md:text-5xl text-on-surface mt-2 tracking-tight">{hijriHeaderParts.month} {hijriHeaderParts.year}</h2>
+                                <h2 className="font-manrope font-extrabold text-4xl md:text-5xl text-on-surface mt-2 tracking-tight">{hijriHeaderParts.month} {hijriHeaderParts.year} AH</h2>
                             ): (
                                 <h2 className="font-manrope font-extrabold text-4xl md:text-5xl text-on-surface mt-2 tracking-tight">Loading...</h2>
                             )}
@@ -121,9 +153,9 @@ export default function IslamicCalendarPage() {
                             <button onClick={handlePrevMonth} className="p-2 hover:bg-surface-container-high rounded-full transition-colors" aria-label="Previous month">
                                 <span className="material-symbols-outlined text-on-surface">chevron_left</span>
                             </button>
-                            <span className="px-4 font-manrope font-bold text-sm text-center w-40">
-                                {hijriHeaderParts ? `${hijriHeaderParts.month}` : "Loading..."}
-                            </span>
+                             <button onClick={() => setViewedDate(new Date())} className="px-4 font-manrope font-bold text-sm text-center w-28 hover:bg-surface-container-high rounded-full py-1">
+                                Today
+                            </button>
                             <button onClick={handleNextMonth} className="p-2 hover:bg-surface-container-high rounded-full transition-colors" aria-label="Next month">
                                 <span className="material-symbols-outlined text-on-surface">chevron_right</span>
                             </button>
@@ -141,46 +173,6 @@ export default function IslamicCalendarPage() {
                     <div className="text-center py-2 text-on-surface-variant font-bold text-xs uppercase tracking-widest">Sat</div>
                     {calendarDays}
                 </div>
-                
-                <section className="mt-8 grid md:grid-cols-2 gap-6">
-                    <div className="bg-surface-container-low rounded-lg p-6">
-                         <div className="flex items-center gap-4 mb-4">
-                            <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center text-on-primary">
-                                <span className="material-symbols-outlined">event_note</span>
-                            </div>
-                            <div>
-                                <h3 className="font-manrope font-bold text-lg leading-tight">{today.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</h3>
-                                {todayHijriParts ? (
-                                    <p className="text-on-surface-variant text-sm">{todayHijriParts.day} {todayHijriParts.month} {todayHijriParts.year}</p>
-                                ): (
-                                     <p className="text-on-surface-variant text-sm">Loading Hijri date...</p>
-                                )}
-                            </div>
-                        </div>
-                        <div className="space-y-3">
-                            <div className="flex justify-between items-center p-3 bg-surface-container-lowest rounded-lg">
-                                <span className="text-on-surface-variant text-sm font-medium">Islamic Months</span>
-                            </div>
-                             <ul className="space-y-1 max-h-48 overflow-y-auto">
-                                {islamicMonths.map((month, index) => (
-                                    <li key={month} className={`flex items-center gap-4 p-2 rounded-lg ${todayHijriParts?.month === month ? 'bg-secondary-container/50' : ''}`}>
-                                        <span className={`flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm ${todayHijriParts?.month === month ? 'bg-primary text-on-primary' : 'bg-primary/10 text-primary'}`}>{index + 1}</span>
-                                        <span className="font-medium">{month}</span>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    </div>
-                     <div className="bg-surface-container-low rounded-lg p-6 flex flex-col justify-center overflow-hidden relative group">
-                        <div className="relative z-10">
-                            <h3 className="font-manrope font-bold text-lg mb-2">About Hijri Calendar</h3>
-                            <p className="text-sm text-on-surface-variant">
-                                The Islamic calendar, or Hijri calendar, is a lunar calendar consisting of 12 months in a year of 354 or 355 days. It is used to date events in many Muslim countries and is used by Muslims everywhere to determine the proper days on which to observe the annual fast of Ramadan, to attend Hajj, and to celebrate other Islamic holidays and festivals.
-                            </p>
-                        </div>
-                        <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-secondary/5 rounded-full blur-2xl group-hover:scale-125 transition-transform"></div>
-                    </div>
-                </section>
             </main>
 
             <nav className="fixed bottom-0 w-full z-50 pb-safe bg-surface/80 backdrop-blur-2xl flex justify-around items-center h-20 px-4 max-w-2xl mx-auto left-0 right-0">
