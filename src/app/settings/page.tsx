@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -39,6 +40,8 @@ export default function SettingsPage() {
     const [calculationMethod, setCalculationMethod] = useState('2');
     const [timeFormat, setTimeFormat] = useState('12h');
     const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+    const [language, setLanguage] = useState('en');
+
 
     useEffect(() => {
         setMounted(true);
@@ -88,7 +91,9 @@ export default function SettingsPage() {
                      <button onClick={() => router.back()} className="flex items-center justify-center p-2 rounded-full hover:bg-surface-container-high transition-colors active:scale-95 duration-200">
                         <span className="material-symbols-outlined text-on-surface">arrow_back</span>
                     </button>
-                    <Link href="/home" className="text-primary font-manrope font-extrabold tracking-tighter text-xl">Islamic Companion</Link>
+                    <Link href="/home">
+                        <h1 className="font-manrope font-bold text-xl tracking-tight text-primary">Islamic Companion</h1>
+                    </Link>
                 </div>
                  <button className="flex items-center justify-center p-2 rounded-full hover:bg-surface-container-high transition-colors active:scale-95 duration-200">
                     <span className="material-symbols-outlined text-on-surface">account_circle</span>
@@ -96,39 +101,68 @@ export default function SettingsPage() {
             </header>
 
             {/* Main Content */}
-            <main className="pt-24 pb-32 px-6 max-w-2xl mx-auto">
-                <h1 className="font-headline font-extrabold text-4xl text-on-surface mb-10 tracking-tight">Settings</h1>
-
-                {/* Appearance Settings */}
-                <section className="mb-8">
-                    <h2 className="text-sm font-bold uppercase tracking-widest text-secondary mb-4">Appearance</h2>
-                    <div className="bg-surface-container-lowest rounded-lg divide-y divide-outline-variant/20">
-                        <div className="p-5 flex items-center justify-between">
-                            <div className="flex items-center gap-5">
-                                <span className="material-symbols-outlined text-on-surface-variant">palette</span>
-                                <span className="font-headline font-medium">Theme</span>
+            <main className="pt-24 pb-32 px-6 max-w-2xl mx-auto space-y-8">
+                 <section className="bg-surface-container-low p-6 rounded-lg flex items-center gap-5">
+                    <div className="w-16 h-16 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container">
+                        <span className="material-symbols-outlined text-4xl" style={{fontVariationSettings: "'FILL' 1"}}>person</span>
+                    </div>
+                    <div>
+                        <h2 className="font-headline font-bold text-xl tracking-tight">Assalamu Alaikum, Guest</h2>
+                        <p className="text-on-surface-variant text-sm font-medium">Manage your spiritual preferences</p>
+                    </div>
+                </section>
+                
+                <section className="space-y-4">
+                    <h3 className="text-secondary font-headline font-bold text-sm uppercase tracking-widest px-2">General Preferences</h3>
+                    <div className="bg-surface-container-lowest rounded-lg overflow-hidden divide-y divide-outline-variant/10">
+                        <div className="flex items-center justify-between p-5">
+                            <div className="flex items-center gap-4">
+                                <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-secondary">
+                                    <span className="material-symbols-outlined">language</span>
+                                </div>
+                                <div>
+                                    <p className="font-semibold text-on-surface">Language</p>
+                                    <p className="text-xs text-on-surface-variant font-medium">Current: {language === 'en' ? 'English' : 'Urdu'}</p>
+                                </div>
                             </div>
-                            <div className="flex items-center gap-2 bg-surface-container p-1 rounded-full">
-                                <button onClick={() => setTheme('light')} className={`px-4 py-1.5 text-sm font-bold rounded-full transition-colors ${theme === 'light' ? 'bg-primary text-on-primary' : 'text-on-surface-variant'}`}>Light</button>
-                                <button onClick={() => setTheme('dark')} className={`px-4 py-1.5 text-sm font-bold rounded-full transition-colors ${theme === 'dark' ? 'bg-primary text-on-primary' : 'text-on-surface-variant'}`}>Dark</button>
-                                <button onClick={() => setTheme('system')} className={`px-4 py-1.5 text-sm font-bold rounded-full transition-colors ${theme === 'system' ? 'bg-primary text-on-primary' : 'text-on-surface-variant'}`}>System</button>
+                            <div className="flex bg-surface-container p-1 rounded-full">
+                                <button onClick={() => setLanguage('en')} className={`px-4 py-1.5 rounded-full text-xs font-bold transition-colors ${language === 'en' ? 'bg-primary text-on-primary' : 'text-on-surface-variant'}`}>English</button>
+                                <button onClick={() => setLanguage('ur')} className={`px-4 py-1.5 rounded-full text-xs font-bold transition-colors ${language === 'ur' ? 'bg-primary text-on-primary' : 'text-on-surface-variant'}`}>Urdu</button>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center justify-between p-5">
+                            <div className="flex items-center gap-4">
+                                <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-secondary">
+                                    <span className="material-symbols-outlined">dark_mode</span>
+                                </div>
+                                <div>
+                                    <p className="font-semibold text-on-surface">Theme</p>
+                                    <p className="text-xs text-on-surface-variant font-medium capitalize">{theme === 'system' ? 'Automatic' : theme}</p>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-1 bg-surface-container p-1 rounded-full">
+                                <button onClick={() => setTheme('light')} className={`px-3 py-1.5 text-xs font-bold rounded-full transition-colors ${theme === 'light' ? 'bg-primary text-on-primary' : 'text-on-surface-variant'}`}>Light</button>
+                                <button onClick={() => setTheme('dark')} className={`px-3 py-1.5 text-xs font-bold rounded-full transition-colors ${theme === 'dark' ? 'bg-primary text-on-primary' : 'text-on-surface-variant'}`}>Dark</button>
+                                <button onClick={() => setTheme('system')} className={`px-3 py-1.5 text-xs font-bold rounded-full transition-colors ${theme === 'system' ? 'bg-primary text-on-primary' : 'text-on-surface-variant'}`}>System</button>
                             </div>
                         </div>
                     </div>
                 </section>
                 
-                {/* Prayer Time Settings */}
-                <section className="mb-8">
-                    <h2 className="text-sm font-bold uppercase tracking-widest text-secondary mb-4">Prayer Times</h2>
-                    <div className="bg-surface-container-lowest rounded-lg divide-y divide-outline-variant/20">
+                <section className="space-y-4">
+                    <h3 className="text-secondary font-headline font-bold text-sm uppercase tracking-widest px-2">Prayer Time Preferences</h3>
+                    <div className="bg-surface-container-lowest rounded-lg divide-y divide-outline-variant/10">
                          <div className="p-5">
                             <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-5">
-                                    <span className="material-symbols-outlined text-on-surface-variant">calculate</span>
-                                    <Label className="font-headline font-medium" htmlFor="calculation-method">Calculation Method</Label>
+                                <div className="flex items-center gap-4">
+                                    <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-secondary">
+                                        <span className="material-symbols-outlined">calculate</span>
+                                    </div>
+                                    <Label className="font-semibold text-on-surface" htmlFor="calculation-method">Calculation Method</Label>
                                 </div>
                                 <Select onValueChange={handleMethodChange} value={calculationMethod}>
-                                    <SelectTrigger id="calculation-method" className="w-[180px] bg-surface-container">
+                                    <SelectTrigger id="calculation-method" className="w-auto md:w-[180px] bg-surface-container border-0">
                                         <SelectValue placeholder="Select method" />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -141,16 +175,18 @@ export default function SettingsPage() {
                         </div>
                         <div className="p-5">
                             <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-5">
-                                    <span className="material-symbols-outlined text-on-surface-variant">schedule</span>
-                                    <Label className="font-headline font-medium">Time Format</Label>
+                                <div className="flex items-center gap-4">
+                                    <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-secondary">
+                                        <span className="material-symbols-outlined">schedule</span>
+                                    </div>
+                                    <Label className="font-semibold text-on-surface">Time Format</Label>
                                 </div>
-                                <RadioGroup value={timeFormat} onValueChange={handleTimeFormatChange} className="flex gap-2 bg-surface-container p-1 rounded-full">
-                                    <Label htmlFor="12h" className={`px-4 py-1.5 text-sm font-bold rounded-full transition-colors cursor-pointer ${timeFormat === '12h' ? 'bg-primary text-on-primary' : 'text-on-surface-variant'}`}>
+                                <RadioGroup value={timeFormat} onValueChange={handleTimeFormatChange} className="flex gap-1 bg-surface-container p-1 rounded-full">
+                                    <Label htmlFor="12h" className={`px-4 py-1.5 text-xs font-bold rounded-full transition-colors cursor-pointer ${timeFormat === '12h' ? 'bg-primary text-on-primary' : 'text-on-surface-variant'}`}>
                                         <RadioGroupItem value="12h" id="12h" className="sr-only" />
                                         12-hour
                                     </Label>
-                                    <Label htmlFor="24h" className={`px-4 py-1.5 text-sm font-bold rounded-full transition-colors cursor-pointer ${timeFormat === '24h' ? 'bg-primary text-on-primary' : 'text-on-surface-variant'}`}>
+                                    <Label htmlFor="24h" className={`px-4 py-1.5 text-xs font-bold rounded-full transition-colors cursor-pointer ${timeFormat === '24h' ? 'bg-primary text-on-primary' : 'text-on-surface-variant'}`}>
                                         <RadioGroupItem value="24h" id="24h" className="sr-only" />
                                         24-hour
                                     </Label>
@@ -158,42 +194,54 @@ export default function SettingsPage() {
                             </div>
                         </div>
                         <div className="p-5 flex items-center justify-between">
-                            <div className="flex items-center gap-5">
-                                <span className="material-symbols-outlined text-on-surface-variant">notifications_active</span>
-                                <span className="font-headline font-medium">Adhan Notifications</span>
+                            <div className="flex items-center gap-4">
+                                <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-secondary">
+                                    <span className="material-symbols-outlined">notifications_active</span>
+                                </div>
+                                <span className="font-semibold text-on-surface">Adhan Notifications</span>
                             </div>
                             <Switch checked={notificationsEnabled} onCheckedChange={handleNotificationToggle} />
                         </div>
                     </div>
                 </section>
 
-                {/* About Section */}
-                 <section>
-                    <h2 className="text-sm font-bold uppercase tracking-widest text-secondary mb-4">About & Support</h2>
-                    <div className="bg-surface-container-lowest rounded-lg divide-y divide-outline-variant/20">
-                        <Link href="/privacy-policy" className="p-5 flex items-center justify-between hover:bg-surface-container transition-colors">
-                            <div className="flex items-center gap-5">
-                                <span className="material-symbols-outlined text-on-surface-variant">policy</span>
-                                <span className="font-headline font-medium">Privacy Policy</span>
+                 <section className="space-y-4">
+                    <h3 className="text-secondary font-headline font-bold text-sm uppercase tracking-widest px-2">Support & Legal</h3>
+                    <div className="bg-surface-container-lowest rounded-lg divide-y divide-outline-variant/10">
+                        <Link href="/privacy-policy" className="w-full flex items-center justify-between p-5 hover:bg-surface-container-high transition-colors group">
+                            <div className="flex items-center gap-4">
+                                <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-secondary">
+                                    <span className="material-symbols-outlined">policy</span>
+                                </div>
+                                <p className="font-semibold text-on-surface text-left">Privacy Policy</p>
                             </div>
-                            <span className="material-symbols-outlined text-on-surface-variant">chevron_right</span>
+                            <span className="material-symbols-outlined text-on-surface-variant group-hover:translate-x-1 transition-transform">chevron_right</span>
                         </Link>
-                         <div className="p-5 flex items-center justify-between hover:bg-surface-container transition-colors cursor-pointer">
-                            <div className="flex items-center gap-5">
-                                <span className="material-symbols-outlined text-on-surface-variant">share</span>
-                                <span className="font-headline font-medium">Share App</span>
+                         <button className="w-full flex items-center justify-between p-5 hover:bg-surface-container-high transition-colors group">
+                            <div className="flex items-center gap-4">
+                                <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-secondary">
+                                    <span className="material-symbols-outlined">star</span>
+                                </div>
+                                <p className="font-semibold text-on-surface text-left">Rate App</p>
                             </div>
-                            <span className="material-symbols-outlined text-on-surface-variant">chevron_right</span>
-                        </div>
-                         <div className="p-5 flex items-center justify-between hover:bg-surface-container transition-colors cursor-pointer">
-                            <div className="flex items-center gap-5">
-                                <span className="material-symbols-outlined text-on-surface-variant">star</span>
-                                <span className="font-headline font-medium">Rate on App Store</span>
+                            <span className="material-symbols-outlined text-on-surface-variant group-hover:translate-x-1 transition-transform">chevron_right</span>
+                        </button>
+                         <button className="w-full flex items-center justify-between p-5 hover:bg-surface-container-high transition-colors group">
+                            <div className="flex items-center gap-4">
+                                <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-secondary">
+                                    <span className="material-symbols-outlined">info</span>
+                                </div>
+                                <p className="font-semibold text-on-surface text-left">About App</p>
                             </div>
-                            <span className="material-symbols-outlined text-on-surface-variant">chevron_right</span>
-                        </div>
+                            <span className="material-symbols-outlined text-on-surface-variant group-hover:translate-x-1 transition-transform">chevron_right</span>
+                        </button>
                     </div>
                 </section>
+                
+                <div className="pt-8 text-center space-y-2 opacity-40 grayscale pointer-events-none">
+                    <span className="material-symbols-outlined text-4xl text-primary">brightness_3</span>
+                    <p className="font-manrope font-black tracking-tighter text-on-surface-variant">VERSION 1.0.0 (2024)</p>
+                </div>
             </main>
 
             {/* Bottom Nav */}
@@ -222,3 +270,5 @@ export default function SettingsPage() {
         </div>
     );
 }
+
+    
