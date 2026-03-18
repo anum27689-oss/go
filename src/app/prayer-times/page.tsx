@@ -29,6 +29,37 @@ const prayerTimesData: { [city: string]: { [prayer: string]: string } } = {
     'Kuala Lumpur': { Fajr: '05:50 AM', Dhuhr: '01:15 PM', Asr: '04:30 PM', Maghrib: '07:20 PM', Isha: '08:35 PM' },
     'Karachi': { Fajr: '04:55 AM', Dhuhr: '12:35 PM', Asr: '04:00 PM', Maghrib: '07:05 PM', Isha: '08:35 PM' },
     'Dhaka': { Fajr: '04:30 AM', Dhuhr: '12:05 PM', Asr: '03:20 PM', Maghrib: '06:20 PM', Isha: '07:45 PM' },
+    'Lahore': { Fajr: '04:00 AM', Dhuhr: '12:10 PM', Asr: '03:45 PM', Maghrib: '06:50 PM', Isha: '08:20 PM' },
+    'Islamabad': { Fajr: '03:50 AM', Dhuhr: '12:15 PM', Asr: '03:55 PM', Maghrib: '07:00 PM', Isha: '08:30 PM' },
+    'Delhi': { Fajr: '04:20 AM', Dhuhr: '12:25 PM', Asr: '03:55 PM', Maghrib: '07:00 PM', Isha: '08:30 PM' },
+    'Lagos': { Fajr: '05:15 AM', Dhuhr: '12:45 PM', Asr: '04:10 PM', Maghrib: '06:55 PM', Isha: '08:10 PM' },
+    'Tehran': { Fajr: '04:40 AM', Dhuhr: '12:50 PM', Asr: '04:30 PM', Maghrib: '07:50 PM', Isha: '09:10 PM' },
+    'Ankara': { Fajr: '04:40 AM', Dhuhr: '01:00 PM', Asr: '04:50 PM', Maghrib: '07:55 PM', Isha: '09:25 PM' },
+    'Algiers': { Fajr: '04:45 AM', Dhuhr: '12:50 PM', Asr: '04:35 PM', Maghrib: '07:40 PM', Isha: '09:05 PM' },
+    'Khartoum': { Fajr: '04:30 AM', Dhuhr: '11:55 AM', Asr: '03:15 PM', Maghrib: '06:10 PM', Isha: '07:30 PM' },
+    'Baghdad': { Fajr: '03:50 AM', Dhuhr: '12:10 PM', Asr: '03:50 PM', Maghrib: '07:00 PM', Isha: '08:30 PM' },
+    'Rabat': { Fajr: '05:30 AM', Dhuhr: '01:20 PM', Asr: '04:55 PM', Maghrib: '08:10 PM', Isha: '09:30 PM' },
+    'Casablanca': { Fajr: '05:35 AM', Dhuhr: '01:25 PM', Asr: '05:00 PM', Maghrib: '08:15 PM', Isha: '09:35 PM' },
+    'Kabul': { Fajr: '03:30 AM', Dhuhr: '12:00 PM', Asr: '03:35 PM', Maghrib: '06:50 PM', Isha: '08:20 PM' },
+    'Riyadh': { Fajr: '04:10 AM', Dhuhr: '11:50 AM', Asr: '03:20 PM', Maghrib: '06:25 PM', Isha: '07:55 PM' },
+    'Medina': { Fajr: '04:45 AM', Dhuhr: '12:20 PM', Asr: '03:50 PM', Maghrib: '06:45 PM', Isha: '08:15 PM' },
+    'Tashkent': { Fajr: '03:50 AM', Dhuhr: '12:30 PM', Asr: '04:20 PM', Maghrib: '07:30 PM', Isha: '09:00 PM' },
+    'Sana\'a': { Fajr: '04:35 AM', Dhuhr: '12:10 PM', Asr: '03:30 PM', Maghrib: '06:20 PM', Isha: '07:40 PM' },
+    'Damascus': { Fajr: '04:20 AM', Dhuhr: '12:35 PM', Asr: '04:20 PM', Maghrib: '07:30 PM', Isha: '08:50 PM' },
+    'Dakar': { Fajr: '05:40 AM', Dhuhr: '01:20 PM', Asr: '04:45 PM', Maghrib: '07:30 PM', Isha: '08:45 PM' },
+    'Tunis': { Fajr: '04:15 AM', Dhuhr: '12:30 PM', Asr: '04:15 PM', Maghrib: '07:20 PM', Isha: '08:45 PM' },
+    'Amman': { Fajr: '04:30 AM', Dhuhr: '12:30 PM', Asr: '04:10 PM', Maghrib: '07:20 PM', Isha: '08:40 PM' },
+    'Baku': { Fajr: '04:00 AM', Dhuhr: '12:50 PM', Asr: '04:45 PM', Maghrib: '08:00 PM', Isha: '09:20 PM' },
+    'Abu Dhabi': { Fajr: '04:40 AM', Dhuhr: '12:20 PM', Asr: '03:45 PM', Maghrib: '07:05 PM', Isha: '08:35 PM' },
+    'Tripoli': { Fajr: '04:30 AM', Dhuhr: '12:50 PM', Asr: '04:30 PM', Maghrib: '07:50 PM', Isha: '09:20 PM' },
+    'Jerusalem': { Fajr: '04:40 AM', Dhuhr: '12:30 PM', Asr: '04:10 PM', Maghrib: '07:15 PM', Isha: '08:35 PM' },
+    'Beirut': { Fajr: '04:30 AM', Dhuhr: '12:35 PM', Asr: '04:20 PM', Maghrib: '07:30 PM', Isha: '08:50 PM' },
+    'Muscat': { Fajr: '04:30 AM', Dhuhr: '12:15 PM', Asr: '03:40 PM', Maghrib: '06:45 PM', Isha: '08:15 PM' },
+    'Kuwait City': { Fajr: '03:50 AM', Dhuhr: '11:55 AM', Asr: '03:30 PM', Maghrib: '06:30 PM', Isha: '08:00 PM' },
+    'Doha': { Fajr: '03:50 AM', Dhuhr: '11:40 AM', Asr: '03:05 PM', Maghrib: '06:10 PM', Isha: '07:40 PM' },
+    'Manama': { Fajr: '03:55 AM', Dhuhr: '11:45 AM', Asr: '03:10 PM', Maghrib: '06:15 PM', Isha: '07:45 PM' },
+    'Malé': { Fajr: '04:50 AM', Dhuhr: '12:15 PM', Asr: '03:40 PM', Maghrib: '06:20 PM', Isha: '07:35 PM' },
+    'Bandar Seri Begawan': { Fajr: '05:00 AM', Dhuhr: '12:25 PM', Asr: '03:50 PM', Maghrib: '06:30 PM', Isha: '07:45 PM' }
 };
 
 const prayers = [
@@ -123,7 +154,7 @@ export default function PrayerTimesPage() {
                                 </div>
                             </SelectTrigger>
                             <SelectContent>
-                                {Object.keys(prayerTimesData).map(city => (
+                                {Object.keys(prayerTimesData).sort().map(city => (
                                     <SelectItem key={city} value={city}>{city}</SelectItem>
                                 ))}
                             </SelectContent>
