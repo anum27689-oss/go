@@ -50,10 +50,10 @@ export default function IslamicCalendarPage() {
     for (let day = 1; day <= daysInMonth; day++) {
         const isToday = day === gregorianDay;
         calendarDays.push(
-            <div key={day} className={`aspect-square rounded-lg p-3 flex flex-col justify-between group cursor-pointer transition-all ${isToday ? 'bg-primary text-on-primary shadow-xl shadow-primary/10' : 'bg-surface-container-lowest hover:bg-secondary-container'}`}>
+            <div key={day} className={`aspect-square rounded-lg p-2 flex flex-col justify-between group cursor-pointer transition-all ${isToday ? 'bg-primary text-on-primary shadow-xl shadow-primary/10' : 'bg-surface-container-lowest hover:bg-secondary-container'}`}>
                 <span className={`font-manrope font-medium text-xs ${isToday ? 'text-primary-fixed-dim' : 'text-on-surface-variant'}`}>{gregorianMonthName.substring(0, 3)} {day}</span>
                  {isToday && <div className="text-[10px] absolute bottom-2 left-2 font-bold uppercase tracking-tighter opacity-70">Today</div>}
-                 <span className={`font-manrope font-extrabold text-xl self-end ${isToday ? '' : 'text-primary'}`}>
+                 <span className={`font-manrope font-extrabold text-lg self-end ${isToday ? '' : 'text-primary'}`}>
                     {
                         (() => {
                             try {
@@ -71,7 +71,7 @@ export default function IslamicCalendarPage() {
 
     return (
         <div className="bg-surface text-on-surface min-h-screen pb-24">
-            <header className="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl flex justify-between items-center px-6 h-16 max-w-4xl mx-auto left-0 right-0">
+            <header className="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl flex justify-between items-center px-6 h-16 max-w-2xl mx-auto left-0 right-0">
                 <button onClick={() => router.back()} className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors active:scale-95 duration-200">
                     <span className="material-symbols-outlined text-on-surface">arrow_back</span>
                 </button>
@@ -83,7 +83,7 @@ export default function IslamicCalendarPage() {
                 </button>
             </header>
 
-            <main className="pt-24 px-6 max-w-4xl mx-auto">
+            <main className="pt-24 px-6 max-w-2xl mx-auto">
                 <section className="mb-10">
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                         <div>
@@ -107,7 +107,7 @@ export default function IslamicCalendarPage() {
                     </div>
                 </section>
                 
-                <div className="grid grid-cols-7 gap-3 mb-8">
+                <div className="grid grid-cols-7 gap-2 mb-8">
                     <div className="text-center py-2 text-on-surface-variant font-bold text-xs uppercase tracking-widest">Sun</div>
                     <div className="text-center py-2 text-on-surface-variant font-bold text-xs uppercase tracking-widest">Mon</div>
                     <div className="text-center py-2 text-on-surface-variant font-bold text-xs uppercase tracking-widest">Tue</div>
