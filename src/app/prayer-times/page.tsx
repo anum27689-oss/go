@@ -81,7 +81,7 @@ export default function PrayerTimesPage() {
                     setSelectedCity(pakistanCities.find(c => c.city === "Karachi") || null);
                 }
             } catch (e) {
-                console.error("Failed to parse selectedCity from localStorage", e);
+                // Silently fail and set a default city if parsing fails
                 setSelectedCity(pakistanCities.find(c => c.city === "Karachi") || null);
             }
         } else {
