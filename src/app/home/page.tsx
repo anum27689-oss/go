@@ -88,7 +88,7 @@ export default function HomePage() {
       <nav className="fixed bottom-0 w-full z-50 pb-safe bg-surface/80 backdrop-blur-2xl flex justify-around items-center h-20 px-4 max-w-2xl mx-auto left-0 right-0">
         {/* Home (Active) */}
         <Link href="/home" className="flex flex-col items-center justify-center bg-primary text-on-primary rounded-full px-5 py-1.5 transition-all active:scale-90">
-            <span className="material-symbols-outlined material-symbols-fill" style={{ fontVariationSettings: "'FILL' 1" }}>home</span>
+            <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>home</span>
             <span className="font-label text-sm font-medium tracking-wide">Home</span>
         </Link>
         {/* Prayer */}
@@ -101,10 +101,10 @@ export default function HomePage() {
             <span className="material-symbols-outlined">explore</span>
             <span className="font-label text-sm font-medium tracking-wide">Qibla</span>
         </Link>
-        {/* Tasbeeh */}
-        <Link href="/tasbeeh" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90">
-            <span className="material-symbols-outlined">adjust</span>
-            <span className="font-label text-sm font-medium tracking-wide">Tasbeeh</span>
+        {/* Quran */}
+        <Link href="/quran-audio" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90">
+            <span className="material-symbols-outlined">volume_up</span>
+            <span className="font-label text-sm font-medium tracking-wide">Quran</span>
         </Link>
         {/* Settings */}
         <Link href="/settings" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90">
@@ -118,5 +118,3 @@ export default function HomePage() {
     </div>
   );
 }
-
-    
