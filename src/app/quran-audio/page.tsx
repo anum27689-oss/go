@@ -39,12 +39,18 @@ export default function QuranAudioPage() {
             setIsLoading(true);
             try {
                 const response = await fetch('https://api.alquran.cloud/v1/surah');
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
                 const data: SurahApiResponse = await response.json();
                 if (data.code === 200) {
                     setAllSurahs(data.data);
+                } else {
+                     throw new Error('Failed to fetch Surah list');
                 }
             } catch (error) {
                 console.error("Failed to fetch Surahs:", error);
+                // Optionally, set an error state to show in the UI
             } finally {
                 setIsLoading(false);
             }
@@ -76,11 +82,15 @@ export default function QuranAudioPage() {
         } else {
             setCurrentlyPlaying(surah);
             if (audioRef.current) {
+                // Using a copyright-free audio source (Mishary Rashid Alafasy)
                 const audioSrc = `https://server7.mp3quran.net/s_gmd/${String(surah.number).padStart(3, '0')}.mp3`;
                 audioRef.current.src = audioSrc;
                 audioRef.current.play().then(() => {
                     setIsPlaying(true);
-                }).catch(e => console.error("Playback failed", e));
+                }).catch(e => {
+                    console.error("Playback failed. User interaction may be required.", e)
+                    setIsPlaying(false);
+                });
             }
         }
     };
@@ -88,6 +98,7 @@ export default function QuranAudioPage() {
     const playNext = () => {
         if(!currentlyPlaying) return;
         const currentIndex = allSurahs.findIndex(s => s.number === currentlyPlaying.number);
+        if (currentIndex === -1) return;
         const nextIndex = (currentIndex + 1) % allSurahs.length;
         handlePlayPause(allSurahs[nextIndex]);
     }
@@ -95,19 +106,20 @@ export default function QuranAudioPage() {
     const playPrev = () => {
         if(!currentlyPlaying) return;
         const currentIndex = allSurahs.findIndex(s => s.number === currentlyPlaying.number);
+        if (currentIndex === -1) return;
         const prevIndex = (currentIndex - 1 + allSurahs.length) % allSurahs.length;
         handlePlayPause(allSurahs[prevIndex]);
     }
     
     const handleTimeUpdate = () => {
-        if (audioRef.current) {
+        if (audioRef.current && isFinite(audioRef.current.duration)) {
             const newProgress = (audioRef.current.currentTime / audioRef.current.duration) * 100;
             setProgress(newProgress);
         }
     };
     
     const handleSeek = (event: React.MouseEvent<HTMLDivElement>) => {
-        if (audioRef.current && currentlyPlaying) {
+        if (audioRef.current && currentlyPlaying && isFinite(audioRef.current.duration)) {
             const progressBar = event.currentTarget;
             const clickPosition = event.clientX - progressBar.getBoundingClientRect().left;
             const newTime = (clickPosition / progressBar.offsetWidth) * audioRef.current.duration;
@@ -118,7 +130,7 @@ export default function QuranAudioPage() {
 
     return (
         <div className="bg-surface text-on-surface font-body selection:bg-primary-fixed selection:text-on-primary-fixed">
-            <header className="fixed top-0 w-full z-30 bg-surface/80 backdrop-blur-xl flex justify-between items-center px-6 h-16">
+            <header className="fixed top-0 w-full z-30 bg-surface/80 backdrop-blur-xl flex justify-between items-center px-6 h-16 max-w-2xl mx-auto left-0 right-0">
                 <div className="flex items-center gap-4">
                     <button onClick={() => router.back()} className="hover:bg-surface-container-high transition-colors p-2 rounded-full active:scale-95 duration-200">
                         <span className="material-symbols-outlined text-on-surface-variant">arrow_back</span>
@@ -154,7 +166,7 @@ export default function QuranAudioPage() {
                         <span className="material-symbols-outlined text-primary-fixed text-4xl" style={{fontVariationSettings: "'FILL' 1"}}>auto_stories</span>
                         <div>
                             <p className="font-label text-sm opacity-80">Last Read</p>
-                            <h3 className="font-headline font-bold text-xl">Al-Fatihah</h3>
+                            <h3 className="font-headline font-bold text-xl">Coming Soon</h3>
                         </div>
                     </div>
                     <div className="bg-secondary-container p-6 rounded-lg text-on-secondary-container flex flex-col justify-between h-40">
@@ -203,7 +215,7 @@ export default function QuranAudioPage() {
                                         <span>{surah.numberOfAyahs} Verses</span>
                                     </div>
                                 </div>
-                                <span className="material-symbols-outlined text-secondary group-hover:scale-110 transition-transform" style={ (isPlaying && currentlyPlaying?.number === surah.number) ? {fontVariationSettings: "'FILL' 1"} : {}}>
+                                <span className="material-symbols-outlined text-secondary group-hover:scale-110 transition-transform text-4xl">
                                     { (isPlaying && currentlyPlaying?.number === surah.number) ? 'pause_circle' : 'play_circle' }
                                 </span>
                             </div>
@@ -213,8 +225,8 @@ export default function QuranAudioPage() {
             </main>
 
             {currentlyPlaying && (
-                 <div className="fixed bottom-24 left-0 right-0 z-40 px-4">
-                    <div className="max-w-2xl mx-auto bg-surface/90 backdrop-blur-2xl p-4 rounded-xl flex items-center gap-4 shadow-xl border border-outline-variant/10">
+                 <div className="fixed bottom-24 left-0 right-0 z-40 px-4 max-w-2xl mx-auto">
+                    <div className="bg-surface/90 backdrop-blur-2xl p-4 rounded-xl flex items-center gap-4 shadow-xl border border-outline-variant/10">
                         <div className="w-12 h-12 rounded-lg bg-primary shrink-0 flex items-center justify-center relative overflow-hidden group cursor-pointer">
                             <div className="absolute inset-0 bg-gradient-to-br from-primary to-primary-container"></div>
                             <span className="material-symbols-outlined text-on-primary relative z-10 text-3xl">music_note</span>
@@ -239,7 +251,7 @@ export default function QuranAudioPage() {
             
             <audio ref={audioRef} onTimeUpdate={handleTimeUpdate} onEnded={playNext} />
 
-            <nav className="fixed bottom-0 w-full z-50 pb-safe bg-surface/80 backdrop-blur-2xl flex justify-around items-center h-20 px-4">
+            <nav className="fixed bottom-0 w-full z-20 pb-safe bg-surface/80 backdrop-blur-2xl flex justify-around items-center h-20 px-4 max-w-2xl mx-auto left-0 right-0">
                 <Link href="/home" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 tap-highlight-none active:scale-90 transition-transform">
                     <span className="material-symbols-outlined">home</span>
                     <span className="font-label text-sm font-medium tracking-wide">Home</span>
@@ -248,7 +260,7 @@ export default function QuranAudioPage() {
                     <span className="material-symbols-outlined">schedule</span>
                     <span className="font-label text-sm font-medium tracking-wide">Prayer</span>
                 </Link>
-                <Link href="/quran-audio" className="flex flex-col items-center justify-center bg-primary text-on-primary rounded-full px-5 py-1.5 transition-all tap-highlight-none active:scale-90">
+                 <Link href="/quran-audio" className="flex flex-col items-center justify-center bg-primary text-on-primary rounded-full px-5 py-1.5 transition-all tap-highlight-none active:scale-90">
                     <span className="material-symbols-outlined" style={{fontVariationSettings: "'FILL' 1"}}>volume_up</span>
                     <span className="font-label text-sm font-medium tracking-wide">Quran</span>
                 </Link>

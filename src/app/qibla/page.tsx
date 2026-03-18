@@ -73,6 +73,7 @@ export default function QiblaDirectionPage() {
         
         const requestPermissions = async () => {
              if (typeof window !== 'undefined' && 'DeviceOrientationEvent' in window) {
+                // Check for the specific permission request method used by iOS 13+
                 const requestPermission = (DeviceOrientationEvent as any).requestPermission;
                 if (typeof requestPermission === 'function') {
                     try {
@@ -304,9 +305,9 @@ export default function QiblaDirectionPage() {
                     <span className="material-symbols-outlined" style={{fontVariationSettings: "'FILL' 1"}}>explore</span>
                     <span className="font-label text-sm font-medium tracking-wide">Qibla</span>
                 </Link>
-                <Link href="/tasbeeh" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90 tap-highlight-none">
-                    <span className="material-symbols-outlined">adjust</span>
-                    <span className="font-label text-sm font-medium tracking-wide">Tasbeeh</span>
+                <Link href="/quran-audio" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90 tap-highlight-none">
+                    <span className="material-symbols-outlined">volume_up</span>
+                    <span className="font-label text-sm font-medium tracking-wide">Quran</span>
                 </Link>
                 <Link href="/settings" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90 tap-highlight-none">
                     <span className="material-symbols-outlined">settings</span>

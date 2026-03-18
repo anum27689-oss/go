@@ -68,7 +68,7 @@ export default function TasbeehCounterPage() {
   return (
     <div className="bg-surface text-on-surface font-body min-h-screen flex flex-col">
         {/* TopAppBar */}
-        <header className="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl flex justify-between items-center px-6 h-16">
+        <header className="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl flex justify-between items-center px-6 h-16 max-w-2xl mx-auto left-0 right-0">
             <div className="flex items-center gap-4">
                 <button onClick={() => router.back()} className="hover:bg-surface-container-high transition-colors p-2 rounded-full active:scale-95 duration-200">
                     <span className="material-symbols-outlined text-on-surface-variant">arrow_back</span>
@@ -152,22 +152,26 @@ export default function TasbeehCounterPage() {
         </main>
         
         {/* BottomNavBar */}
-        <nav className="fixed bottom-0 w-full z-50 pb-safe bg-surface/80 backdrop-blur-2xl flex justify-around items-center h-20 px-4">
+        <nav className="fixed bottom-0 w-full z-50 pb-safe bg-surface/80 backdrop-blur-2xl flex justify-around items-center h-20 px-4 max-w-2xl mx-auto left-0 right-0">
             <Link href="/home" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 tap-highlight-none active:scale-90 transition-transform">
                 <span className="material-symbols-outlined">home</span>
-                <span className="font-inter text-label-md font-medium tracking-wide mt-1">Home</span>
+                <span className="font-label text-sm font-medium tracking-wide">Home</span>
             </Link>
             <Link href="/prayer-times" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 tap-highlight-none active:scale-90 transition-transform">
                 <span className="material-symbols-outlined">schedule</span>
-                <span className="font-inter text-label-md font-medium tracking-wide mt-1">Prayer</span>
+                <span className="font-label text-sm font-medium tracking-wide">Prayer</span>
+            </Link>
+            <Link href="/quran-audio" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 tap-highlight-none active:scale-90 transition-transform">
+                <span className="material-symbols-outlined">volume_up</span>
+                <span className="font-label text-sm font-medium tracking-wide">Quran</span>
             </Link>
             <Link href="/tasbeeh" className="flex flex-col items-center justify-center bg-primary text-on-primary rounded-full px-5 py-1.5 transition-all tap-highlight-none active:scale-90">
                 <span className="material-symbols-outlined" style={{fontVariationSettings: "'FILL' 1"}}>adjust</span>
-                <span className="font-inter text-label-md font-medium tracking-wide">Tasbeeh</span>
+                <span className="font-label text-sm font-medium tracking-wide">Tasbeeh</span>
             </Link>
             <Link href="/settings" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 tap-highlight-none active:scale-90 transition-transform">
                 <span className="material-symbols-outlined">settings</span>
-                <span className="font-inter text-label-md font-medium tracking-wide mt-1">Settings</span>
+                <span className="font-label text-sm font-medium tracking-wide">Settings</span>
             </Link>
         </nav>
     </div>
