@@ -13,42 +13,70 @@ const islamicMonths = [
 
 export default function IslamicCalendarPage() {
     const router = useRouter();
-    const [hijriDateParts, setHijriDateParts] = useState<{ day: string; month: string; year: string } | null>(null);
-    const [gregorianDate, setGregorianDate] = useState(new Date());
+    const [viewedDate, setViewedDate] = useState(new Date());
+    const [hijriHeaderParts, setHijriHeaderParts] = useState<{ month: string; year: string } | null>(null);
+    const [todayHijriParts, setTodayHijriParts] = useState<{ day: string; month: string; year: string } | null>(null);
 
+    const today = new Date();
+    
+    // Effect for the main header, depends on the month being viewed
     useEffect(() => {
-        const today = new Date();
-        setGregorianDate(today);
+        const firstDayOfViewedMonth = new Date(viewedDate.getFullYear(), viewedDate.getMonth(), 1);
+        try {
+            const hijriMonthFormatter = new Intl.DateTimeFormat('en-u-ca-islamic', { month: 'long' });
+            const hijriYearFormatter = new Intl.DateTimeFormat('en-u-ca-islamic', { year: 'numeric' });
+            setHijriHeaderParts({
+                month: hijriMonthFormatter.format(firstDayOfViewedMonth),
+                year: hijriYearFormatter.format(firstDayOfViewedMonth).split(' ')[0],
+            });
+        } catch (e) {
+            console.error("Could not format Hijri header date:", e);
+            setHijriHeaderParts(null);
+        }
+    }, [viewedDate]);
 
+    // Effect for today's date info, runs once
+    useEffect(() => {
         try {
             const hijriDayFormatter = new Intl.DateTimeFormat('en-u-ca-islamic', { day: 'numeric' });
             const hijriMonthFormatter = new Intl.DateTimeFormat('en-u-ca-islamic', { month: 'long' });
             const hijriYearFormatter = new Intl.DateTimeFormat('en-u-ca-islamic', { year: 'numeric' });
 
-            setHijriDateParts({
+            setTodayHijriParts({
                 day: hijriDayFormatter.format(today),
                 month: hijriMonthFormatter.format(today),
                 year: hijriYearFormatter.format(today).split(' ')[0], // "1445 AH" -> "1445"
             });
         } catch (e) {
-            console.error("Could not format Hijri date:", e);
-            setHijriDateParts(null);
+            console.error("Could not format today's Hijri date:", e);
+            setTodayHijriParts(null);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const gregorianMonthName = gregorianDate.toLocaleString('default', { month: 'long' });
-    const gregorianYear = gregorianDate.getFullYear();
-    const gregorianDay = gregorianDate.getDate();
+    const handlePrevMonth = () => {
+        setViewedDate(current => new Date(current.getFullYear(), current.getMonth() - 1, 1));
+    };
+    
+    const handleNextMonth = () => {
+        setViewedDate(current => new Date(current.getFullYear(), current.getMonth() + 1, 1));
+    };
 
-    const daysInMonth = new Date(gregorianDate.getFullYear(), gregorianDate.getMonth() + 1, 0).getDate();
-    const firstDayOfMonth = new Date(gregorianDate.getFullYear(), gregorianDate.getMonth(), 1).getDay();
+    const gregorianMonthName = viewedDate.toLocaleString('default', { month: 'long' });
+    const gregorianYear = viewedDate.getFullYear();
+    
+    const isCurrentMonthViewed = today.getFullYear() === gregorianYear && today.getMonth() === viewedDate.getMonth();
+    const todayDayOfMonth = isCurrentMonthViewed ? today.getDate() : -1;
+
+    const daysInMonth = new Date(viewedDate.getFullYear(), viewedDate.getMonth() + 1, 0).getDate();
+    const firstDayOfMonth = new Date(viewedDate.getFullYear(), viewedDate.getMonth(), 1).getDay();
 
     const calendarDays = [];
     for (let i = 0; i < firstDayOfMonth; i++) {
         calendarDays.push(<div key={`empty-${i}`} className="aspect-square"></div>);
     }
     for (let day = 1; day <= daysInMonth; day++) {
-        const isToday = day === gregorianDay;
+        const isToday = day === todayDayOfMonth;
         calendarDays.push(
             <div key={day} className={`aspect-square rounded-lg p-2 flex flex-col justify-between group cursor-pointer transition-all ${isToday ? 'bg-primary text-on-primary shadow-xl shadow-primary/10' : 'bg-surface-container-lowest hover:bg-secondary-container'}`}>
                 <span className={`font-manrope font-medium text-xs ${isToday ? 'text-primary-fixed-dim' : 'text-on-surface-variant'}`}>{gregorianMonthName.substring(0, 3)} {day}</span>
@@ -57,7 +85,7 @@ export default function IslamicCalendarPage() {
                     {
                         (() => {
                             try {
-                                const dateForDay = new Date(gregorianDate.getFullYear(), gregorianDate.getMonth(), day);
+                                const dateForDay = new Date(viewedDate.getFullYear(), viewedDate.getMonth(), day);
                                 return new Intl.DateTimeFormat('en-u-ca-islamic', { day: 'numeric' }).format(dateForDay);
                             } catch {
                                 return '-';
@@ -88,19 +116,19 @@ export default function IslamicCalendarPage() {
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                         <div>
                             <span className="text-secondary font-semibold tracking-wider text-sm uppercase">Lunar Cycle</span>
-                            {hijriDateParts ? (
-                                <h2 className="font-manrope font-extrabold text-4xl md:text-5xl text-on-surface mt-2 tracking-tight">{hijriDateParts.month} {hijriDateParts.year}</h2>
+                            {hijriHeaderParts ? (
+                                <h2 className="font-manrope font-extrabold text-4xl md:text-5xl text-on-surface mt-2 tracking-tight">{hijriHeaderParts.month} {hijriHeaderParts.year}</h2>
                             ): (
                                 <h2 className="font-manrope font-extrabold text-4xl md:text-5xl text-on-surface mt-2 tracking-tight">Loading...</h2>
                             )}
                             <p className="text-on-surface-variant font-medium mt-1">{gregorianMonthName} {gregorianYear}</p>
                         </div>
                         <div className="flex items-center gap-2 bg-surface-container-low p-1 rounded-full">
-                            <button className="p-2 hover:bg-surface-container-high rounded-full transition-colors opacity-50 cursor-not-allowed" aria-label="Previous month" disabled>
+                            <button onClick={handlePrevMonth} className="p-2 hover:bg-surface-container-high rounded-full transition-colors" aria-label="Previous month">
                                 <span className="material-symbols-outlined text-on-surface">chevron_left</span>
                             </button>
-                            <span className="px-4 font-manrope font-bold">Current Month</span>
-                            <button className="p-2 hover:bg-surface-container-high rounded-full transition-colors opacity-50 cursor-not-allowed" aria-label="Next month" disabled>
+                            <span className="px-4 font-manrope font-bold text-sm text-center w-28">{gregorianMonthName} {gregorianYear}</span>
+                            <button onClick={handleNextMonth} className="p-2 hover:bg-surface-container-high rounded-full transition-colors" aria-label="Next month">
                                 <span className="material-symbols-outlined text-on-surface">chevron_right</span>
                             </button>
                         </div>
@@ -125,9 +153,9 @@ export default function IslamicCalendarPage() {
                                 <span className="material-symbols-outlined">event_note</span>
                             </div>
                             <div>
-                                <h3 className="font-manrope font-bold text-lg leading-tight">{gregorianDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</h3>
-                                {hijriDateParts ? (
-                                    <p className="text-on-surface-variant text-sm">{hijriDateParts.day} {hijriDateParts.month} {hijriDateParts.year}</p>
+                                <h3 className="font-manrope font-bold text-lg leading-tight">{today.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</h3>
+                                {todayHijriParts ? (
+                                    <p className="text-on-surface-variant text-sm">{todayHijriParts.day} {todayHijriParts.month} {todayHijriParts.year}</p>
                                 ): (
                                      <p className="text-on-surface-variant text-sm">Loading Hijri date...</p>
                                 )}
@@ -139,8 +167,8 @@ export default function IslamicCalendarPage() {
                             </div>
                              <ul className="space-y-1 max-h-48 overflow-y-auto">
                                 {islamicMonths.map((month, index) => (
-                                    <li key={month} className={`flex items-center gap-4 p-2 rounded-lg ${hijriDateParts?.month === month ? 'bg-secondary-container/50' : ''}`}>
-                                        <span className={`flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm ${hijriDateParts?.month === month ? 'bg-primary text-on-primary' : 'bg-primary/10 text-primary'}`}>{index + 1}</span>
+                                    <li key={month} className={`flex items-center gap-4 p-2 rounded-lg ${todayHijriParts?.month === month ? 'bg-secondary-container/50' : ''}`}>
+                                        <span className={`flex items-center justify-center w-8 h-8 rounded-full font-bold text-sm ${todayHijriParts?.month === month ? 'bg-primary text-on-primary' : 'bg-primary/10 text-primary'}`}>{index + 1}</span>
                                         <span className="font-medium">{month}</span>
                                     </li>
                                 ))}
