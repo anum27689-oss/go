@@ -7,9 +7,58 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Switch } from '@/components/ui/switch';
 import { useTheme } from 'next-themes';
+import { useEffect, useState } from 'react';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+
+const calculationMethods = [
+    { value: '1', label: 'Jafari (Ithna Ashari)' },
+    { value: '2', label: 'University of Islamic Sciences, Karachi' },
+    { value: '3', label: 'Islamic Society of North America (ISNA)' },
+    { value: '4', label: 'Muslim World League' },
+    { value: '5', label: 'Umm Al-Qura University, Makkah' },
+    { value: '7', label: 'Egyptian General Authority of Survey' },
+    { value: '8', label: 'Institute of Geophysics, University of Tehran' },
+    { value: '9', label: 'Gulf Region' },
+    { value: '10', label: 'Kuwait' },
+    { value: '11', label: 'Qatar' },
+    { value: '12', label: 'Majlis Ugama Islam Singapura, Singapore' },
+    { value: '13', label: 'Union Organization islamic de France' },
+    { value: '14', label: 'Diyanet İşleri Başkanlığı, Turkey' },
+    { value: '15', label: 'Spiritual Administration of Muslims of Russia' },
+];
 
 export default function SettingsPage() {
     const { theme, setTheme } = useTheme();
+    const [calculationMethod, setCalculationMethod] = useState('2');
+    const [timeFormat, setTimeFormat] = useState('12h');
+
+    useEffect(() => {
+        const savedMethod = localStorage.getItem('prayerCalculationMethod');
+        if (savedMethod) {
+            setCalculationMethod(savedMethod);
+        }
+        const savedFormat = localStorage.getItem('prayerTimeFormat');
+        if (savedFormat) {
+            setTimeFormat(savedFormat);
+        }
+    }, []);
+
+    const handleMethodChange = (value: string) => {
+        setCalculationMethod(value);
+        localStorage.setItem('prayerCalculationMethod', value);
+    };
+
+    const handleTimeFormatChange = (value: string) => {
+        setTimeFormat(value);
+        localStorage.setItem('prayerTimeFormat', value);
+    };
+
 
     return (
         <div className="flex flex-col h-screen">
@@ -17,19 +66,35 @@ export default function SettingsPage() {
             <main className="flex-1 container mx-auto p-4 md:p-6 space-y-6">
                 <Card>
                     <CardHeader>
-                        <CardTitle>Language</CardTitle>
+                        <CardTitle>Prayer Time Settings</CardTitle>
                     </CardHeader>
-                    <CardContent>
-                        <RadioGroup defaultValue="en">
-                            <div className="flex items-center space-x-2">
-                                <RadioGroupItem value="en" id="en" />
-                                <Label htmlFor="en">English</Label>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                                <RadioGroupItem value="ur" id="ur" />
-                                <Label htmlFor="ur">Urdu</Label>
-                            </div>
-                        </RadioGroup>
+                    <CardContent className="space-y-4">
+                        <div>
+                            <Label htmlFor="calculation-method">Calculation Method</Label>
+                            <Select onValueChange={handleMethodChange} value={calculationMethod}>
+                                <SelectTrigger id="calculation-method">
+                                    <SelectValue placeholder="Select calculation method" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {calculationMethods.map(method => (
+                                        <SelectItem key={method.value} value={method.value}>{method.label}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                         <div>
+                            <Label>Time Format</Label>
+                            <RadioGroup value={timeFormat} onValueChange={handleTimeFormatChange} className="mt-2">
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="12h" id="12h" />
+                                    <Label htmlFor="12h">12-hour</Label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="24h" id="24h" />
+                                    <Label htmlFor="24h">24-hour</Label>
+                                </div>
+                            </RadioGroup>
+                        </div>
                     </CardContent>
                 </Card>
 
