@@ -153,7 +153,7 @@ export default function QiblaDirectionPage() {
 
     return (
         <div className="bg-surface text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container">
-            <header className="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl flex justify-between items-center px-6 h-16">
+            <header className="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl flex justify-between items-center px-6 h-16 max-w-2xl mx-auto left-0 right-0">
                 <div className="flex items-center gap-4">
                     <button onClick={() => router.back()} className="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-high transition-colors p-2 rounded-full active:scale-95 duration-200">arrow_back</button>
                     <Link href="/home">
@@ -282,7 +282,7 @@ export default function QiblaDirectionPage() {
                 </div>
             </main>
 
-            <nav className="fixed bottom-0 w-full z-50 pb-safe bg-surface/80 backdrop-blur-2xl flex justify-around items-center h-20 px-4">
+            <nav className="fixed bottom-0 w-full z-50 pb-safe bg-surface/80 backdrop-blur-2xl flex justify-around items-center h-20 px-4 max-w-2xl mx-auto left-0 right-0">
                 <Link href="/home" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90 tap-highlight-none">
                     <span className="material-symbols-outlined">home</span>
                     <span className="font-label text-sm font-medium tracking-wide">Home</span>
@@ -308,3 +308,4 @@ export default function QiblaDirectionPage() {
     );
 }
 
+    
