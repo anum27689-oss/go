@@ -1,6 +1,7 @@
+
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Switch } from '@/components/ui/switch';
@@ -84,8 +85,31 @@ const parseTime = (timeStr: string): Date => {
 export default function PrayerTimesPage() {
     const router = useRouter();
     const [selectedCity, setSelectedCity] = useState('London');
-    const [nextPrayerInfo, setNextPrayerInfo] = useState({ name: '', minutesUntil: 0 });
+    const [nextPrayerInfo, setNextPrayerInfo] = useState({ name: '', minutesUntil: -1 });
+    const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+    const audioRef = useRef<HTMLAudioElement>(null);
+    const [notificationPermission, setNotificationPermission] = useState('default');
+    const [lastNotifiedPrayer, setLastNotifiedPrayer] = useState('');
 
+    useEffect(() => {
+        const savedCity = localStorage.getItem('selectedCity');
+        if (savedCity && prayerTimesData[savedCity]) {
+            setSelectedCity(savedCity);
+        }
+
+        const adhanSetting = localStorage.getItem('adhanNotifications') === 'true';
+        setNotificationsEnabled(adhanSetting);
+
+        if ('Notification' in window) {
+            setNotificationPermission(Notification.permission);
+        }
+    }, []);
+
+    useEffect(() => {
+        localStorage.setItem('selectedCity', selectedCity);
+        setLastNotifiedPrayer(''); // Reset notification tracker when city changes
+    }, [selectedCity]);
+    
     useEffect(() => {
         const calculateNextPrayer = () => {
             const now = new Date();
@@ -109,17 +133,54 @@ export default function PrayerTimesPage() {
             
             const minutesUntil = Math.max(0, Math.round((nextPrayer.time.getTime() - now.getTime()) / (1000 * 60)));
             
-            setNextPrayerInfo({
-                name: nextPrayer.name,
-                minutesUntil: minutesUntil
-            });
+            if (nextPrayerInfo.name !== nextPrayer.name || nextPrayerInfo.minutesUntil !== minutesUntil) {
+                 setNextPrayerInfo({
+                    name: nextPrayer.name,
+                    minutesUntil: minutesUntil
+                });
+            }
         };
 
         calculateNextPrayer();
-        const interval = setInterval(calculateNextPrayer, 30000);
+        const interval = setInterval(calculateNextPrayer, 10000); // Check every 10 seconds
 
         return () => clearInterval(interval);
-    }, [selectedCity]);
+    }, [selectedCity, nextPrayerInfo]);
+
+    // Effect to handle Azan playback and notification
+    useEffect(() => {
+        if (notificationsEnabled && notificationPermission === 'granted' && nextPrayerInfo.minutesUntil === 0 && nextPrayerInfo.name && lastNotifiedPrayer !== nextPrayerInfo.name) {
+            
+            const cityPrayerTimes = prayerTimesData[selectedCity];
+            if (!cityPrayerTimes || !nextPrayerInfo.name) return;
+            
+            const prayerTime = cityPrayerTimes[nextPrayerInfo.name];
+            
+            new Notification(`Time for ${nextPrayerInfo.name} prayer`, {
+                body: `It's ${prayerTime} in ${selectedCity}. Time for prayer.`,
+            });
+            audioRef.current?.play().catch(e => console.error("Audio playback failed", e));
+            setLastNotifiedPrayer(nextPrayerInfo.name);
+        }
+    }, [nextPrayerInfo, notificationsEnabled, notificationPermission, lastNotifiedPrayer, selectedCity]);
+
+    const handleNotificationToggle = async (checked: boolean) => {
+        setNotificationsEnabled(checked);
+        localStorage.setItem('adhanNotifications', String(checked));
+
+        if (checked && 'Notification' in window) {
+            if (notificationPermission !== 'granted') {
+                const permission = await Notification.requestPermission();
+                setNotificationPermission(permission);
+                if (permission !== 'granted') {
+                    // User denied permission, so toggle it back off and inform them.
+                    setNotificationsEnabled(false);
+                    localStorage.setItem('adhanNotifications', 'false');
+                    alert("You have disabled notifications. Please enable them in your browser settings to receive Azan alerts.");
+                }
+            }
+        }
+    };
     
     const cityPrayerTimes = prayerTimesData[selectedCity] || {};
 
@@ -167,7 +228,7 @@ export default function PrayerTimesPage() {
                         <p className="font-label text-label-md uppercase tracking-[0.2em] mb-2 opacity-90">Up Next</p>
                         <h2 className="font-headline font-extrabold text-4xl mb-1 leading-none">{nextPrayerInfo.name}</h2>
                         <p className="font-body text-xl font-medium opacity-80">
-                            {nextPrayerInfo.minutesUntil > 0 ? `in ${nextPrayerInfo.minutesUntil} minutes` : 'Now'}
+                            {nextPrayerInfo.minutesUntil > 0 ? `in ${nextPrayerInfo.minutesUntil} minutes` : (nextPrayerInfo.minutesUntil === 0 ? 'Now' : '')}
                         </p>
                     </div>
                     <div className="absolute -right-12 -bottom-12 w-48 h-48 rounded-full bg-primary/10 blur-3xl"></div>
@@ -207,9 +268,11 @@ export default function PrayerTimesPage() {
                         <span className="material-symbols-outlined text-primary">notifications_active</span>
                         <span className="font-headline font-bold text-on-surface">Adhan Notifications</span>
                     </div>
-                    <Switch defaultChecked />
+                    <Switch checked={notificationsEnabled} onCheckedChange={handleNotificationToggle} />
                 </div>
             </main>
+
+            <audio ref={audioRef} src="https://www.islamcan.com/audio/adhan/azan1.mp3" preload="auto"></audio>
 
             <nav className="fixed bottom-0 w-full z-50 pb-safe bg-surface/80 backdrop-blur-2xl flex justify-around items-center h-20 px-4 max-w-2xl mx-auto left-0 right-0">
                 <Link href="/home" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 tap-highlight-none active:scale-90 transition-transform">
@@ -232,3 +295,4 @@ export default function PrayerTimesPage() {
         </div>
     );
 }
+
