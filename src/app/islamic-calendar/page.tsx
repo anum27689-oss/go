@@ -90,7 +90,7 @@ export default function IslamicCalendarPage() {
             <div
                 key={day}
                 className={cn(
-                    'h-20 rounded-lg p-2 flex flex-col justify-between group cursor-pointer transition-all border-2 border-transparent',
+                    'aspect-square rounded-lg p-1.5 flex flex-col justify-between group cursor-pointer transition-all border-2 border-transparent',
                     {
                         'bg-primary text-on-primary shadow-xl shadow-primary/20': isToday,
                         'bg-surface-container-lowest hover:bg-surface-container': !isToday && !eventName,
@@ -103,19 +103,19 @@ export default function IslamicCalendarPage() {
                     <span className={cn('font-manrope font-medium text-xs', isToday ? 'text-on-primary/70' : 'text-on-surface-variant/80')}>
                         {day}
                     </span>
-                    <span className={cn('font-manrope font-extrabold text-xl', isToday ? 'text-on-primary' : 'text-primary')}>
+                    <span className={cn('font-manrope font-extrabold text-lg', isToday ? 'text-on-primary' : 'text-primary')}>
                         {hijriDay}
                     </span>
                 </div>
 
-                <div className="h-6 flex items-end justify-center text-center">
+                <div className="flex items-end justify-center text-center">
                     {eventName && (
-                        <p className={cn("text-xs font-bold leading-tight", isToday ? 'text-on-primary/90' : 'text-on-secondary-container')}>
+                        <p className={cn("text-[10px] font-bold leading-tight", isToday ? 'text-on-primary/90' : 'text-on-secondary-container')}>
                             {eventName}
                         </p>
                     )}
                     {isMonthEnd && !eventName && (
-                        <p className="text-xs font-bold text-secondary">
+                        <p className="text-[10px] font-bold text-secondary">
                             Month End
                         </p>
                     )}
@@ -163,14 +163,14 @@ export default function IslamicCalendarPage() {
                     </div>
                 </section>
                 
-                <div className="grid grid-cols-7 gap-2 mb-8">
-                    <div className="text-center py-2 text-on-surface-variant font-bold text-xs uppercase tracking-widest">Sun</div>
-                    <div className="text-center py-2 text-on-surface-variant font-bold text-xs uppercase tracking-widest">Mon</div>
-                    <div className="text-center py-2 text-on-surface-variant font-bold text-xs uppercase tracking-widest">Tue</div>
-                    <div className="text-center py-2 text-on-surface-variant font-bold text-xs uppercase tracking-widest">Wed</div>
-                    <div className="text-center py-2 text-on-surface-variant font-bold text-xs uppercase tracking-widest">Thu</div>
-                    <div className="text-center py-2 text-on-surface-variant font-bold text-xs uppercase tracking-widest">Fri</div>
-                    <div className="text-center py-2 text-on-surface-variant font-bold text-xs uppercase tracking-widest">Sat</div>
+                <div className="grid grid-cols-7 gap-1.5 mb-8">
+                    <div className="text-center py-1 text-on-surface-variant font-bold text-xs uppercase tracking-widest">Sun</div>
+                    <div className="text-center py-1 text-on-surface-variant font-bold text-xs uppercase tracking-widest">Mon</div>
+                    <div className="text-center py-1 text-on-surface-variant font-bold text-xs uppercase tracking-widest">Tue</div>
+                    <div className="text-center py-1 text-on-surface-variant font-bold text-xs uppercase tracking-widest">Wed</div>
+                    <div className="text-center py-1 text-on-surface-variant font-bold text-xs uppercase tracking-widest">Thu</div>
+                    <div className="text-center py-1 text-on-surface-variant font-bold text-xs uppercase tracking-widest">Fri</div>
+                    <div className="text-center py-1 text-on-surface-variant font-bold text-xs uppercase tracking-widest">Sat</div>
                     {calendarDays}
                 </div>
             </main>
@@ -200,3 +200,5 @@ export default function IslamicCalendarPage() {
         </div>
     );
 }
+
+    
