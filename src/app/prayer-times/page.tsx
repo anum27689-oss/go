@@ -10,6 +10,14 @@ const prayerTimesData: { [city: string]: { [prayer: string]: string } } = {
   'New York': { Fajr: '04:30 AM', Dhuhr: '01:00 PM', Asr: '04:45 PM', Maghrib: '07:30 PM', Isha: '09:00 PM' },
   'London': { Fajr: '03:45 AM', Dhuhr: '12:50 PM', Asr: '05:30 PM', Maghrib: '08:45 PM', Isha: '10:15 PM' },
   'Makkah': { Fajr: '04:50 AM', Dhuhr: '12:25 PM', Asr: '03:50 PM', Maghrib: '06:40 PM', Isha: '08:10 PM' },
+  'Jakarta': { Fajr: '04:40 AM', Dhuhr: '12:00 PM', Asr: '03:25 PM', Maghrib: '06:00 PM', Isha: '07:15 PM' },
+  'Cairo': { Fajr: '03:50 AM', Dhuhr: '12:05 PM', Asr: '03:40 PM', Maghrib: '06:50 PM', Isha: '08:20 PM' },
+  'Istanbul': { Fajr: '04:30 AM', Dhuhr: '01:10 PM', Asr: '05:00 PM', Maghrib: '08:10 PM', Isha: '09:40 PM' },
+  'Moscow': { Fajr: '02:30 AM', Dhuhr: '12:30 PM', Asr: '05:00 PM', Maghrib: '08:50 PM', Isha: '10:50 PM' },
+  'Beijing': { Fajr: '04:00 AM', Dhuhr: '12:20 PM', Asr: '03:50 PM', Maghrib: '07:10 PM', Isha: '08:30 PM' },
+  'Sydney': { Fajr: '05:30 AM', Dhuhr: '12:00 PM', Asr: '02:45 PM', Maghrib: '05:15 PM', Isha: '06:45 PM' },
+  'Toronto': { Fajr: '05:00 AM', Dhuhr: '01:20 PM', Asr: '05:10 PM', Maghrib: '08:00 PM', Isha: '09:30 PM' },
+  'São Paulo': { Fajr: '05:10 AM', Dhuhr: '12:15 PM', Asr: '03:30 PM', Maghrib: '05:50 PM', Isha: '07:10 PM' },
 };
 
 const prayers = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];

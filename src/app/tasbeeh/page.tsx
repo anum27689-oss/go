@@ -16,43 +16,48 @@ export default function TasbeehCounterPage() {
   const router = useRouter();
 
   useEffect(() => {
+    // On initial load, set count from localStorage or to 0
     const savedCount = localStorage.getItem(TASBEEH_COUNT_KEY);
-    if (savedCount) {
-      setCount(parseInt(savedCount, 10));
-    }
-
+    setCount(savedCount ? parseInt(savedCount, 10) : 0);
+    
+    // Set last session taps from localStorage or to 0
     const savedLastSessionTaps = localStorage.getItem(LAST_SESSION_TAPS_KEY);
-    if (savedLastSessionTaps) {
-      setLastSessionTaps(parseInt(savedLastSessionTaps, 10));
-    }
+    setLastSessionTaps(savedLastSessionTaps ? parseInt(savedLastSessionTaps, 10) : 0);
 
+    // Calculate streak and determine if history should be shown
     const streakStartDate = localStorage.getItem(STREAK_START_DATE_KEY);
     if (streakStartDate) {
       const startDate = new Date(streakStartDate);
       const today = new Date();
       const diffTime = Math.abs(today.getTime() - startDate.getTime());
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      // Add 1 to include the start day
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1; 
       setStreak(diffDays);
       if (diffDays >= 12) {
         setShowHistory(true);
       }
     } else {
-        localStorage.setItem(STREAK_START_DATE_KEY, new Date().toISOString());
+      setStreak(0);
     }
   }, []);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-        localStorage.setItem(TASBEEH_COUNT_KEY, String(count));
+    // This effect runs whenever 'count' changes.
+    localStorage.setItem(TASBEEH_COUNT_KEY, String(count));
+    
+    // If user starts tapping (count becomes 1) and there is no streak, start one.
+    if (count === 1 && streak === 0) {
+      const today = new Date().toISOString();
+      localStorage.setItem(STREAK_START_DATE_KEY, today);
+      setStreak(1);
     }
-  }, [count]);
-  
+  }, [count, streak]);
+
   const increment = () => setCount(prev => prev + 1);
 
   const reset = () => {
-    const currentCount = count;
-    setLastSessionTaps(currentCount);
-    localStorage.setItem(LAST_SESSION_TAPS_KEY, String(currentCount));
+    setLastSessionTaps(count);
+    localStorage.setItem(LAST_SESSION_TAPS_KEY, String(count));
     setCount(0);
   };
   
