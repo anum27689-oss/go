@@ -77,7 +77,7 @@ export default function IslamicCalendarPage() {
             <div
                 key={day}
                 className={cn(
-                    'aspect-square rounded-lg p-2 flex flex-col items-center justify-center relative group cursor-pointer transition-all',
+                    'aspect-square rounded-lg p-1 flex flex-col items-center justify-center relative group cursor-pointer transition-all',
                     {
                         'bg-primary text-on-primary shadow-xl shadow-primary/20': isToday,
                         'bg-surface-container-lowest hover:bg-surface-container': !isToday,
@@ -85,20 +85,20 @@ export default function IslamicCalendarPage() {
                 )}
             >
                 <span className={cn(
-                    'font-manrope font-extrabold text-2xl',
-                    isToday ? 'text-on-primary' : 'text-primary'
-                )}>
-                    {hijriDay}
-                </span>
-                <span className={cn(
-                    'absolute top-2 left-2 font-manrope font-medium text-xs',
+                    'font-manrope font-medium text-[10px]',
                     isToday ? 'text-on-primary/70' : 'text-on-surface-variant/80'
                 )}>
                     {day}
                 </span>
+                <span className={cn(
+                    'font-manrope font-extrabold text-xl -mt-1',
+                    isToday ? 'text-on-primary' : 'text-primary'
+                )}>
+                    {hijriDay}
+                </span>
                 {isMonthEnd && (
                     <span className={cn(
-                        'absolute bottom-2 text-[10px] font-bold',
+                        'absolute bottom-1.5 text-[9px] font-bold',
                         isToday ? 'text-on-primary/90' : 'text-secondary'
                     )}>
                         Month End
