@@ -58,7 +58,7 @@ export default function IslamicCalendarPage() {
     const hijriMonthFormatterNum = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', { month: 'numeric' });
     
     for (let i = 0; i < firstDayOfWeek; i++) {
-        calendarDays.push(<div key={`empty-${i}`} className="aspect-square"></div>);
+        calendarDays.push(<div key={`empty-${i}`}></div>);
     }
 
     for (let day = 1; day <= daysInMonth; day++) {
@@ -90,7 +90,7 @@ export default function IslamicCalendarPage() {
             <div
                 key={day}
                 className={cn(
-                    'aspect-square rounded-lg p-2 flex flex-col justify-between group cursor-pointer transition-all border-2 border-transparent',
+                    'h-20 rounded-lg p-2 flex flex-col justify-between group cursor-pointer transition-all border-2 border-transparent',
                     {
                         'bg-primary text-on-primary shadow-xl shadow-primary/20': isToday,
                         'bg-surface-container-lowest hover:bg-surface-container': !isToday && !eventName,
@@ -110,12 +110,12 @@ export default function IslamicCalendarPage() {
 
                 <div className="h-6 flex items-end justify-center text-center">
                     {eventName && (
-                        <p className={cn("text-[9px] font-bold leading-tight", isToday ? 'text-on-primary/90' : 'text-on-secondary-container')}>
+                        <p className={cn("text-xs font-bold leading-tight", isToday ? 'text-on-primary/90' : 'text-on-secondary-container')}>
                             {eventName}
                         </p>
                     )}
                     {isMonthEnd && !eventName && (
-                        <p className="text-[9px] font-bold text-secondary">
+                        <p className="text-xs font-bold text-secondary">
                             Month End
                         </p>
                     )}
@@ -200,5 +200,3 @@ export default function IslamicCalendarPage() {
         </div>
     );
 }
-
-    
