@@ -19,7 +19,6 @@ export default function IslamicCalendarPage() {
 
     const today = new Date();
     
-    // Effect for the main header, depends on the month being viewed
     useEffect(() => {
         const firstDayOfViewedMonth = new Date(viewedDate.getFullYear(), viewedDate.getMonth(), 1);
         try {
@@ -35,7 +34,6 @@ export default function IslamicCalendarPage() {
         }
     }, [viewedDate]);
 
-    // Effect for today's date info, runs once
     useEffect(() => {
         try {
             const hijriDayFormatter = new Intl.DateTimeFormat('en-u-ca-islamic', { day: 'numeric' });
@@ -45,7 +43,7 @@ export default function IslamicCalendarPage() {
             setTodayHijriParts({
                 day: hijriDayFormatter.format(today),
                 month: hijriMonthFormatter.format(today),
-                year: hijriYearFormatter.format(today).split(' ')[0], // "1445 AH" -> "1445"
+                year: hijriYearFormatter.format(today).split(' ')[0],
             });
         } catch (e) {
             console.error("Could not format today's Hijri date:", e);
@@ -62,37 +60,34 @@ export default function IslamicCalendarPage() {
         setViewedDate(current => new Date(current.getFullYear(), current.getMonth() + 1, 1));
     };
 
-    const gregorianMonthName = viewedDate.toLocaleString('default', { month: 'long' });
-    const gregorianYear = viewedDate.getFullYear();
-    
-    const isCurrentMonthViewed = today.getFullYear() === gregorianYear && today.getMonth() === viewedDate.getMonth();
+    const isCurrentMonthViewed = today.getFullYear() === viewedDate.getFullYear() && today.getMonth() === viewedDate.getMonth();
     const todayDayOfMonth = isCurrentMonthViewed ? today.getDate() : -1;
 
     const daysInMonth = new Date(viewedDate.getFullYear(), viewedDate.getMonth() + 1, 0).getDate();
     const firstDayOfMonth = new Date(viewedDate.getFullYear(), viewedDate.getMonth(), 1).getDay();
 
     const calendarDays = [];
+    const hijriDayFormatter = new Intl.DateTimeFormat('en-u-ca-islamic', { day: 'numeric' });
+    
     for (let i = 0; i < firstDayOfMonth; i++) {
         calendarDays.push(<div key={`empty-${i}`} className="aspect-square"></div>);
     }
+
     for (let day = 1; day <= daysInMonth; day++) {
         const isToday = day === todayDayOfMonth;
+        const dateForDay = new Date(viewedDate.getFullYear(), viewedDate.getMonth(), day);
+        let hijriDay;
+        try {
+            hijriDay = hijriDayFormatter.format(dateForDay);
+        } catch {
+            hijriDay = '-';
+        }
+
         calendarDays.push(
             <div key={day} className={`aspect-square rounded-lg p-2 flex flex-col justify-between group cursor-pointer transition-all ${isToday ? 'bg-primary text-on-primary shadow-xl shadow-primary/10' : 'bg-surface-container-lowest hover:bg-secondary-container'}`}>
                 <span className={`font-manrope font-medium text-xs self-start ${isToday ? 'text-primary-fixed-dim' : 'text-on-surface-variant'}`}>{day}</span>
                  {isToday && <div className="text-[10px] absolute bottom-2 left-2 font-bold uppercase tracking-tighter opacity-70">Today</div>}
-                 <span className={`font-manrope font-extrabold text-lg self-end ${isToday ? '' : 'text-primary'}`}>
-                    {
-                        (() => {
-                            try {
-                                const dateForDay = new Date(viewedDate.getFullYear(), viewedDate.getMonth(), day);
-                                return new Intl.DateTimeFormat('en-u-ca-islamic', { day: 'numeric' }).format(dateForDay);
-                            } catch {
-                                return '-';
-                            }
-                        })()
-                    }
-                </span>
+                 <span className={`font-manrope font-extrabold text-lg self-end ${isToday ? '' : 'text-primary'}`}>{hijriDay}</span>
             </div>
         );
     }
@@ -121,14 +116,13 @@ export default function IslamicCalendarPage() {
                             ): (
                                 <h2 className="font-manrope font-extrabold text-4xl md:text-5xl text-on-surface mt-2 tracking-tight">Loading...</h2>
                             )}
-                            <p className="text-on-surface-variant font-medium mt-1">{gregorianMonthName} {gregorianYear}</p>
                         </div>
                         <div className="flex items-center gap-2 bg-surface-container-low p-1 rounded-full">
                             <button onClick={handlePrevMonth} className="p-2 hover:bg-surface-container-high rounded-full transition-colors" aria-label="Previous month">
                                 <span className="material-symbols-outlined text-on-surface">chevron_left</span>
                             </button>
                             <span className="px-4 font-manrope font-bold text-sm text-center w-40">
-                                {hijriHeaderParts ? `${hijriHeaderParts.month} ${hijriHeaderParts.year}` : "Loading..."}
+                                {hijriHeaderParts ? `${hijriHeaderParts.month}` : "Loading..."}
                             </span>
                             <button onClick={handleNextMonth} className="p-2 hover:bg-surface-container-high rounded-full transition-colors" aria-label="Next month">
                                 <span className="material-symbols-outlined text-on-surface">chevron_right</span>
@@ -214,3 +208,5 @@ export default function IslamicCalendarPage() {
         </div>
     );
 }
+
+    
