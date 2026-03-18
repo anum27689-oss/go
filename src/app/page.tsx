@@ -2,7 +2,6 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Moon } from 'lucide-react';
 
 export default function Splash() {
   const router = useRouter();
@@ -16,22 +15,59 @@ export default function Splash() {
   }, [router]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-background animate-fadeIn">
-      <div className="flex flex-col items-center gap-4">
-        <Moon className="w-20 h-20 text-primary animate-pulse" />
-        <h1 className="text-3xl font-bold text-primary tracking-wider">
-          Islamic Daily Companion
-        </h1>
-      </div>
-      <style jsx>{`
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        .animate-fadeIn {
-          animation: fadeIn 1.5s ease-in-out;
-        }
-      `}</style>
+    <div className="bg-surface font-body text-on-surface antialiased overflow-hidden">
+        {/* Main Splash Canvas */}
+        <main className="relative h-screen w-full flex flex-col items-center justify-center bg-spiritual-gradient overflow-hidden">
+            {/* Subtle Ambient Background Element */}
+            <div className="absolute inset-0 opacity-20 pointer-events-none">
+                <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] rounded-full bg-primary-container/10 blur-[120px]"></div>
+                <div className="absolute bottom-[-5%] right-[-5%] w-[50%] h-[50%] rounded-full bg-secondary-container/20 blur-[100px]"></div>
+            </div>
+            {/* Centerpiece Container */}
+            <div className="relative z-10 flex flex-col items-center gap-12 max-w-xs text-center">
+                {/* Minimalist Crescent Icon */}
+                <div className="relative flex items-center justify-center">
+                    {/* Outer Glow */}
+                    <div className="absolute w-32 h-32 rounded-full bg-secondary-container/10 blur-3xl animate-pulse"></div>
+                    {/* Icon Shell */}
+                    <div className="relative w-24 h-24 bg-surface-container-lowest flex items-center justify-center rounded-full ethereal-glow">
+                        <span className="material-symbols-outlined text-[64px] text-secondary" style={{ fontVariationSettings: "'FILL' 0, 'wght' 100" }}>
+                            brightness_3
+                        </span>
+                    </div>
+                </div>
+                {/* Branding Text Cluster */}
+                <div className="space-y-3">
+                    <h1 className="font-headline tracking-tighter text-on-surface">
+                        <span className="block text-4xl font-extrabold text-primary leading-tight">Islamic Daily</span>
+                        <span className="block text-lg font-light tracking-widest text-on-surface-variant uppercase">Companion</span>
+                    </h1>
+                    {/* Editorial Accent Line */}
+                    <div className="flex justify-center pt-2">
+                        <div className="h-[1px] w-8 bg-outline-variant/30"></div>
+                    </div>
+                </div>
+            </div>
+            {/* Footer / Metadata (Editorial Style) */}
+            <div className="absolute bottom-16 left-0 w-full flex flex-col items-center gap-6">
+                <p className="font-body text-sm text-on-surface-variant/60 tracking-[0.2em] font-medium">EST. 2026</p>
+                {/* Subtle Loading Indicator */}
+                <div className="flex gap-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-primary/20"></div>
+                    <div className="w-1.5 h-1.5 rounded-full bg-primary/40"></div>
+                    <div className="w-1.5 h-1.5 rounded-full bg-primary/20"></div>
+                </div>
+            </div>
+            {/* Decorative Pattern (Asymmetric Editorial Touch) */}
+            <div className="absolute top-12 left-12 opacity-5 pointer-events-none">
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="w-1 h-1 bg-on-surface rounded-full"></div>
+                    <div className="w-1 h-1 bg-on-surface rounded-full"></div>
+                    <div className="w-1 h-1 bg-on-surface rounded-full"></div>
+                    <div className="w-1 h-1 bg-on-surface rounded-full"></div>
+                </div>
+            </div>
+        </main>
     </div>
   );
 }

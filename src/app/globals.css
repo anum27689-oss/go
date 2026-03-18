@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  min-height: max(884px, 100dvh);
 }
 
 @layer base {
@@ -95,3 +95,12 @@ body {
   z-index: -1;
 }
 
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 48;
+}
+.ethereal-glow {
+    box-shadow: 0 0 60px 10px rgba(254, 214, 91, 0.15);
+}
+.bg-spiritual-gradient {
+    background: radial-gradient(circle at center, #f8f9fa 0%, #f3f4f5 40%, #e7e8e9 100%);
+}
