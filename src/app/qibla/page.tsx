@@ -1,103 +1,310 @@
+
 "use client";
 
-import { useState, useEffect } from 'react';
-import { AppHeader } from '@/components/app-header';
-import { Card, CardContent } from '@/components/ui/card';
+import { useState, useEffect, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+
+import { Check, ChevronsUpDown, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import {
+    Command,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+    CommandList,
+} from "@/components/ui/command";
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover";
+import { pakistanCities, type City } from '@/lib/pakistan-cities';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 export default function QiblaDirectionPage() {
-  const [direction, setDirection] = useState(0);
-  const [qiblaDirection, setQiblaDirection] = useState(285); // Approximate Qibla direction from a central point
-  const [error, setError] = useState('');
-  
-  useEffect(() => {
-    const handleOrientation = (event: DeviceOrientationEvent) => {
-      let alpha = event.alpha; // Compass direction
-      if (typeof alpha !== 'number') {
-        setError('Your device or browser does not support compass direction.');
-        return;
-      }
-      
-      // For iOS devices
-      if (typeof (event as any).webkitCompassHeading !== 'undefined') {
-        alpha = (event as any).webkitCompassHeading;
-      }
+    const router = useRouter();
+    const [direction, setDirection] = useState(0);
+    const [qiblaDirection, setQiblaDirection] = useState(0);
+    const [distance, setDistance] = useState(0);
+    const [error, setError] = useState('');
+    const [selectedCity, setSelectedCity] = useState<City | null>(null);
+    const [open, setOpen] = useState(false);
+    const [isGpsLoading, setIsGpsLoading] = useState(false);
 
-      setDirection(alpha);
-    };
+    const KAABA_LAT = 21.4225;
+    const KAABA_LNG = 39.8262;
 
-    if ('DeviceOrientationEvent' in window) {
-      // Check for permissions
-      if (typeof (DeviceOrientationEvent as any).requestPermission === 'function') {
-        (DeviceOrientationEvent as any).requestPermission()
-          .then((permissionState: 'granted' | 'denied') => {
-            if (permissionState === 'granted') {
-              window.addEventListener('deviceorientation', handleOrientation);
-            } else {
-              setError('Permission to access device orientation was denied.');
+    useEffect(() => {
+        const savedCityJSON = localStorage.getItem('selectedCity');
+        if (savedCityJSON) {
+            try {
+                const savedCity = JSON.parse(savedCityJSON);
+                if (typeof savedCity === 'object' && savedCity !== null && 'lat' in savedCity && 'lng' in savedCity) {
+                    setSelectedCity(savedCity);
+                } else {
+                    setSelectedCity(pakistanCities.find(c => c.city === "Islamabad") || null);
+                }
+            } catch (e) {
+                console.error("Failed to parse saved city:", e);
+                setSelectedCity(pakistanCities.find(c => c.city === "Islamabad") || null);
             }
-          })
-          .catch((e) => {
-             console.error(e)
-             setError('Error requesting device orientation permission.');
-          });
-      } else {
-        // For non-iOS 13+ devices
-        window.addEventListener('deviceorientation', handleOrientation);
-      }
-    } else {
-      setError('Your device or browser does not support Device Orientation events.');
-    }
+        } else {
+            setSelectedCity(pakistanCities.find(c => c.city === "Islamabad") || null);
+        }
 
-    return () => {
-      window.removeEventListener('deviceorientation', handleOrientation);
+        const handleOrientation = (event: DeviceOrientationEvent) => {
+            let alpha = event.alpha; // Compass direction
+            if (typeof alpha !== 'number') {
+                setError('Your device or browser does not support compass direction.');
+                return;
+            }
+            if (typeof (event as any).webkitCompassHeading !== 'undefined') {
+                alpha = (event as any).webkitCompassHeading;
+            }
+            setDirection(alpha);
+        };
+
+        if (typeof window !== 'undefined' && 'DeviceOrientationEvent' in window) {
+            const requestPermission = (DeviceOrientationEvent as any).requestPermission;
+            if (typeof requestPermission === 'function') {
+                requestPermission()
+                    .then((permissionState: 'granted' | 'denied') => {
+                        if (permissionState === 'granted') {
+                            window.addEventListener('deviceorientation', handleOrientation);
+                        } else {
+                            setError('Permission to access device orientation was denied.');
+                        }
+                    })
+                    .catch((e: any) => {
+                        console.error(e);
+                        setError('Error requesting device orientation permission.');
+                    });
+            } else {
+                window.addEventListener('deviceorientation', handleOrientation);
+            }
+        } else {
+            setError('Your device or browser does not support Device Orientation events.');
+        }
+
+        return () => {
+            window.removeEventListener('deviceorientation', handleOrientation);
+        };
+    }, []);
+
+    useEffect(() => {
+        if (selectedCity) {
+            localStorage.setItem('selectedCity', JSON.stringify(selectedCity));
+            calculateQibla(selectedCity.lat, selectedCity.lng);
+        }
+    }, [selectedCity]);
+
+    const calculateQibla = (lat: number, lng: number) => {
+        const toRad = (deg: number) => deg * (Math.PI / 180);
+
+        const userLatRad = toRad(lat);
+        const userLngRad = toRad(lng);
+        const kaabaLatRad = toRad(KAABA_LAT);
+        const kaabaLngRad = toRad(KAABA_LNG);
+
+        const deltaLng = kaabaLngRad - userLngRad;
+        const y = Math.sin(deltaLng);
+        const x = Math.cos(userLatRad) * Math.tan(kaabaLatRad) - Math.sin(userLatRad) * Math.cos(deltaLng);
+        let qibla = Math.atan2(y, x) * (180 / Math.PI);
+        qibla = (qibla + 360) % 360;
+        setQiblaDirection(qibla);
+
+        const R = 6371; // Earth's radius in km
+        const dLat = kaabaLatRad - userLatRad;
+        const dLng = deltaLng;
+        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(userLatRad) * Math.cos(kaabaLatRad) *
+            Math.sin(dLng / 2) * Math.sin(dLng / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        setDistance(R * c);
     };
-  }, []);
 
-  const rotation = qiblaDirection - direction;
+    const handleGeoLocation = () => {
+        if (!navigator.geolocation) {
+            setError('Geolocation is not supported by your browser.');
+            return;
+        }
+        setIsGpsLoading(true);
+        navigator.geolocation.getCurrentPosition((position) => {
+            const { latitude, longitude } = position.coords;
+            const city: City = { city: "Current Location", lat: latitude, lng: longitude, country: "", admin_name: "GPS" };
+            setSelectedCity(city);
+            setIsGpsLoading(false);
+        }, () => {
+            setError('Unable to retrieve your location. Please enable location services.');
+            setIsGpsLoading(false);
+        });
+    };
+    
+    const compassRotationStyle = { transform: `rotate(${qiblaDirection - direction}deg)` };
+    const magneticDeclination = 1.2; // Example fixed value
 
-  return (
-    <div className="flex flex-col h-screen">
-      <AppHeader title="Qibla Direction" />
-      <main className="flex-1 flex flex-col items-center justify-center p-4">
-        <Card className="w-full max-w-sm text-center">
-          <CardContent className="p-6">
-            <h2 className="text-2xl font-semibold mb-2">Qibla</h2>
-            <p className="text-muted-foreground mb-6">Point your device towards the Kaaba</p>
-            
-            <div className="relative w-64 h-64 mx-auto my-4 flex items-center justify-center">
-                {/* Compass background */}
-                <div 
-                    className="absolute w-full h-full rounded-full bg-muted border-4 border-border"
-                    style={{ transform: `rotate(${-direction}deg)` }}
-                >
-                    <span className="absolute top-2 left-1/2 -translate-x-1/2 font-bold text-foreground">N</span>
-                    <span className="absolute bottom-2 left-1/2 -translate-x-1/2 font-bold text-muted-foreground">S</span>
-                    <span className="absolute top-1/2 -translate-y-1/2 right-2 font-bold text-muted-foreground">E</span>
-                    <span className="absolute top-1/2 -translate-y-1/2 left-2 font-bold text-muted-foreground">W</span>
+    const getCardinalDirection = (angle: number) => {
+        const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+        return directions[Math.round(angle / 45) % 8];
+    };
+
+    return (
+        <div className="bg-surface text-on-surface font-body selection:bg-primary-container selection:text-on-primary-container">
+            <header className="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl flex justify-between items-center px-6 h-16">
+                <div className="flex items-center gap-4">
+                    <button onClick={() => router.back()} className="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-high transition-colors p-2 rounded-full active:scale-95 duration-200">arrow_back</button>
+                    <Link href="/home">
+                      <h1 className="font-manrope font-extrabold tracking-tighter text-primary text-xl">Islamic Companion</h1>
+                    </Link>
+                </div>
+                <div className="flex items-center">
+                    <span className="material-symbols-outlined text-on-surface-variant p-2 hover:bg-surface-container-high transition-colors rounded-full active:scale-95 duration-200" data-icon="account_circle">account_circle</span>
+                </div>
+            </header>
+
+            <main className="min-h-screen pt-24 pb-32 px-6 flex flex-col items-center max-w-xl mx-auto">
+                <section className="w-full mb-8">
+                     <div className="flex flex-col gap-1">
+                        <span className="text-label-md font-medium text-secondary tracking-widest uppercase opacity-80">Location</span>
+                         <Popover open={open} onOpenChange={setOpen}>
+                            <PopoverTrigger asChild>
+                                <Button
+                                    variant="outline"
+                                    role="combobox"
+                                    aria-expanded={open}
+                                    className="w-full justify-between bg-surface-container-lowest p-4 rounded-lg shadow-sm group cursor-pointer active:scale-[0.98] transition-all border-0 focus:ring-0 h-auto"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <span className="material-symbols-outlined text-primary">location_on</span>
+                                        <span className="font-headline font-bold text-lg text-left">
+                                            {selectedCity ? `${selectedCity.city}, ${selectedCity.admin_name}` : "Select city..."}
+                                        </span>
+                                    </div>
+                                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
+                                <Command>
+                                    <CommandInput placeholder="Search city..." />
+                                    <CommandList>
+                                        <CommandEmpty>No city found.</CommandEmpty>
+                                        <CommandGroup>
+                                            {pakistanCities.map((city) => (
+                                                <CommandItem
+                                                    key={`${city.city}-${city.admin_name}`}
+                                                    value={`${city.city} ${city.admin_name}`}
+                                                    onSelect={() => {
+                                                        setSelectedCity(city);
+                                                        setOpen(false);
+                                                    }}
+                                                >
+                                                    <Check
+                                                        className={cn(
+                                                            "mr-2 h-4 w-4",
+                                                            selectedCity?.city === city.city && selectedCity?.admin_name === city.admin_name ? "opacity-100" : "opacity-0"
+                                                        )}
+                                                    />
+                                                    {city.city}, {city.admin_name}
+                                                </CommandItem>
+                                            ))}
+                                        </CommandGroup>
+                                    </CommandList>
+                                </Command>
+                            </PopoverContent>
+                        </Popover>
+                    </div>
+                     <Button onClick={handleGeoLocation} disabled={isGpsLoading} className="w-full mt-2">
+                        {isGpsLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <span className="material-symbols-outlined mr-2">my_location</span>}
+                        Use my location
+                    </Button>
+                </section>
+                
+                <div className="relative w-full aspect-square max-w-[360px] flex items-center justify-center">
+                    <div className="absolute inset-0 rounded-full bg-surface-container-low border border-outline-variant/10 shadow-sm flex items-center justify-center" style={{ transform: `rotate(${-direction}deg)` }}>
+                        <span className="absolute top-6 font-headline font-extrabold text-on-surface-variant/40">N</span>
+                        <span className="absolute bottom-6 font-headline font-extrabold text-on-surface-variant/40">S</span>
+                        <span className="absolute left-6 font-headline font-extrabold text-on-surface-variant/40">W</span>
+                        <span className="absolute right-6 font-headline font-extrabold text-on-surface-variant/40">E</span>
+                        <div className="absolute inset-0 rounded-full border-[12px] border-surface-container opacity-50"></div>
+                    </div>
+                    <div className="relative w-full h-full flex items-center justify-center transition-transform duration-1000 ease-out" style={compassRotationStyle}>
+                        <div className="absolute w-[80%] h-[80%] rounded-full bg-primary/5 blur-3xl"></div>
+                        <div className="relative w-full h-full flex flex-col items-center">
+                            <div className="absolute top-4 w-4 h-32 qibla-gradient rounded-full shadow-lg shadow-primary/20 bg-gradient-to-b from-primary to-primary-container">
+                                <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-6 h-6 bg-secondary-container rounded-full border-4 border-surface flex items-center justify-center">
+                                    <span className="material-symbols-outlined text-[14px] text-on-secondary-container" style={{ fontVariationSettings: "'FILL' 1" }}>mosque</span>
+                                </div>
+                            </div>
+                            <div className="absolute bottom-4 w-4 h-32 bg-surface-container-highest rounded-full"></div>
+                        </div>
+                    </div>
+                    <div className="absolute w-12 h-12 rounded-full bg-surface-container-lowest shadow-xl flex items-center justify-center z-10">
+                        <div className="w-3 h-3 rounded-full bg-primary"></div>
+                    </div>
                 </div>
 
-                {/* Qibla Arrow */}
-                <div
-                    className="transition-transform duration-500 ease-in-out"
-                    style={{ transform: `rotate(${rotation}deg)` }}
-                >
-                  <span className="material-symbols-outlined text-primary text-[96px] drop-shadow-lg">navigation</span>
+                <section className="w-full mt-12 grid grid-cols-1 gap-6">
+                    <div className="bg-surface-container-low rounded-lg p-8 flex flex-col items-center justify-center text-center">
+                        <span className="font-headline font-black text-6xl text-primary tracking-tighter mb-2">{Math.round(qiblaDirection)}° {getCardinalDirection(qiblaDirection)}</span>
+                        <p className="font-body text-on-surface-variant/80">Angle relative to North</p>
+                    </div>
+                    <div className="bg-primary text-on-primary rounded-lg p-6 flex items-center gap-6 shadow-xl shadow-primary/10">
+                        <div className="w-14 h-14 bg-on-primary/10 rounded-full flex items-center justify-center shrink-0">
+                            <span className="material-symbols-outlined text-3xl">explore</span>
+                        </div>
+                        <div>
+                            <h3 className="font-headline font-bold text-lg mb-1">Facing the Kaaba</h3>
+                            <p className="font-body text-sm text-on-primary/80 leading-relaxed">Rotate your device until the needle aligns with the golden mosque icon.</p>
+                        </div>
+                    </div>
+                </section>
+                
+                 {error && (
+                    <Alert variant="destructive" className="mt-6 text-left w-full">
+                        <span className="material-symbols-outlined h-4 w-4 mr-2">explore_off</span>
+                        <AlertTitle>Sensor Error</AlertTitle>
+                        <AlertDescription>{error}</AlertDescription>
+                    </Alert>
+                )}
+
+                <div className="w-full mt-8 grid grid-cols-2 gap-4">
+                    <div className="bg-surface-container-high/50 p-4 rounded-lg flex flex-col items-center">
+                        <span className="font-label text-[10px] uppercase tracking-widest text-secondary mb-1">Distance</span>
+                        <span className="font-headline font-bold text-on-surface">{Math.round(distance)} km</span>
+                    </div>
+                    <div className="bg-surface-container-high/50 p-4 rounded-lg flex flex-col items-center">
+                        <span className="font-label text-[10px] uppercase tracking-widest text-secondary mb-1">Magnetic</span>
+                        <span className="font-headline font-bold text-on-surface">+{magneticDeclination.toFixed(1)}° Decl.</span>
+                    </div>
                 </div>
-            </div>
+            </main>
 
-            <p className="text-lg font-medium">{Math.round(qiblaDirection)}° from North</p>
-
-            {error && (
-              <Alert variant="destructive" className="mt-6 text-left">
-                <span className="material-symbols-outlined h-4 w-4 mr-2">explore</span>
-                <AlertTitle>Sensor Error</AlertTitle>
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
-          </CardContent>
-        </Card>
-      </main>
-    </div>
-  );
+            <nav className="fixed bottom-0 w-full z-50 pb-safe bg-surface/80 backdrop-blur-2xl flex justify-around items-center h-20 px-4">
+                <Link href="/home" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90 tap-highlight-none">
+                    <span className="material-symbols-outlined">home</span>
+                    <span className="font-label text-sm font-medium tracking-wide">Home</span>
+                </Link>
+                <Link href="/prayer-times" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90 tap-highlight-none">
+                     <span className="material-symbols-outlined">schedule</span>
+                    <span className="font-label text-sm font-medium tracking-wide">Prayer</span>
+                </Link>
+                 <Link href="/qibla" className="flex flex-col items-center justify-center bg-primary text-on-primary rounded-full px-5 py-1.5 transition-all tap-highlight-none active:scale-90">
+                    <span className="material-symbols-outlined" style={{fontVariationSettings: "'FILL' 1"}}>explore</span>
+                    <span className="font-label text-sm font-medium tracking-wide">Qibla</span>
+                </Link>
+                <Link href="/tasbeeh" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90 tap-highlight-none">
+                    <span className="material-symbols-outlined">adjust</span>
+                    <span className="font-label text-sm font-medium tracking-wide">Tasbeeh</span>
+                </Link>
+                <Link href="/settings" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90 tap-highlight-none">
+                    <span className="material-symbols-outlined">settings</span>
+                    <span className="font-label text-sm font-medium tracking-wide">Settings</span>
+                </Link>
+            </nav>
+        </div>
+    );
 }
+

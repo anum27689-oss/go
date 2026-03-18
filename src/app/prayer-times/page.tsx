@@ -1,6 +1,7 @@
+
 "use client";
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Switch } from '@/components/ui/switch';
@@ -52,25 +53,23 @@ export default function PrayerTimesPage() {
     const router = useRouter();
     const [selectedCity, setSelectedCity] = useState<City | null>(null);
     const [prayerTimes, setPrayerTimes] = useState<Prayer[]>([]);
-    const [nextPrayerInfo, setNextPrayerInfo] = useState({ name: '', minutesUntil: -1 });
+    const [nextPrayerInfo, setNextPrayerInfo] = useState({ name: '', minutesUntil: -1, time: '' });
     const [notificationsEnabled, setNotificationsEnabled] = useState(false);
     const [notificationPermission, setNotificationPermission] = useState('default');
     const [isLoading, setIsLoading] = useState(true);
     const [isGpsLoading, setIsGpsLoading] = useState(false);
     const [open, setOpen] = useState(false);
+    const audioRef = useRef<HTMLAudioElement>(null);
     
-    // Settings state
     const [calculationMethod, setCalculationMethod] = useState('2'); // Default: ISNA
     const [timeFormat, setTimeFormat] = useState('12h');
 
     useEffect(() => {
-        // Load settings from localStorage
         const savedMethod = localStorage.getItem('prayerCalculationMethod') || '2';
         const savedTimeFormat = localStorage.getItem('prayerTimeFormat') || '12h';
         setCalculationMethod(savedMethod);
         setTimeFormat(savedTimeFormat);
         
-        // Load saved city
         const savedCityJSON = localStorage.getItem('selectedCity');
         if (savedCityJSON) {
             try {
@@ -81,15 +80,13 @@ export default function PrayerTimesPage() {
                     setSelectedCity(pakistanCities.find(c => c.city === "Karachi") || null);
                 }
             } catch (e) {
-                // Silently fail and set a default city if parsing fails
+                console.error("Failed to parse saved city, defaulting to Karachi:", e);
                 setSelectedCity(pakistanCities.find(c => c.city === "Karachi") || null);
             }
         } else {
-            // Default to a major city if none is saved
             setSelectedCity(pakistanCities.find(c => c.city === "Karachi") || null);
         }
 
-        // Load notification settings
         const adhanSetting = localStorage.getItem('adhanNotifications') === 'true';
         setNotificationsEnabled(adhanSetting);
         if ('Notification' in window) {
@@ -117,29 +114,41 @@ export default function PrayerTimesPage() {
                 .sort((a, b) => a.time.getTime() - b.time.getTime());
 
             let nextPrayer = sortedPrayers.find(p => p.time > now);
+            let isTomorrow = false;
 
             if (!nextPrayer) {
-                // If all prayers for today are done, next is Fajr tomorrow
+                isTomorrow = true;
                 nextPrayer = sortedPrayers[0];
-                const tomorrow = new Date();
-                tomorrow.setDate(tomorrow.getDate() + 1);
-                nextPrayer.time = parseTimeToDate(prayerTimes.find(p => p.name === nextPrayer?.name)?.time || '00:00', tomorrow);
             }
             
-            const minutesUntil = Math.max(0, Math.round((nextPrayer.time.getTime() - now.getTime()) / (1000 * 60)));
+            const nextPrayerTime = new Date(nextPrayer.time);
+            if (isTomorrow) {
+                nextPrayerTime.setDate(nextPrayerTime.getDate() + 1);
+            }
+            
+            const minutesUntil = Math.max(0, Math.round((nextPrayerTime.getTime() - now.getTime()) / (1000 * 60)));
             
             if (nextPrayerInfo.name !== nextPrayer.name || nextPrayerInfo.minutesUntil !== minutesUntil) {
                 setNextPrayerInfo({
                     name: nextPrayer.name,
-                    minutesUntil: minutesUntil
+                    minutesUntil: minutesUntil,
+                    time: nextPrayer.time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: timeFormat === '12h' })
                 });
+
+                if (minutesUntil === 0 && notificationsEnabled && notificationPermission === 'granted') {
+                    playAdhan();
+                    new Notification(`It's time for ${nextPrayer.name} prayer.`, {
+                        body: `The time for ${nextPrayer.name} has begun.`,
+                        icon: '/icon.png' 
+                    });
+                }
             }
         };
 
         const interval = setInterval(calculateNextPrayer, 1000);
         return () => clearInterval(interval);
 
-    }, [prayerTimes, nextPrayerInfo]);
+    }, [prayerTimes, nextPrayerInfo, notificationsEnabled, notificationPermission, timeFormat]);
     
     const fetchPrayerTimes = async (lat: number, lng: number) => {
         setIsLoading(true);
@@ -164,7 +173,6 @@ export default function PrayerTimesPage() {
             setPrayerTimes(mappedPrayers);
         } catch (error) {
             console.error("Error fetching prayer times:", error);
-            // Try to load from cache
             const cachedTimings = localStorage.getItem(`prayerTimes_${lat}_${lng}`);
             if (cachedTimings) {
                 const timings = JSON.parse(cachedTimings);
@@ -187,8 +195,7 @@ export default function PrayerTimesPage() {
         setIsGpsLoading(true);
         navigator.geolocation.getCurrentPosition((position) => {
             const { latitude, longitude } = position.coords;
-            // Find nearest city or just use coords
-             const city = { city: "Current Location", lat: latitude, lng: longitude, country: "...", admin_name: "" };
+             const city: City = { city: "Current Location", lat: latitude, lng: longitude, country: "...", admin_name: "" };
              setSelectedCity(city);
              setIsGpsLoading(false);
         }, () => {
@@ -213,6 +220,13 @@ export default function PrayerTimesPage() {
             }
         }
     };
+    
+    const playAdhan = () => {
+        if (audioRef.current) {
+            audioRef.current.play().catch(error => console.error("Audio play failed:", error));
+        }
+    };
+
 
     const formattedPrayerTimes = useMemo(() => {
         return prayerNames.map(prayerInfo => {
@@ -233,6 +247,7 @@ export default function PrayerTimesPage() {
 
     return (
         <div className="bg-surface font-body text-on-surface antialiased">
+            <audio ref={audioRef} src="/adhan.mp3" preload="auto"></audio>
             <header className="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl flex justify-between items-center px-6 h-16 max-w-2xl mx-auto left-0 right-0">
                 <div className="flex items-center gap-4">
                     <button onClick={() => router.back()} className="flex items-center justify-center p-2 rounded-full hover:bg-surface-container-high transition-colors active:scale-95 duration-200">
@@ -381,6 +396,10 @@ export default function PrayerTimesPage() {
                 <Link href="/prayer-times" className="flex flex-col items-center justify-center bg-primary text-on-primary rounded-full px-5 py-1.5 transition-all tap-highlight-none active:scale-90">
                     <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>schedule</span>
                     <span className="font-label text-sm font-medium tracking-wide">Prayer</span>
+                </Link>
+                <Link href="/qibla" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90">
+                    <span className="material-symbols-outlined">explore</span>
+                    <span className="font-label text-sm font-medium tracking-wide">Qibla</span>
                 </Link>
                 <Link href="/tasbeeh" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 tap-highlight-none active:scale-90 transition-transform">
                     <span className="material-symbols-outlined">adjust</span>

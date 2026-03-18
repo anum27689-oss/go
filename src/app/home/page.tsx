@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -94,6 +95,11 @@ export default function HomePage() {
         <Link href="/prayer-times" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90">
             <span className="material-symbols-outlined">schedule</span>
             <span className="font-label text-sm font-medium tracking-wide">Prayer</span>
+        </Link>
+        {/* Qibla */}
+        <Link href="/qibla" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90">
+            <span className="material-symbols-outlined">explore</span>
+            <span className="font-label text-sm font-medium tracking-wide">Qibla</span>
         </Link>
         {/* Tasbeeh */}
         <Link href="/tasbeeh" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90">
