@@ -77,30 +77,33 @@ export default function IslamicCalendarPage() {
             <div
                 key={day}
                 className={cn(
-                    'aspect-square rounded-lg p-1.5 flex flex-col justify-between group cursor-pointer transition-all border-2 border-transparent',
+                    'aspect-square rounded-lg p-2 flex flex-col items-center justify-center relative group cursor-pointer transition-all',
                     {
                         'bg-primary text-on-primary shadow-xl shadow-primary/20': isToday,
                         'bg-surface-container-lowest hover:bg-surface-container': !isToday,
-                        'border-secondary/50 border-dashed': isMonthEnd && !isToday,
                     }
                 )}
             >
-                <div className="w-full flex justify-between items-start">
-                    <span className={cn('font-manrope font-medium text-xs', isToday ? 'text-on-primary/70' : 'text-on-surface-variant/80')}>
-                        {day}
+                <span className={cn(
+                    'font-manrope font-extrabold text-2xl',
+                    isToday ? 'text-on-primary' : 'text-primary'
+                )}>
+                    {hijriDay}
+                </span>
+                <span className={cn(
+                    'absolute top-2 left-2 font-manrope font-medium text-xs',
+                    isToday ? 'text-on-primary/70' : 'text-on-surface-variant/80'
+                )}>
+                    {day}
+                </span>
+                {isMonthEnd && (
+                    <span className={cn(
+                        'absolute bottom-2 text-[10px] font-bold',
+                        isToday ? 'text-on-primary/90' : 'text-secondary'
+                    )}>
+                        Month End
                     </span>
-                    <span className={cn('font-manrope font-extrabold text-lg', isToday ? 'text-on-primary' : 'text-primary')}>
-                        {hijriDay}
-                    </span>
-                </div>
-
-                <div className="flex items-end justify-center text-center">
-                    {isMonthEnd && (
-                        <p className="text-[10px] font-bold text-secondary">
-                            Month End
-                        </p>
-                    )}
-                </div>
+                )}
             </div>
         );
     }
