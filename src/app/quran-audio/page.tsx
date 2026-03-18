@@ -50,7 +50,7 @@ export default function QuranAudioPage() {
             <AppHeader title="Quran Audio" />
             <main className="flex-1 container mx-auto p-4 md:p-6 flex flex-col gap-4">
                 {currentlyPlaying && (
-                    <Card className="shadow-lg bg-primary/10">
+                    <Card className="bg-primary/10 border-primary/20">
                         <CardContent className="p-4 flex items-center justify-between">
                             <div className="flex items-center gap-3">
                                 <Volume2 className="w-6 h-6 text-primary" />
@@ -66,31 +66,31 @@ export default function QuranAudioPage() {
                     </Card>
                 )}
                 
-                <Card className="flex-1 shadow-lg">
-                    <ScrollArea className="h-[calc(100vh-15rem)]">
-                        <CardContent className="p-0">
-                            <ul>
-                                {surahs.map((surah, index) => (
-                                    <li key={surah.number}>
-                                        <button 
-                                            onClick={() => handlePlayPause(surah)} 
-                                            className={`w-full text-left p-4 flex items-center justify-between transition-colors ${currentlyPlaying?.number === surah.number ? 'bg-secondary' : 'hover:bg-secondary/50'}`}
-                                        >
-                                            <div className="flex items-center gap-4">
-                                                <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-bold text-sm">{surah.number}</span>
-                                                <div>
-                                                    <p className="font-semibold">{surah.name}</p>
-                                                    <p className="text-sm text-muted-foreground">{surah.englishName}</p>
-                                                </div>
-                                            </div>
-                                            {(currentlyPlaying?.number === surah.number && isPlaying) ? <Pause className="w-5 h-5 text-primary" /> : <Play className="w-5 h-5 text-muted-foreground" />}
-                                        </button>
-                                        {index < surahs.length - 1 && <Separator />}
-                                    </li>
-                                ))}
-                            </ul>
-                        </CardContent>
-                    </ScrollArea>
+                <Card className="flex-1">
+                  <ScrollArea className="h-full">
+                      <CardContent className="p-0">
+                          <ul>
+                              {surahs.map((surah, index) => (
+                                  <li key={surah.number}>
+                                      <button 
+                                          onClick={() => handlePlayPause(surah)} 
+                                          className={`w-full text-left p-4 flex items-center justify-between transition-colors ${currentlyPlaying?.number === surah.number ? 'bg-accent' : 'hover:bg-accent'}`}
+                                      >
+                                          <div className="flex items-center gap-4">
+                                              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-bold text-sm">{surah.number}</span>
+                                              <div>
+                                                  <p className="font-semibold">{surah.name}</p>
+                                                  <p className="text-sm text-muted-foreground">{surah.englishName}</p>
+                                              </div>
+                                          </div>
+                                          {(currentlyPlaying?.number === surah.number && isPlaying) ? <Pause className="w-5 h-5 text-primary" /> : <Play className="w-5 h-5 text-muted-foreground" />}
+                                      </button>
+                                      {index < surahs.length - 1 && <Separator />}
+                                  </li>
+                              ))}
+                          </ul>
+                      </CardContent>
+                  </ScrollArea>
                 </Card>
             </main>
             <audio ref={audioRef} onEnded={() => setIsPlaying(false)} />

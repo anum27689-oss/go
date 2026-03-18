@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AppHeader } from '@/components/app-header';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -18,25 +18,24 @@ export default function PrayerTimesPage() {
   const [selectedCity, setSelectedCity] = useState('Makkah');
   const [currentDate, setCurrentDate] = useState('');
 
-  // Effect to set date on client
-  useState(() => {
+  useEffect(() => {
     setCurrentDate(new Date().toLocaleDateString('en-US', {
         weekday: 'long',
         year: 'numeric',
         month: 'long',
         day: 'numeric',
     }));
-  });
+  }, []);
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col h-screen">
       <AppHeader title="Prayer Times" />
       <main className="flex-1 container mx-auto p-4 md:p-6">
-        <Card className="shadow-lg">
+        <Card>
           <CardHeader>
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
               <div>
-                <CardTitle>Daily Prayer Times</CardTitle>
+                <CardTitle className="text-xl font-medium">Daily Prayer Times</CardTitle>
                 <p className="text-muted-foreground text-sm mt-1">{currentDate}</p>
               </div>
               <Select value={selectedCity} onValueChange={setSelectedCity}>
@@ -52,10 +51,10 @@ export default function PrayerTimesPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <ul className="space-y-2">
+            <ul className="space-y-1">
               {prayers.map((prayer, index) => (
                 <li key={prayer}>
-                  <div className="flex justify-between items-center p-3 rounded-lg hover:bg-secondary/50">
+                  <div className="flex justify-between items-center p-3 rounded-lg hover:bg-accent">
                     <span className="font-medium">{prayer}</span>
                     <span className="font-semibold text-primary">{prayerTimesData[selectedCity][prayer]}</span>
                   </div>

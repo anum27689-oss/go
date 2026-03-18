@@ -26,19 +26,19 @@ export default function TasbeehCounterPage() {
   const reset = () => setCount(0);
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col h-screen">
       <AppHeader title="Tasbeeh Counter" />
       <main className="flex-1 flex flex-col items-center justify-center p-4">
-        <Card className="w-full max-w-sm shadow-lg">
+        <Card className="w-full max-w-sm">
           <CardContent className="p-6 text-center">
-            <div className="bg-secondary rounded-lg p-8 mb-6">
+            <div className="bg-muted rounded-lg p-8 mb-6">
               <p className="text-7xl font-mono font-bold text-primary">{String(count).padStart(4, '0')}</p>
             </div>
 
             <div className="flex flex-col gap-4">
                 <Button 
                   onClick={increment} 
-                  className="h-32 text-2xl rounded-lg shadow-md transition-transform duration-150 active:scale-95"
+                  className="h-32 text-2xl rounded-lg shadow-sm transition-transform duration-150 active:scale-95"
                   aria-label="Increment count"
                 >
                   Tap to Count

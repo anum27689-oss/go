@@ -33,10 +33,10 @@ export default function IslamicCalendarPage() {
     }, []);
 
     return (
-        <div className="flex flex-col min-h-screen">
+        <div className="flex flex-col h-screen">
             <AppHeader title="Islamic Calendar" />
-            <main className="flex-1 container mx-auto p-4 md:p-6 space-y-6">
-                <Card className="text-center shadow-lg">
+            <main className="flex-1 container mx-auto p-4 md:p-6 space-y-6 overflow-y-auto">
+                <Card className="text-center">
                     <CardHeader>
                         <CardTitle className="text-primary">Today's Hijri Date</CardTitle>
                     </CardHeader>
@@ -46,7 +46,7 @@ export default function IslamicCalendarPage() {
                 </Card>
                 
                 <div className="grid md:grid-cols-2 gap-6">
-                    <Card className="shadow-lg">
+                    <Card>
                         <CardHeader>
                             <CardTitle>Gregorian Calendar</CardTitle>
                         </CardHeader>
@@ -61,7 +61,7 @@ export default function IslamicCalendarPage() {
                         </CardContent>
                     </Card>
 
-                    <Card className="shadow-lg">
+                    <Card>
                         <CardHeader>
                             <CardTitle>Islamic Months</CardTitle>
                         </CardHeader>
@@ -69,7 +69,7 @@ export default function IslamicCalendarPage() {
                             <ul className="space-y-2">
                                 {islamicMonths.map((month, index) => (
                                     <li key={month}>
-                                        <div className="flex items-center gap-4 p-2 rounded-lg hover:bg-secondary/50">
+                                        <div className="flex items-center gap-4 p-2 rounded-lg hover:bg-accent">
                                             <span className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/10 text-primary font-bold text-sm">{index + 1}</span>
                                             <span className="font-medium">{month}</span>
                                         </div>

@@ -3,10 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function PrivacyPolicyPage() {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col h-screen">
       <AppHeader title="Privacy Policy" />
-      <main className="flex-1 container mx-auto p-4 md:p-6">
-        <Card className="shadow-lg">
+      <main className="flex-1 container mx-auto p-4 md:p-6 overflow-y-auto">
+        <Card>
           <CardHeader>
             <CardTitle>Privacy Policy for Islamic Daily Companion</CardTitle>
           </CardHeader>
@@ -17,7 +17,7 @@ export default function PrivacyPolicyPage() {
               policy to respect your privacy regarding any information we may
               collect from you through our app.
             </p>
-            <h3 className="font-bold">Information We Collect</h3>
+            <h3 className="font-semibold text-lg">Information We Collect</h3>
             <p>
               We only ask for personal information when we truly need it to
               provide a service to you. We collect it by fair and lawful means,
@@ -31,7 +31,7 @@ export default function PrivacyPolicyPage() {
               feature, we use your device's compass and orientation sensors. This data
               is processed on your device and is not transmitted or stored.
             </p>
-            <h3 className="font-bold">Third-Party Services</h3>
+            <h3 className="font-semibold text-lg">Third-Party Services</h3>
             <p>
               Our app may display ads from third-party networks. These networks may
               use technology to receive your IP address. They may also use other
@@ -39,7 +39,7 @@ export default function PrivacyPolicyPage() {
               advertisements and/or to personalize the advertising content that
               you see.
             </p>
-            <h3 className="font-bold">Security</h3>
+            <h3 className="font-semibold text-lg">Security</h3>
             <p>
               We value your trust in providing us your Personal Information, thus
               we are striving to use commercially acceptable means of protecting
@@ -47,7 +47,7 @@ export default function PrivacyPolicyPage() {
               or method of electronic storage is 100% secure and reliable, and
               we cannot guarantee its absolute security.
             </p>
-            <h3 className="font-bold">Changes to This Privacy Policy</h3>
+            <h3 className="font-semibold text-lg">Changes to This Privacy Policy</h3>
             <p>
               We may update our Privacy Policy from time to time. Thus, you are
               advised to review this page periodically for any changes. We will
