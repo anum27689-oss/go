@@ -4,7 +4,6 @@ import { useState, useRef } from 'react';
 import { AppHeader } from '@/components/app-header';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Play, Pause, Volume2 } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 
@@ -53,14 +52,14 @@ export default function QuranAudioPage() {
                     <Card className="bg-primary/10 border-primary/20">
                         <CardContent className="p-4 flex items-center justify-between">
                             <div className="flex items-center gap-3">
-                                <Volume2 className="w-6 h-6 text-primary" />
+                                <span className="material-symbols-outlined w-6 h-6 text-primary">volume_up</span>
                                 <div>
                                     <p className="font-semibold">{currentlyPlaying.name}</p>
                                     <p className="text-sm text-muted-foreground">{currentlyPlaying.englishName}</p>
                                 </div>
                             </div>
                             <Button onClick={() => handlePlayPause(currentlyPlaying)} size="icon" variant="ghost">
-                                {isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6" />}
+                                {isPlaying ? <span className="material-symbols-outlined w-6 h-6">pause</span> : <span className="material-symbols-outlined w-6 h-6">play_arrow</span>}
                             </Button>
                         </CardContent>
                     </Card>
@@ -83,7 +82,7 @@ export default function QuranAudioPage() {
                                                   <p className="text-sm text-muted-foreground">{surah.englishName}</p>
                                               </div>
                                           </div>
-                                          {(currentlyPlaying?.number === surah.number && isPlaying) ? <Pause className="w-5 h-5 text-primary" /> : <Play className="w-5 h-5 text-muted-foreground" />}
+                                          {(currentlyPlaying?.number === surah.number && isPlaying) ? <span className="material-symbols-outlined w-5 h-5 text-primary">pause</span> : <span className="material-symbols-outlined w-5 h-5 text-muted-foreground">play_arrow</span>}
                                       </button>
                                       {index < surahs.length - 1 && <Separator />}
                                   </li>

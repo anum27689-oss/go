@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { AppHeader } from '@/components/app-header';
 import { Card, CardContent } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Compass, Navigation } from 'lucide-react';
 
 export default function QiblaDirectionPage() {
   const [direction, setDirection] = useState(0);
@@ -83,7 +82,7 @@ export default function QiblaDirectionPage() {
                     className="transition-transform duration-500 ease-in-out"
                     style={{ transform: `rotate(${rotation}deg)` }}
                 >
-                  <Navigation className="h-24 w-24 text-primary drop-shadow-lg" />
+                  <span className="material-symbols-outlined text-primary text-[96px] drop-shadow-lg">navigation</span>
                 </div>
             </div>
 
@@ -91,7 +90,7 @@ export default function QiblaDirectionPage() {
 
             {error && (
               <Alert variant="destructive" className="mt-6 text-left">
-                <Compass className="h-4 w-4" />
+                <span className="material-symbols-outlined h-4 w-4 mr-2">explore</span>
                 <AlertTitle>Sensor Error</AlertTitle>
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
