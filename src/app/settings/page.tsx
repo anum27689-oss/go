@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -15,6 +14,7 @@ import {
 } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
+import { useToast } from '@/hooks/use-toast';
 
 const calculationMethods = [
     { value: '1', label: 'Jafari (Ithna Ashari)' },
@@ -41,6 +41,7 @@ export default function SettingsPage() {
     const [timeFormat, setTimeFormat] = useState('12h');
     const [notificationsEnabled, setNotificationsEnabled] = useState(false);
     const [language, setLanguage] = useState('en');
+    const { toast } = useToast();
 
 
     useEffect(() => {
@@ -53,16 +54,31 @@ export default function SettingsPage() {
 
         const adhanSetting = localStorage.getItem('adhanNotifications') === 'true';
         setNotificationsEnabled(adhanSetting);
+        
+        const savedLang = localStorage.getItem('language') || 'en';
+        setLanguage(savedLang);
+
     }, []);
 
     const handleMethodChange = (value: string) => {
         setCalculationMethod(value);
         localStorage.setItem('prayerCalculationMethod', value);
+         toast({ title: "Settings Saved", description: "Prayer calculation method updated." });
     };
 
     const handleTimeFormatChange = (value: string) => {
         setTimeFormat(value);
         localStorage.setItem('prayerTimeFormat', value);
+        toast({ title: "Settings Saved", description: "Time format updated." });
+    };
+    
+    const handleLanguageChange = (lang: string) => {
+        setLanguage(lang);
+        localStorage.setItem('language', lang);
+        toast({
+            title: "Language preference saved",
+            description: "Full app translation is not yet implemented.",
+        });
     };
 
     const handleNotificationToggle = async (checked: boolean) => {
@@ -74,9 +90,24 @@ export default function SettingsPage() {
             if (permission !== 'granted') {
                 setNotificationsEnabled(false);
                 localStorage.setItem('adhanNotifications', 'false');
-                alert("You have disabled notifications. Please enable them in your browser settings to receive Azan alerts.");
+                toast({
+                    variant: "destructive",
+                    title: "Permission Denied",
+                    description: "Please enable notifications in your browser settings."
+                });
+            } else {
+                 toast({ title: "Notifications Enabled", description: "You will now receive Adhan alerts." });
             }
+        } else {
+            toast({ title: "Settings Saved", description: `Notifications have been ${checked ? 'enabled' : 'disabled'}.` });
         }
+    };
+    
+    const handleFeatureClick = () => {
+        toast({
+            title: "Coming Soon!",
+            description: "This feature is not yet available.",
+        });
     };
     
     if (!mounted) {
@@ -126,8 +157,8 @@ export default function SettingsPage() {
                                 </div>
                             </div>
                             <div className="flex bg-surface-container p-1 rounded-full">
-                                <button onClick={() => setLanguage('en')} className={`px-4 py-1.5 rounded-full text-xs font-bold transition-colors ${language === 'en' ? 'bg-primary text-on-primary' : 'text-on-surface-variant'}`}>English</button>
-                                <button onClick={() => setLanguage('ur')} className={`px-4 py-1.5 rounded-full text-xs font-bold transition-colors ${language === 'ur' ? 'bg-primary text-on-primary' : 'text-on-surface-variant'}`}>Urdu</button>
+                                <button onClick={() => handleLanguageChange('en')} className={`px-4 py-1.5 rounded-full text-xs font-bold transition-colors ${language === 'en' ? 'bg-primary text-on-primary' : 'text-on-surface-variant'}`}>English</button>
+                                <button onClick={() => handleLanguageChange('ur')} className={`px-4 py-1.5 rounded-full text-xs font-bold transition-colors ${language === 'ur' ? 'bg-primary text-on-primary' : 'text-on-surface-variant'}`}>Urdu</button>
                             </div>
                         </div>
 
@@ -217,7 +248,7 @@ export default function SettingsPage() {
                             </div>
                             <span className="material-symbols-outlined text-on-surface-variant group-hover:translate-x-1 transition-transform">chevron_right</span>
                         </Link>
-                         <button className="w-full flex items-center justify-between p-5 hover:bg-surface-container-high transition-colors group">
+                         <button onClick={handleFeatureClick} className="w-full flex items-center justify-between p-5 hover:bg-surface-container-high transition-colors group">
                             <div className="flex items-center gap-4">
                                 <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-secondary">
                                     <span className="material-symbols-outlined">star</span>
@@ -226,7 +257,7 @@ export default function SettingsPage() {
                             </div>
                             <span className="material-symbols-outlined text-on-surface-variant group-hover:translate-x-1 transition-transform">chevron_right</span>
                         </button>
-                         <button className="w-full flex items-center justify-between p-5 hover:bg-surface-container-high transition-colors group">
+                         <button onClick={handleFeatureClick} className="w-full flex items-center justify-between p-5 hover:bg-surface-container-high transition-colors group">
                             <div className="flex items-center gap-4">
                                 <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-secondary">
                                     <span className="material-symbols-outlined">info</span>
@@ -270,5 +301,3 @@ export default function SettingsPage() {
         </div>
     );
 }
-
-    
