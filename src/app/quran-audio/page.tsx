@@ -21,6 +21,9 @@ type SurahApiResponse = {
     data: Surah[];
 };
 
+const LAST_PLAYED_SURAH_KEY = 'quran_last_played';
+const FAVORITE_SURAHS_KEY = 'quran_favorites';
+
 
 export default function QuranAudioPage() {
     const router = useRouter();
@@ -31,6 +34,9 @@ export default function QuranAudioPage() {
     const [currentlyPlaying, setCurrentlyPlaying] = useState<Surah | null>(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [progress, setProgress] = useState(0);
+
+    const [lastPlayed, setLastPlayed] = useState<Surah | null>(null);
+    const [favorites, setFavorites] = useState<number[]>([]);
 
     const audioRef = useRef<HTMLAudioElement>(null);
 
@@ -45,6 +51,26 @@ export default function QuranAudioPage() {
                 const data: SurahApiResponse = await response.json();
                 if (data.code === 200) {
                     setAllSurahs(data.data);
+
+                    // Load favorites from local storage
+                    const savedFavoritesJSON = localStorage.getItem(FAVORITE_SURAHS_KEY);
+                    if (savedFavoritesJSON) {
+                        try {
+                           setFavorites(JSON.parse(savedFavoritesJSON));
+                        } catch(e) {
+                            console.error("Failed to parse favorites from localStorage", e);
+                        }
+                    }
+        
+                    // Load last played from local storage
+                    const lastPlayedNumber = localStorage.getItem(LAST_PLAYED_SURAH_KEY);
+                    if (lastPlayedNumber) {
+                        const lastPlayedSurah = data.data.find(s => s.number === parseInt(lastPlayedNumber));
+                        if (lastPlayedSurah) {
+                            setLastPlayed(lastPlayedSurah);
+                        }
+                    }
+
                 } else {
                      throw new Error('Failed to fetch Surah list');
                 }
@@ -81,6 +107,8 @@ export default function QuranAudioPage() {
             }
         } else {
             setCurrentlyPlaying(surah);
+            setLastPlayed(surah);
+            localStorage.setItem(LAST_PLAYED_SURAH_KEY, String(surah.number));
             if (audioRef.current) {
                 // Using a copyright-free audio source (Mishary Rashid Alafasy)
                 const audioSrc = `https://server7.mp3quran.net/s_gmd/${String(surah.number).padStart(3, '0')}.mp3`;
@@ -111,6 +139,14 @@ export default function QuranAudioPage() {
         handlePlayPause(allSurahs[prevIndex]);
     }
     
+    const toggleFavorite = (surahNumber: number) => {
+        const newFavorites = favorites.includes(surahNumber)
+            ? favorites.filter(num => num !== surahNumber)
+            : [...favorites, surahNumber];
+        setFavorites(newFavorites);
+        localStorage.setItem(FAVORITE_SURAHS_KEY, JSON.stringify(newFavorites));
+    };
+
     const handleTimeUpdate = () => {
         if (audioRef.current && isFinite(audioRef.current.duration)) {
             const newProgress = (audioRef.current.currentTime / audioRef.current.duration) * 100;
@@ -162,18 +198,21 @@ export default function QuranAudioPage() {
                 </section>
 
                 <section className="grid grid-cols-2 gap-4 mb-10">
-                    <div className="bg-primary-container p-6 rounded-lg text-on-primary-container flex flex-col justify-between h-40">
+                     <div 
+                        onClick={() => lastPlayed && handlePlayPause(lastPlayed)}
+                        className={`bg-primary-container p-6 rounded-lg text-on-primary-container flex flex-col justify-between h-40 ${lastPlayed ? 'cursor-pointer hover:bg-primary-container/90' : 'cursor-default'}`}
+                    >
                         <span className="material-symbols-outlined text-primary-fixed text-4xl" style={{fontVariationSettings: "'FILL' 1"}}>auto_stories</span>
                         <div>
                             <p className="font-label text-sm opacity-80">Last Read</p>
-                            <h3 className="font-headline font-bold text-xl">Coming Soon</h3>
+                            <h3 className="font-headline font-bold text-xl truncate">{lastPlayed ? lastPlayed.englishName : 'None'}</h3>
                         </div>
                     </div>
                     <div className="bg-secondary-container p-6 rounded-lg text-on-secondary-container flex flex-col justify-between h-40">
                         <span className="material-symbols-outlined text-secondary text-4xl" style={{fontVariationSettings: "'FILL' 1"}}>favorite</span>
                         <div>
                             <p className="font-label text-sm opacity-80">Favorites</p>
-                            <h3 className="font-headline font-bold text-xl">Coming Soon</h3>
+                            <h3 className="font-headline font-bold text-xl">{favorites.length} Surah{favorites.length !== 1 ? 's' : ''}</h3>
                         </div>
                     </div>
                 </section>
@@ -215,9 +254,25 @@ export default function QuranAudioPage() {
                                         <span>{surah.numberOfAyahs} Verses</span>
                                     </div>
                                 </div>
-                                <span className="material-symbols-outlined text-secondary group-hover:scale-110 transition-transform text-4xl">
-                                    { (isPlaying && currentlyPlaying?.number === surah.number) ? 'pause_circle' : 'play_circle' }
-                                </span>
+                                <div className="flex items-center gap-2">
+                                     <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            toggleFavorite(surah.number);
+                                        }}
+                                        className="p-2 rounded-full text-secondary/70 hover:text-secondary hover:bg-secondary/10 transition-colors z-10"
+                                    >
+                                        <span 
+                                            className="material-symbols-outlined transition-all"
+                                            style={favorites.includes(surah.number) ? {fontVariationSettings: "'FILL' 1"} : {}}
+                                        >
+                                            favorite
+                                        </span>
+                                    </button>
+                                    <span className="material-symbols-outlined text-secondary group-hover:scale-110 transition-transform text-4xl">
+                                        { (isPlaying && currentlyPlaying?.number === surah.number) ? 'pause_circle' : 'play_circle' }
+                                    </span>
+                                </div>
                             </div>
                         ))
                     )}
