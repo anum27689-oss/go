@@ -3,10 +3,125 @@
 
 import Link from 'next/link';
 import { useTranslation } from '@/hooks/use-translation';
-import { useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
+import { pakistanCities, type City } from '@/lib/pakistan-cities';
+
+// Helper function to parse time string
+const parseTimeToDate = (timeStr: string, date: Date = new Date()) => {
+    if (!timeStr || !timeStr.includes(':')) return new Date(0);
+    const [hours, minutes] = timeStr.split(':').map(Number);
+    const newDate = new Date(date);
+    newDate.setHours(hours, minutes, 0, 0);
+    return newDate;
+};
+
+const prayerNameKeys = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
 
 export default function HomePage() {
   const { t } = useTranslation();
+  const [nextPrayerInfo, setNextPrayerInfo] = useState<{ name: string; countdown: string }>({ name: t('common.loading'), countdown: '' });
+  const [isLoading, setIsLoading] = useState(true);
+
+  const prayerNames = useMemo(() => ({
+    'Fajr': t('prayer.fajr'),
+    'Dhuhr': t('prayer.dhuhr'),
+    'Asr': t('prayer.asr'),
+    'Maghrib': t('prayer.maghrib'),
+    'Isha': t('prayer.isha'),
+  }), [t]);
+
+  const calculateCountdown = useCallback((prayerTimes: {name: string, time: string}[]) => {
+      const now = new Date();
+      const sortedPrayers = prayerTimes
+        .map(p => ({
+          name: p.name,
+          date: parseTimeToDate(p.time, now)
+        }))
+        .sort((a, b) => a.date.getTime() - b.date.getTime());
+
+      let nextPrayer = sortedPrayers.find(p => p.date > now);
+      
+      if (!nextPrayer) {
+          // If all prayers for today have passed, the next prayer is Fajr tomorrow
+          nextPrayer = sortedPrayers[0];
+          nextPrayer.date.setDate(nextPrayer.date.getDate() + 1);
+      }
+      
+      const minutesUntil = Math.max(0, Math.round((nextPrayer.date.getTime() - now.getTime()) / (1000 * 60)));
+      const translatedName = prayerNames[nextPrayer.name as keyof typeof prayerNames] || nextPrayer.name;
+
+      let countdownText = '';
+      if (minutesUntil > 0) {
+          countdownText = t('prayer.inMinutes').replace('{minutes}', String(minutesUntil));
+      } else {
+          countdownText = t('prayer.now');
+      }
+
+      setNextPrayerInfo({
+          name: translatedName,
+          countdown: countdownText
+      });
+  }, [t, prayerNames]);
+
+  useEffect(() => {
+    let city: City | null = null;
+    const savedCityJSON = localStorage.getItem('selectedCity');
+    
+    try {
+        city = savedCityJSON ? JSON.parse(savedCityJSON) : (pakistanCities.find(c => c.city === "Karachi") || null);
+    } catch {
+        city = pakistanCities.find(c => c.city === "Karachi") || null;
+    }
+
+    if (!city) {
+        setIsLoading(false);
+        setNextPrayerInfo({ name: t('prayer.selectCity'), countdown: '' });
+        return;
+    }
+
+    const fetchAndSetPrayerTimes = async (city: City) => {
+      setIsLoading(true);
+      const method = localStorage.getItem('prayerCalculationMethod') || '2';
+      const date = new Date();
+      const dateString = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
+      const url = `https://api.aladhan.com/v1/timings/${dateString}?latitude=${city.lat}&longitude=${city.lng}&method=${method}`;
+      
+      try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Failed to fetch prayer times');
+        const data = await response.json();
+        const timings = data.data.timings;
+        
+        const prayerTimes = prayerNameKeys.map(p => ({
+          name: p,
+          time: timings[p]
+        }));
+        
+        // Initial calculation
+        calculateCountdown(prayerTimes);
+        
+        // Set interval to update countdown every minute
+        const intervalId = setInterval(() => calculateCountdown(prayerTimes), 60000); 
+
+        setIsLoading(false);
+        // Cleanup interval on component unmount
+        return () => clearInterval(intervalId);
+
+      } catch (error) {
+        console.error("Error fetching prayer times:", error);
+        setNextPrayerInfo({ name: 'Error', countdown: 'Could not load times' });
+        setIsLoading(false);
+      }
+    };
+    
+    const interval = fetchAndSetPrayerTimes(city);
+
+    return () => {
+        interval.then(cleanup => cleanup && cleanup());
+    }
+
+  }, [calculateCountdown, t]);
+
 
   const title = useMemo(() => {
     const translated = t('home.title');
@@ -50,7 +165,9 @@ export default function HomePage() {
                     <span className="material-symbols-outlined text-4xl">schedule</span>
                     <div className="text-left">
                         <p className="font-headline font-bold text-2xl">{t('home.prayerTimes')}</p>
-                        <p className="opacity-80 text-sm">{t('home.nextPrayer').replace('{prayer}', 'Asr').replace('{time}', '3:45 PM')}</p>
+                        <p className="opacity-80 text-sm">
+                          {isLoading ? t('common.loading') : `${t('prayer.upNext')}: ${nextPrayerInfo.name} ${nextPrayerInfo.countdown}`}
+                        </p>
                     </div>
                 </div>
                 {/* Abstract Pattern background */}

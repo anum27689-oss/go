@@ -42,7 +42,6 @@ export default function AboutPage() {
 
             <div className="pt-8 text-center space-y-2">
                 <span className="material-symbols-outlined text-4xl text-primary">brightness_3</span>
-                <p className="font-manrope font-black tracking-tighter text-on-surface-variant">Version 2026 — v1.0.0</p>
             </div>
             
           </CardContent>

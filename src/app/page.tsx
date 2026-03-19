@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect } from 'react';
@@ -44,31 +45,20 @@ export default function Splash() {
                     <span className="block text-3xl font-extrabold text-primary leading-tight">{t('splash.title1')}</span>
                     <span className="block text-base font-light tracking-widest text-on-surface-variant uppercase">{t('splash.title2')}</span>
                 </h1>
-                {/* Editorial Accent Line */}
+                 {/* Editorial Accent Line */}
                 <div className="flex justify-center pt-2">
                     <div className="h-[1px] w-8 bg-outline-variant/30"></div>
                 </div>
             </div>
         </div>
 
-        {/* Footer / Metadata (Editorial Style) */}
+        {/* Footer / Loading Indicator */}
         <div className="absolute bottom-16 left-0 w-full flex flex-col items-center gap-6">
-            <p className="font-body text-xs text-on-surface-variant/60 tracking-[0.2em] font-medium">{t('splash.est')}</p>
             {/* Subtle Loading Indicator */}
             <div className="flex gap-2 animate-pulse">
                 <div className="w-1.5 h-1.5 rounded-full bg-primary/20"></div>
                 <div className="w-1.5 h-1.5 rounded-full bg-primary/40"></div>
                 <div className="w-1.5 h-1.5 rounded-full bg-primary/20"></div>
-            </div>
-        </div>
-
-        {/* Decorative Pattern (Asymmetric Editorial Touch) */}
-        <div className="absolute top-12 left-12 opacity-5 pointer-events-none">
-            <div className="grid grid-cols-2 gap-4">
-                <div className="w-1 h-1 bg-on-surface rounded-full"></div>
-                <div className="w-1 h-1 bg-on-surface rounded-full"></div>
-                <div className="w-1 h-1 bg-on-surface rounded-full"></div>
-                <div className="w-1 h-1 bg-on-surface rounded-full"></div>
             </div>
         </div>
     </main>
