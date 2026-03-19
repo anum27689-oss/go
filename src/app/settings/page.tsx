@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -94,11 +95,8 @@ export default function SettingsPage() {
         }
     };
     
-    const handleFeatureClick = () => {
-        toast({
-            title: t('settings.toast.comingSoon'),
-            description: t('settings.toast.featureNotAvailable'),
-        });
+    const handleRateApp = () => {
+        window.open('https://play.google.com/store/apps/details?id=com.islamicdailycompanion.app', '_blank');
     };
     
     if (!mounted) {
@@ -237,7 +235,7 @@ export default function SettingsPage() {
                             </div>
                             <span className="material-symbols-outlined text-on-surface-variant group-hover:translate-x-1 transition-transform">chevron_right</span>
                         </Link>
-                         <button onClick={handleFeatureClick} className="w-full flex items-center justify-between p-5 hover:bg-surface-container-high transition-colors group">
+                         <button onClick={handleRateApp} className="w-full flex items-center justify-between p-5 hover:bg-surface-container-high transition-colors group">
                             <div className="flex items-center gap-4">
                                 <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-secondary">
                                     <span className="material-symbols-outlined">star</span>
@@ -246,7 +244,7 @@ export default function SettingsPage() {
                             </div>
                             <span className="material-symbols-outlined text-on-surface-variant group-hover:translate-x-1 transition-transform">chevron_right</span>
                         </button>
-                         <button onClick={handleFeatureClick} className="w-full flex items-center justify-between p-5 hover:bg-surface-container-high transition-colors group">
+                         <Link href="/about" className="w-full flex items-center justify-between p-5 hover:bg-surface-container-high transition-colors group">
                             <div className="flex items-center gap-4">
                                 <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-secondary">
                                     <span className="material-symbols-outlined">info</span>
@@ -254,13 +252,13 @@ export default function SettingsPage() {
                                 <p className="font-semibold text-on-surface text-left">{t('settings.about')}</p>
                             </div>
                             <span className="material-symbols-outlined text-on-surface-variant group-hover:translate-x-1 transition-transform">chevron_right</span>
-                        </button>
+                        </Link>
                     </div>
                 </section>
                 
-                <div className="pt-8 text-center space-y-2 opacity-40 grayscale pointer-events-none">
+                <div className="pt-8 text-center space-y-2">
                     <span className="material-symbols-outlined text-4xl text-primary">brightness_3</span>
-                    <p className="font-manrope font-black tracking-tighter text-on-surface-variant">{t('settings.version')}</p>
+                    <p className="font-manrope font-black tracking-tighter text-on-surface-variant">Version 2026 — v1.0.0</p>
                 </div>
             </main>
 
