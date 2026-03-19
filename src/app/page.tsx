@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect } from 'react';
@@ -30,9 +29,17 @@ export default function Splash() {
           <div className="relative flex items-center justify-center">
             <div className="absolute w-40 h-40 rounded-full bg-primary/5 blur-3xl"></div>
             <div className="relative w-20 h-20 bg-white dark:bg-surface-container-high rounded-full shadow-sm flex items-center justify-center border border-primary/10">
-              <span className="material-symbols-outlined text-[44px] text-primary" style={{ fontVariationSettings: "'FILL' 1, 'wght' 300" }}>
-                nights_stay
-              </span>
+              {/* Replaced span with SVG to prevent text flashing */}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                height="44"
+                width="44"
+                viewBox="0 0 24 24"
+                className="text-primary"
+                fill="currentColor"
+              >
+                <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.64-.11 2.41-.31-3.23-1.42-5.41-4.44-5.41-7.92s2.18-6.5 5.41-7.92C13.64 3.11 12.83 3 12 3z" />
+              </svg>
             </div>
           </div>
           {/* Typography Section */}
