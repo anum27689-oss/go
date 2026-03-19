@@ -198,24 +198,6 @@ export default function HomePage() {
                 <span className="font-headline font-bold text-lg text-on-surface">{t('home.calendar')}</span>
             </Link>
         </div>
-
-        {/* Banner Ad Placeholder */}
-        <section className="mt-10 mb-6">
-            <div className="w-full h-24 bg-surface-container-highest rounded-lg flex items-center justify-center overflow-hidden border border-outline-variant/15">
-                <div className="text-center">
-                    <p className="text-[10px] text-on-surface-variant uppercase tracking-widest mb-1">{t('home.sponsored')}</p>
-                    <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded bg-primary/10 flex items-center justify-center">
-                            <span className="material-symbols-outlined text-primary text-xl">card_giftcard</span>
-                        </div>
-                        <div className="text-left">
-                            <p className="text-xs font-bold text-on-surface">{t('home.masjidAdTitle')}</p>
-                            <p className="text-[10px] text-on-surface-variant">{t('home.masjidAdSubtitle')}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
       </main>
 
       {/* BottomNavBar */}
