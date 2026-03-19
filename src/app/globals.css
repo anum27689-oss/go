@@ -113,17 +113,14 @@
   }
   body {
     @apply bg-background text-foreground;
-    min-height: 100vh;
-    min-height: 100dvh;
+    min-height: max(884px, 100dvh);
     -webkit-tap-highlight-color: transparent;
   }
 }
 
 @layer utilities {
     .material-symbols-outlined {
-        font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
-        display: inline-block;
-        line-height: 1;
+        font-variation-settings: 'FILL' 0, 'wght' 200, 'GRAD' 0, 'opsz' 48;
     }
     .material-symbols-fill {
         font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
@@ -138,5 +135,11 @@
     .glass-panel {
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
+    }
+    .ethereal-glow {
+        box-shadow: 0 0 60px 10px rgba(254, 214, 91, 0.15);
+    }
+    .bg-spiritual-gradient {
+        background: radial-gradient(circle at center, #f8f9fa 0%, #f3f4f5 40%, #e7e8e9 100%);
     }
 }

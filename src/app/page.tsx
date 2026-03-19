@@ -2,11 +2,9 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useTranslation } from '@/hooks/use-translation';
 
 export default function Splash() {
   const router = useRouter();
-  const { t } = useTranslation();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -17,7 +15,7 @@ export default function Splash() {
   }, [router]);
 
   return (
-    <main className="relative h-screen w-full flex flex-col items-center justify-center bg-surface-bright overflow-hidden">
+    <main className="relative h-screen w-full flex flex-col items-center justify-center bg-spiritual-gradient overflow-hidden">
         {/* Subtle Ambient Background Element */}
         <div className="absolute inset-0 opacity-20 pointer-events-none">
             <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] rounded-full bg-primary-container/10 blur-[120px]"></div>
@@ -29,29 +27,20 @@ export default function Splash() {
             {/* Minimalist Crescent Icon */}
             <div className="relative flex items-center justify-center">
                 {/* Outer Glow */}
-                <div className="absolute w-32 h-32 rounded-full bg-primary-container/10 blur-3xl animate-pulse"></div>
+                <div className="absolute w-32 h-32 rounded-full bg-secondary-container/10 blur-3xl animate-pulse"></div>
                 {/* Icon Shell */}
-                <div className="relative w-24 h-24 bg-surface-container-lowest flex items-center justify-center rounded-full shadow-lg">
-                    <svg
-                        width="56"
-                        height="56"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="text-primary"
-                        >
-                        <path
-                        d="M21.4,12.74A9.5,9.5,0,0,1,11.26,22a9.5,9.5,0,1,1,9.26-11.66,7.5,7.5,0,0,0-1.12,2.4A7.51,7.51,0,0,0,22,12.5a7.33,7.33,0,0,0-.6,2.74Z"
-                        />
-                    </svg>
+                <div className="relative w-24 h-24 bg-surface-container-lowest flex items-center justify-center rounded-full ethereal-glow">
+                    <span className="material-symbols-outlined text-[64px] text-secondary" style={{fontVariationSettings: "'FILL' 0, 'wght' 100"}}>
+                        brightness_3
+                    </span>
                 </div>
             </div>
             
             {/* Branding Text Cluster */}
             <div className="space-y-3">
                 <h1 className="font-headline tracking-tighter text-on-surface">
-                    <span className="block text-3xl font-extrabold text-primary leading-tight">{t('splash.title1')}</span>
-                    <span className="block text-base font-light tracking-widest text-on-surface-variant uppercase">{t('splash.title2')}</span>
+                    <span className="block text-4xl font-extrabold text-primary leading-tight">Islamic Daily</span>
+                    <span className="block text-xl font-light tracking-widest text-on-surface-variant uppercase">Companion</span>
                 </h1>
                  {/* Editorial Accent Line */}
                 <div className="flex justify-center pt-2">
@@ -60,13 +49,24 @@ export default function Splash() {
             </div>
         </div>
 
-        {/* Footer / Loading Indicator */}
+        {/* Footer / Metadata (Editorial Style) */}
         <div className="absolute bottom-16 left-0 w-full flex flex-col items-center gap-6">
+            <p className="font-body text-label-md text-on-surface-variant/60 tracking-[0.2em] font-medium">EST. 2024</p>
             {/* Subtle Loading Indicator */}
-            <div className="flex gap-2 animate-pulse">
+            <div className="flex gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-primary/20"></div>
                 <div className="w-1.5 h-1.5 rounded-full bg-primary/40"></div>
                 <div className="w-1.5 h-1.5 rounded-full bg-primary/20"></div>
+            </div>
+        </div>
+
+        {/* Decorative Pattern (Asymmetric Editorial Touch) */}
+        <div className="absolute top-12 left-12 opacity-5 pointer-events-none">
+            <div className="grid grid-cols-2 gap-4">
+                <div className="w-1 h-1 bg-on-surface rounded-full"></div>
+                <div className="w-1 h-1 bg-on-surface rounded-full"></div>
+                <div className="w-1 h-1 bg-on-surface rounded-full"></div>
+                <div className="w-1 h-1 bg-on-surface rounded-full"></div>
             </div>
         </div>
     </main>
