@@ -10,8 +10,9 @@
     --card-foreground: 200 8% 10%;
     --popover: 210 17% 98%;
     --popover-foreground: 200 8% 10%;
-    --primary: 149 100% 15%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 140 55% 66%;
+    --primary-foreground: 148 100% 7%;
+    --on-primary: 148 100% 7%;
     --primary-container: 150 100% 20%;
     --on-primary-container: 150 78% 80%;
     --secondary: 48 100% 23%;
@@ -61,8 +62,9 @@
     --card-foreground: 210 6% 95%;
     --popover: 200 5% 19%;
     --popover-foreground: 210 6% 95%;
-    --primary: 140 55% 66%;
-    --primary-foreground: 148 100% 7%;
+    --primary: 149 100% 15%;
+    --primary-foreground: 0 0% 100%;
+    --on-primary: 0 0% 100%;
     --primary-container: 148 100% 15%;
     --on-primary-container: 140 55% 70%;
     --secondary: 45 79% 60%;
