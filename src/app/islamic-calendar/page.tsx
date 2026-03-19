@@ -142,26 +142,26 @@ export default function IslamicCalendarPage() {
                 </div>
             </main>
 
-            <nav className="fixed bottom-0 w-full z-50 pb-safe bg-surface/80 backdrop-blur-2xl flex justify-around items-center h-20 px-4 max-w-2xl mx-auto left-0 right-0">
-                <Link href="/home" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90 tap-highlight-none">
+            <nav className="fixed bottom-0 w-full z-50 bg-surface/80 backdrop-blur-2xl flex justify-around items-center h-20 px-2 max-w-2xl mx-auto left-0 right-0 pb-[env(safe-area-inset-bottom)]">
+                <Link href="/home" className="flex flex-col items-center justify-center gap-1 text-on-surface-variant rounded-xl p-2 h-14 w-16 transition-all duration-200 active:scale-90 tap-highlight-none hover:bg-surface-container-high">
                     <span className="material-symbols-outlined">home</span>
-                    <span className="font-label text-sm font-medium tracking-wide">{t('nav.home')}</span>
+                    <span className="text-xs font-medium">{t('nav.home')}</span>
                 </Link>
-                <Link href="/prayer-times" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90 tap-highlight-none">
+                <Link href="/prayer-times" className="flex flex-col items-center justify-center gap-1 text-on-surface-variant rounded-xl p-2 h-14 w-16 transition-all duration-200 active:scale-90 tap-highlight-none hover:bg-surface-container-high">
                      <span className="material-symbols-outlined">schedule</span>
-                    <span className="font-label text-sm font-medium tracking-wide">{t('nav.prayer')}</span>
+                    <span className="text-xs font-medium">{t('nav.prayer')}</span>
                 </Link>
-                <Link href="/tasbeeh" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90 tap-highlight-none">
+                <Link href="/tasbeeh" className="flex flex-col items-center justify-center gap-1 text-on-surface-variant rounded-xl p-2 h-14 w-16 transition-all duration-200 active:scale-90 tap-highlight-none hover:bg-surface-container-high">
                     <span className="material-symbols-outlined">adjust</span>
-                    <span className="font-label text-sm font-medium tracking-wide">{t('nav.tasbeeh')}</span>
+                    <span className="text-xs font-medium">{t('nav.tasbeeh')}</span>
                 </Link>
-                 <Link href="/islamic-calendar" className="flex flex-col items-center justify-center bg-primary text-on-primary rounded-full px-5 py-1.5 transition-all tap-highlight-none active:scale-90">
+                 <Link href="/islamic-calendar" className="flex flex-col items-center justify-center gap-1 bg-primary text-on-primary rounded-xl p-2 h-14 w-16 transition-all duration-200 active:scale-90 tap-highlight-none">
                     <span className="material-symbols-outlined" style={{fontVariationSettings: "'FILL' 1"}}>calendar_month</span>
-                    <span className="font-label text-sm font-medium tracking-wide">{t('nav.calendar')}</span>
+                    <span className="text-xs font-bold">{t('nav.calendar')}</span>
                 </Link>
-                <Link href="/settings" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90 tap-highlight-none">
+                <Link href="/settings" className="flex flex-col items-center justify-center gap-1 text-on-surface-variant rounded-xl p-2 h-14 w-16 transition-all duration-200 active:scale-90 tap-highlight-none hover:bg-surface-container-high">
                     <span className="material-symbols-outlined">settings</span>
-                    <span className="font-label text-sm font-medium tracking-wide">{t('nav.settings')}</span>
+                    <span className="text-xs font-medium">{t('nav.settings')}</span>
                 </Link>
             </nav>
         </div>
