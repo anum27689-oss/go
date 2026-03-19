@@ -4,6 +4,7 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useTranslation } from '@/hooks/use-translation';
 
 // Define the type for a single Surah
 type Surah = {
@@ -28,6 +29,7 @@ const FAVORITE_SURAHS_KEY = 'quran_favorites';
 
 export default function QuranAudioPage() {
     const router = useRouter();
+    const { t } = useTranslation();
     const [allSurahs, setAllSurahs] = useState<Surah[]>([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [isLoading, setIsLoading] = useState(true);
@@ -47,13 +49,12 @@ export default function QuranAudioPage() {
             try {
                 const response = await fetch('https://api.alquran.cloud/v1/surah');
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                    throw new Error(t('quran.fetchError'));
                 }
                 const data: SurahApiResponse = await response.json();
                 if (data.code === 200) {
                     setAllSurahs(data.data);
 
-                    // Load favorites from local storage
                     const savedFavoritesJSON = localStorage.getItem(FAVORITE_SURAHS_KEY);
                     if (savedFavoritesJSON) {
                         try {
@@ -63,7 +64,6 @@ export default function QuranAudioPage() {
                         }
                     }
         
-                    // Load last played from local storage
                     const lastPlayedNumber = localStorage.getItem(LAST_PLAYED_SURAH_KEY);
                     if (lastPlayedNumber) {
                         const lastPlayedSurah = data.data.find(s => s.number === parseInt(lastPlayedNumber));
@@ -73,18 +73,17 @@ export default function QuranAudioPage() {
                     }
 
                 } else {
-                     throw new Error('Failed to fetch Surah list');
+                     throw new Error(t('quran.fetchError'));
                 }
             } catch (error) {
                 console.error("Failed to fetch Surahs:", error);
-                // Optionally, set an error state to show in the UI
             } finally {
                 setIsLoading(false);
             }
         };
 
         fetchSurahs();
-    }, []);
+    }, [t]);
 
     const filteredSurahs = useMemo(() => {
         if (!searchQuery) {
@@ -111,7 +110,6 @@ export default function QuranAudioPage() {
             setLastPlayed(surah);
             localStorage.setItem(LAST_PLAYED_SURAH_KEY, String(surah.number));
             if (audioRef.current) {
-                // Using a copyright-free audio source (Mishary Rashid Alafasy)
                 const audioSrc = `https://server7.mp3quran.net/s_gmd/${String(surah.number).padStart(3, '0')}.mp3`;
                 audioRef.current.src = audioSrc;
                 audioRef.current.play().then(() => {
@@ -173,7 +171,7 @@ export default function QuranAudioPage() {
                         <span className="material-symbols-outlined text-on-surface-variant">arrow_back</span>
                     </button>
                     <Link href="/home">
-                        <h1 className="text-primary font-headline font-extrabold tracking-tighter text-xl md:text-2xl">Islamic Companion</h1>
+                        <h1 className="text-primary font-headline font-extrabold tracking-tighter text-xl md:text-2xl">{t('common.appName')}</h1>
                     </Link>
                 </div>
                  <button className="hover:bg-surface-container-high transition-colors p-2 rounded-full active:scale-95 duration-200">
@@ -183,14 +181,14 @@ export default function QuranAudioPage() {
 
             <main className="pt-24 pb-56 px-6 max-w-2xl mx-auto">
                 <section className="mb-10">
-                    <h2 className="font-headline font-extrabold text-4xl mb-6 tracking-tight">The Noble Quran</h2>
+                    <h2 className="font-headline font-extrabold text-4xl mb-6 tracking-tight">{t('quran.title')}</h2>
                     <div className="relative flex items-center">
                         <div className="absolute left-4 pointer-events-none">
                             <span className="material-symbols-outlined text-secondary">search</span>
                         </div>
                         <input 
                             className="w-full bg-surface-container-high border-none h-14 pl-12 pr-6 rounded-xl focus:ring-2 focus:ring-primary-fixed-dim transition-all text-on-surface placeholder:text-on-surface-variant/50" 
-                            placeholder="Search Surah by name or number..." 
+                            placeholder={t('quran.search')} 
                             type="text"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
@@ -205,15 +203,15 @@ export default function QuranAudioPage() {
                     >
                         <span className="material-symbols-outlined text-primary-fixed text-4xl" style={{fontVariationSettings: "'FILL' 1"}}>auto_stories</span>
                         <div>
-                            <p className="font-label text-sm opacity-80">Last Read</p>
-                            <h3 className="font-headline font-bold text-xl truncate">{lastPlayed ? lastPlayed.englishName : 'None'}</h3>
+                            <p className="font-label text-sm opacity-80">{t('quran.lastRead')}</p>
+                            <h3 className="font-headline font-bold text-xl truncate">{lastPlayed ? lastPlayed.englishName : t('quran.none')}</h3>
                         </div>
                     </div>
                     <div className="bg-secondary-container p-6 rounded-lg text-on-secondary-container flex flex-col justify-between h-40">
                         <span className="material-symbols-outlined text-secondary text-4xl" style={{fontVariationSettings: "'FILL' 1"}}>favorite</span>
                         <div>
-                            <p className="font-label text-sm opacity-80">Favorites</p>
-                            <h3 className="font-headline font-bold text-xl">{favorites.length} Surah{favorites.length !== 1 ? 's' : ''}</h3>
+                            <p className="font-label text-sm opacity-80">{t('quran.favorites')}</p>
+                            <h3 className="font-headline font-bold text-xl">{favorites.length > 1 ? t('quran.surahs').replace('{count}', String(favorites.length)) : t('quran.surah').replace('{count}', String(favorites.length))}</h3>
                         </div>
                     </div>
                 </section>
@@ -250,9 +248,9 @@ export default function QuranAudioPage() {
                                         <span className="font-headline text-xl text-primary/80">{surah.name}</span>
                                     </div>
                                     <div className="flex gap-2 items-center text-on-surface-variant/70 text-sm mt-1">
-                                        <span>{surah.englishNameTranslation}</span>
+                                        <span>{t('quran.translation').replace('{translation}', surah.englishNameTranslation)}</span>
                                         <span className="w-1 h-1 rounded-full bg-outline-variant"></span>
-                                        <span>{surah.numberOfAyahs} Verses</span>
+                                        <span>{t('quran.verses').replace('{count}', String(surah.numberOfAyahs))}</span>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-2">
@@ -289,7 +287,7 @@ export default function QuranAudioPage() {
                         </div>
                         <div className="flex-grow min-w-0">
                             <h5 className="font-headline font-bold truncate text-sm">{currentlyPlaying.englishName}</h5>
-                            <p className="text-xs text-on-surface-variant truncate">Mishary Rashid Alafasy</p>
+                            <p className="text-xs text-on-surface-variant truncate">{t('quran.reciter')}</p>
                             <div className="w-full bg-surface-container-high h-1 rounded-full mt-2 overflow-hidden cursor-pointer" onClick={handleSeek}>
                                 <div className="bg-primary h-full" style={{ width: `${progress}%` }}></div>
                             </div>
@@ -310,23 +308,23 @@ export default function QuranAudioPage() {
             <nav className="fixed bottom-0 w-full z-20 pb-safe bg-surface/80 backdrop-blur-2xl flex justify-around items-center h-20 px-4 max-w-2xl mx-auto left-0 right-0">
                 <Link href="/home" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 tap-highlight-none active:scale-90 transition-transform">
                     <span className="material-symbols-outlined">home</span>
-                    <span className="font-label text-sm font-medium tracking-wide">Home</span>
+                    <span className="font-label text-sm font-medium tracking-wide">{t('nav.home')}</span>
                 </Link>
                 <Link href="/prayer-times" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 tap-highlight-none active:scale-90 transition-transform">
                     <span className="material-symbols-outlined">schedule</span>
-                    <span className="font-label text-sm font-medium tracking-wide">Prayer</span>
+                    <span className="font-label text-sm font-medium tracking-wide">{t('nav.prayer')}</span>
                 </Link>
                 <Link href="/tasbeeh" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 tap-highlight-none active:scale-90 transition-transform">
                     <span className="material-symbols-outlined">adjust</span>
-                    <span className="font-label text-sm font-medium tracking-wide">Tasbeeh</span>
+                    <span className="font-label text-sm font-medium tracking-wide">{t('nav.tasbeeh')}</span>
                 </Link>
                 <Link href="/islamic-calendar" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90">
                     <span className="material-symbols-outlined">calendar_month</span>
-                    <span className="font-label text-sm font-medium tracking-wide">Calendar</span>
+                    <span className="font-label text-sm font-medium tracking-wide">{t('nav.calendar')}</span>
                 </Link>
                 <Link href="/settings" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 tap-highlight-none active:scale-90 transition-transform">
                     <span className="material-symbols-outlined">settings</span>
-                    <span className="font-label text-sm font-medium tracking-wide">Settings</span>
+                    <span className="font-label text-sm font-medium tracking-wide">{t('nav.settings')}</span>
                 </Link>
             </nav>
         </div>

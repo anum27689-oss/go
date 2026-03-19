@@ -23,9 +23,11 @@ import {
 } from "@/components/ui/popover";
 import { pakistanCities, type City } from '@/lib/pakistan-cities';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { useTranslation } from '@/hooks/use-translation';
 
 export default function QiblaDirectionPage() {
     const router = useRouter();
+    const { t } = useTranslation();
     const [direction, setDirection] = useState(0);
     const [qiblaDirection, setQiblaDirection] = useState(0);
     const [distance, setDistance] = useState(0);
@@ -45,7 +47,6 @@ export default function QiblaDirectionPage() {
                 if (typeof savedCity === 'object' && savedCity !== null && 'lat' in savedCity && 'lng' in savedCity) {
                     setSelectedCity(savedCity);
                 } else {
-                     // Default to a major city if saved data is invalid
                     setSelectedCity(pakistanCities.find(c => c.city === "Islamabad") || null);
                 }
             } catch (e) {
@@ -53,27 +54,24 @@ export default function QiblaDirectionPage() {
                 setSelectedCity(pakistanCities.find(c => c.city === "Islamabad") || null);
             }
         } else {
-            // Default to a major city if none is saved
             setSelectedCity(pakistanCities.find(c => c.city === "Islamabad") || null);
         }
 
         const handleOrientation = (event: DeviceOrientationEvent) => {
-            let alpha = event.alpha; // Compass direction
+            let alpha = event.alpha; 
             if (typeof alpha !== 'number') {
-                setError('Your device or browser does not support compass direction.');
+                setError(t('qibla.sensorError'));
                 return;
             }
-            // For iOS
             if (typeof (event as any).webkitCompassHeading !== 'undefined') {
                 alpha = (event as any).webkitCompassHeading;
             }
             setDirection(alpha);
-            setError(''); // Clear previous errors
+            setError(''); 
         };
         
         const requestPermissions = async () => {
              if (typeof window !== 'undefined' && 'DeviceOrientationEvent' in window) {
-                // Check for the specific permission request method used by iOS 13+
                 const requestPermission = (DeviceOrientationEvent as any).requestPermission;
                 if (typeof requestPermission === 'function') {
                     try {
@@ -81,18 +79,17 @@ export default function QiblaDirectionPage() {
                         if (permissionState === 'granted') {
                             window.addEventListener('deviceorientation', handleOrientation);
                         } else {
-                            setError('Permission to access device orientation was denied.');
+                            setError(t('qibla.permissionError'));
                         }
                     } catch (e: any) {
                          console.error(e);
-                         setError('Error requesting device orientation permission. Please grant permission in your browser settings.');
+                         setError(t('qibla.requestError'));
                     }
                 } else {
-                    // For non-iOS 13+ browsers
                     window.addEventListener('deviceorientation', handleOrientation);
                 }
             } else {
-                setError('Your device or browser does not support Device Orientation events.');
+                setError(t('qibla.noSupportError'));
             }
         }
 
@@ -101,7 +98,7 @@ export default function QiblaDirectionPage() {
         return () => {
             window.removeEventListener('deviceorientation', handleOrientation);
         };
-    }, []);
+    }, [t]);
 
     useEffect(() => {
         if (selectedCity) {
@@ -122,11 +119,10 @@ export default function QiblaDirectionPage() {
         const y = Math.sin(deltaLng);
         const x = Math.cos(userLatRad) * Math.tan(kaabaLatRad) - Math.sin(userLatRad) * Math.cos(deltaLng);
         let qibla = Math.atan2(y, x) * (180 / Math.PI);
-        qibla = (qibla + 360) % 360; // Normalize to 0-360
+        qibla = (qibla + 360) % 360;
         setQiblaDirection(qibla);
 
-        // Haversine formula for distance
-        const R = 6371; // Earth's radius in km
+        const R = 6371; 
         const dLat = kaabaLatRad - userLatRad;
         const dLng = deltaLng;
         const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
@@ -138,17 +134,17 @@ export default function QiblaDirectionPage() {
 
     const handleGeoLocation = () => {
         if (!navigator.geolocation) {
-            setError('Geolocation is not supported by your browser.');
+            setError(t('qibla.geoError'));
             return;
         }
         setIsGpsLoading(true);
         navigator.geolocation.getCurrentPosition((position) => {
             const { latitude, longitude } = position.coords;
-            const city: City = { city: "Current Location", lat: latitude, lng: longitude, country: "", admin_name: "GPS" };
+            const city: City = { city: t('prayer.location'), lat: latitude, lng: longitude, country: "", admin_name: "GPS" };
             setSelectedCity(city);
             setIsGpsLoading(false);
         }, () => {
-            setError('Unable to retrieve your location. Please enable location services and grant permission.');
+            setError(t('qibla.geoPermissionError'));
             setIsGpsLoading(false);
         });
     };
@@ -166,7 +162,7 @@ export default function QiblaDirectionPage() {
                 <div className="flex items-center gap-4">
                     <button onClick={() => router.back()} className="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-high transition-colors p-2 rounded-full active:scale-95 duration-200">arrow_back</button>
                      <Link href="/home">
-                      <h1 className="font-manrope font-extrabold tracking-tighter text-primary text-xl">Islamic Companion</h1>
+                      <h1 className="font-manrope font-extrabold tracking-tighter text-primary text-xl">{t('common.appName')}</h1>
                     </Link>
                 </div>
                 <div className="flex items-center">
@@ -182,7 +178,7 @@ export default function QiblaDirectionPage() {
             <main className="min-h-screen pt-24 pb-32 px-6 flex flex-col items-center max-w-xl mx-auto">
                  <section className="w-full mb-8">
                      <div className="flex flex-col gap-1">
-                        <span className="text-label-md font-medium text-secondary tracking-widest uppercase opacity-80">Location</span>
+                        <span className="text-label-md font-medium text-secondary tracking-widest uppercase opacity-80">{t('qibla.location')}</span>
                          <Popover open={open} onOpenChange={setOpen}>
                             <PopoverTrigger asChild>
                                 <Button
@@ -194,7 +190,7 @@ export default function QiblaDirectionPage() {
                                     <div className="flex items-center gap-3">
                                         <span className="material-symbols-outlined text-primary">location_on</span>
                                         <span className="font-headline font-bold text-lg text-left">
-                                            {selectedCity ? `${selectedCity.city}, ${selectedCity.admin_name}` : "Select city..."}
+                                            {selectedCity ? `${selectedCity.city}, ${selectedCity.admin_name}` : t('qibla.selectCity')}
                                         </span>
                                     </div>
                                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -232,7 +228,7 @@ export default function QiblaDirectionPage() {
                     </div>
                      <Button onClick={handleGeoLocation} disabled={isGpsLoading} className="w-full mt-2">
                         {isGpsLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <span className="material-symbols-outlined mr-2">my_location</span>}
-                        Use my location
+                        {t('qibla.useMyLocation')}
                     </Button>
                 </section>
                 
@@ -263,15 +259,15 @@ export default function QiblaDirectionPage() {
                 <section className="w-full mt-12 grid grid-cols-1 gap-6">
                     <div className="bg-surface-container-low rounded-lg p-8 flex flex-col items-center justify-center text-center">
                         <span className="font-headline font-black text-6xl text-primary tracking-tighter mb-2">{Math.round(qiblaDirection)}° {getCardinalDirection(qiblaDirection)}</span>
-                        <p className="font-body text-on-surface-variant/80">Angle relative to North</p>
+                        <p className="font-body text-on-surface-variant/80">{t('qibla.angle')}</p>
                     </div>
                     <div className="bg-primary text-on-primary rounded-lg p-6 flex items-center gap-6 shadow-xl shadow-primary/10">
                         <div className="w-14 h-14 bg-on-primary/10 rounded-full flex items-center justify-center shrink-0">
                             <span className="material-symbols-outlined text-3xl">explore</span>
                         </div>
                         <div>
-                            <h3 className="font-headline font-bold text-lg mb-1">Facing the Kaaba</h3>
-                            <p className="font-body text-sm text-on-primary/80 leading-relaxed">Rotate your device until the needle aligns with the golden mosque icon.</p>
+                            <h3 className="font-headline font-bold text-lg mb-1">{t('qibla.facing')}</h3>
+                            <p className="font-body text-sm text-on-primary/80 leading-relaxed">{t('qibla.instructions')}</p>
                         </div>
                     </div>
                 </section>
@@ -279,15 +275,15 @@ export default function QiblaDirectionPage() {
                  {error && (
                     <Alert variant="destructive" className="mt-6 text-left w-full">
                         <span className="material-symbols-outlined h-4 w-4 mr-2">explore_off</span>
-                        <AlertTitle>Sensor Error</AlertTitle>
+                        <AlertTitle>{t('qibla.sensorErrorTitle')}</AlertTitle>
                         <AlertDescription>{error}</AlertDescription>
                     </Alert>
                 )}
 
                 <div className="w-full mt-8 grid grid-cols-1 gap-4">
                     <div className="bg-surface-container-high/50 p-4 rounded-lg flex flex-col items-center">
-                        <span className="font-label text-[10px] uppercase tracking-widest text-secondary mb-1">Distance</span>
-                        <span className="font-headline font-bold text-on-surface">{Math.round(distance)} km</span>
+                        <span className="font-label text-[10px] uppercase tracking-widest text-secondary mb-1">{t('qibla.distance')}</span>
+                        <span className="font-headline font-bold text-on-surface">{t('qibla.km').replace('{distance}', String(Math.round(distance)))}</span>
                     </div>
                 </div>
             </main>
@@ -295,23 +291,23 @@ export default function QiblaDirectionPage() {
             <nav className="fixed bottom-0 w-full z-50 pb-safe bg-surface/80 backdrop-blur-2xl flex justify-around items-center h-20 px-4 max-w-2xl mx-auto left-0 right-0">
                 <Link href="/home" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90 tap-highlight-none">
                     <span className="material-symbols-outlined">home</span>
-                    <span className="font-label text-sm font-medium tracking-wide">Home</span>
+                    <span className="font-label text-sm font-medium tracking-wide">{t('nav.home')}</span>
                 </Link>
                 <Link href="/prayer-times" className="flex flex-col items-center justify-center bg-primary text-on-primary rounded-full px-5 py-1.5 transition-all tap-highlight-none active:scale-90">
                      <span className="material-symbols-outlined" style={{fontVariationSettings: "'FILL' 1"}}>schedule</span>
-                    <span className="font-label text-sm font-medium tracking-wide">Prayer</span>
+                    <span className="font-label text-sm font-medium tracking-wide">{t('nav.prayer')}</span>
                 </Link>
                 <Link href="/tasbeeh" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90 tap-highlight-none">
                     <span className="material-symbols-outlined">adjust</span>
-                    <span className="font-label text-sm font-medium tracking-wide">Tasbeeh</span>
+                    <span className="font-label text-sm font-medium tracking-wide">{t('nav.tasbeeh')}</span>
                 </Link>
                 <Link href="/islamic-calendar" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90 tap-highlight-none">
                     <span className="material-symbols-outlined">calendar_month</span>
-                    <span className="font-label text-sm font-medium tracking-wide">Calendar</span>
+                    <span className="font-label text-sm font-medium tracking-wide">{t('nav.calendar')}</span>
                 </Link>
                 <Link href="/settings" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90 tap-highlight-none">
                     <span className="material-symbols-outlined">settings</span>
-                    <span className="font-label text-sm font-medium tracking-wide">Settings</span>
+                    <span className="font-label text-sm font-medium tracking-wide">{t('nav.settings')}</span>
                 </Link>
             </nav>
         </div>

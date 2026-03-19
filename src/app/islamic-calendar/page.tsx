@@ -5,9 +5,11 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { cn } from "@/lib/utils";
+import { useTranslation } from '@/hooks/use-translation';
 
 export default function IslamicCalendarPage() {
     const router = useRouter();
+    const { t, language } = useTranslation();
     const [viewedDate, setViewedDate] = useState(new Date());
     const [hijriHeaderParts, setHijriHeaderParts] = useState<{ month: string; year: string } | null>(null);
 
@@ -16,8 +18,8 @@ export default function IslamicCalendarPage() {
     useEffect(() => {
         const firstDayOfViewedMonth = new Date(viewedDate.getFullYear(), viewedDate.getMonth(), 1);
         try {
-            const hijriMonthFormatter = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', { month: 'long' });
-            const hijriYearFormatter = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', { year: 'numeric' });
+            const hijriMonthFormatter = new Intl.DateTimeFormat(language === 'ur' ? 'ar-SA-u-ca-islamic-umalqura' : 'en-u-ca-islamic-umalqura', { month: 'long' });
+            const hijriYearFormatter = new Intl.DateTimeFormat(language === 'ur' ? 'ar-SA-u-ca-islamic-umalqura' : 'en-u-ca-islamic-umalqura', { year: 'numeric' });
             setHijriHeaderParts({
                 month: hijriMonthFormatter.format(firstDayOfViewedMonth),
                 year: hijriYearFormatter.format(firstDayOfViewedMonth).split(' ')[0],
@@ -26,7 +28,7 @@ export default function IslamicCalendarPage() {
             console.error("Could not format Hijri header date:", e);
             setHijriHeaderParts(null);
         }
-    }, [viewedDate]);
+    }, [viewedDate, language]);
 
     const handlePrevMonth = () => {
         setViewedDate(current => new Date(current.getFullYear(), current.getMonth() - 1, 1));
@@ -43,8 +45,8 @@ export default function IslamicCalendarPage() {
     const firstDayOfWeek = new Date(viewedDate.getFullYear(), viewedDate.getMonth(), 1).getDay();
 
     const calendarDays = [];
-    const hijriDayFormatter = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', { day: 'numeric' });
-    const hijriMonthFormatterNum = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', { month: 'numeric' });
+    const hijriDayFormatter = new Intl.DateTimeFormat(language === 'ur' ? 'ar-SA-u-ca-islamic-umalqura' : 'en-u-ca-islamic-umalqura', { day: 'numeric' });
+    const hijriMonthFormatterNum = new Intl.DateTimeFormat(language === 'ur' ? 'ar-SA-u-ca-islamic-umalqura' : 'en-u-ca-islamic-umalqura', { month: 'numeric' });
     
     for (let i = 0; i < firstDayOfWeek; i++) {
         calendarDays.push(<div key={`empty-${i}`}></div>);
@@ -58,8 +60,6 @@ export default function IslamicCalendarPage() {
 
         try {
             hijriDay = hijriDayFormatter.format(dateForDay);
-            const hijriMonthNum = hijriMonthFormatterNum.format(dateForDay);
-
             const nextGregorianDay = new Date(dateForDay);
             nextGregorianDay.setDate(dateForDay.getDate() + 1);
             const currentHijriMonth = hijriMonthFormatterNum.format(dateForDay);
@@ -101,7 +101,7 @@ export default function IslamicCalendarPage() {
                         'absolute bottom-1.5 text-[9px] font-bold',
                         isToday ? 'text-on-primary/90' : 'text-secondary'
                     )}>
-                        Month End
+                        {t('calendar.monthEnd')}
                     </span>
                 )}
             </div>
@@ -115,7 +115,7 @@ export default function IslamicCalendarPage() {
                     <span className="material-symbols-outlined text-on-surface">arrow_back</span>
                 </button>
                 <Link href="/home">
-                    <h1 className="text-primary font-manrope font-extrabold tracking-tighter text-xl">Islamic Companion</h1>
+                    <h1 className="text-primary font-manrope font-extrabold tracking-tighter text-xl">{t('common.appName')}</h1>
                 </Link>
                 <button className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors active:scale-95 duration-200">
                     <span className="material-symbols-outlined text-on-surface">account_circle</span>
@@ -126,11 +126,11 @@ export default function IslamicCalendarPage() {
                 <section className="mb-10">
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                         <div>
-                            <span className="text-secondary font-semibold tracking-wider text-sm uppercase">Lunar Cycle</span>
+                            <span className="text-secondary font-semibold tracking-wider text-sm uppercase">{t('calendar.title')}</span>
                             {hijriHeaderParts ? (
                                 <h2 className="font-manrope font-extrabold text-4xl md:text-5xl text-on-surface mt-2 tracking-tight">{hijriHeaderParts.month} {hijriHeaderParts.year} AH</h2>
                             ): (
-                                <h2 className="font-manrope font-extrabold text-4xl md:text-5xl text-on-surface mt-2 tracking-tight">Loading...</h2>
+                                <h2 className="font-manrope font-extrabold text-4xl md:text-5xl text-on-surface mt-2 tracking-tight">{t('common.loading')}</h2>
                             )}
                         </div>
                         <div className="flex items-center gap-2 bg-surface-container-low p-1 rounded-full">
@@ -138,7 +138,7 @@ export default function IslamicCalendarPage() {
                                 <span className="material-symbols-outlined text-on-surface">chevron_left</span>
                             </button>
                              <button onClick={() => setViewedDate(new Date())} className="px-4 font-manrope font-bold text-sm text-center w-28 hover:bg-surface-container-high rounded-full py-1">
-                                Today
+                                {t('calendar.today')}
                             </button>
                             <button onClick={handleNextMonth} className="p-2 hover:bg-surface-container-high rounded-full transition-colors" aria-label="Next month">
                                 <span className="material-symbols-outlined text-on-surface">chevron_right</span>
@@ -148,13 +148,13 @@ export default function IslamicCalendarPage() {
                 </section>
                 
                 <div className="grid grid-cols-7 gap-1.5 mb-8">
-                    <div className="text-center py-1 text-on-surface-variant font-bold text-xs uppercase tracking-widest">Sun</div>
-                    <div className="text-center py-1 text-on-surface-variant font-bold text-xs uppercase tracking-widest">Mon</div>
-                    <div className="text-center py-1 text-on-surface-variant font-bold text-xs uppercase tracking-widest">Tue</div>
-                    <div className="text-center py-1 text-on-surface-variant font-bold text-xs uppercase tracking-widest">Wed</div>
-                    <div className="text-center py-1 text-on-surface-variant font-bold text-xs uppercase tracking-widest">Thu</div>
-                    <div className="text-center py-1 text-on-surface-variant font-bold text-xs uppercase tracking-widest">Fri</div>
-                    <div className="text-center py-1 text-on-surface-variant font-bold text-xs uppercase tracking-widest">Sat</div>
+                    <div className="text-center py-1 text-on-surface-variant font-bold text-xs uppercase tracking-widest">{t('calendar.sun')}</div>
+                    <div className="text-center py-1 text-on-surface-variant font-bold text-xs uppercase tracking-widest">{t('calendar.mon')}</div>
+                    <div className="text-center py-1 text-on-surface-variant font-bold text-xs uppercase tracking-widest">{t('calendar.tue')}</div>
+                    <div className="text-center py-1 text-on-surface-variant font-bold text-xs uppercase tracking-widest">{t('calendar.wed')}</div>
+                    <div className="text-center py-1 text-on-surface-variant font-bold text-xs uppercase tracking-widest">{t('calendar.thu')}</div>
+                    <div className="text-center py-1 text-on-surface-variant font-bold text-xs uppercase tracking-widest">{t('calendar.fri')}</div>
+                    <div className="text-center py-1 text-on-surface-variant font-bold text-xs uppercase tracking-widest">{t('calendar.sat')}</div>
                     {calendarDays}
                 </div>
             </main>
@@ -162,23 +162,23 @@ export default function IslamicCalendarPage() {
             <nav className="fixed bottom-0 w-full z-50 pb-safe bg-surface/80 backdrop-blur-2xl flex justify-around items-center h-20 px-4 max-w-2xl mx-auto left-0 right-0">
                 <Link href="/home" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90 tap-highlight-none">
                     <span className="material-symbols-outlined">home</span>
-                    <span className="font-label text-sm font-medium tracking-wide">Home</span>
+                    <span className="font-label text-sm font-medium tracking-wide">{t('nav.home')}</span>
                 </Link>
                 <Link href="/prayer-times" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90 tap-highlight-none">
                      <span className="material-symbols-outlined">schedule</span>
-                    <span className="font-label text-sm font-medium tracking-wide">Prayer</span>
+                    <span className="font-label text-sm font-medium tracking-wide">{t('nav.prayer')}</span>
                 </Link>
                 <Link href="/tasbeeh" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90 tap-highlight-none">
                     <span className="material-symbols-outlined">adjust</span>
-                    <span className="font-label text-sm font-medium tracking-wide">Tasbeeh</span>
+                    <span className="font-label text-sm font-medium tracking-wide">{t('nav.tasbeeh')}</span>
                 </Link>
                  <Link href="/islamic-calendar" className="flex flex-col items-center justify-center bg-primary text-on-primary rounded-full px-5 py-1.5 transition-all tap-highlight-none active:scale-90">
                     <span className="material-symbols-outlined" style={{fontVariationSettings: "'FILL' 1"}}>calendar_month</span>
-                    <span className="font-label text-sm font-medium tracking-wide">Calendar</span>
+                    <span className="font-label text-sm font-medium tracking-wide">{t('nav.calendar')}</span>
                 </Link>
                 <Link href="/settings" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90 tap-highlight-none">
                     <span className="material-symbols-outlined">settings</span>
-                    <span className="font-label text-sm font-medium tracking-wide">Settings</span>
+                    <span className="font-label text-sm font-medium tracking-wide">{t('nav.settings')}</span>
                 </Link>
             </nav>
         </div>

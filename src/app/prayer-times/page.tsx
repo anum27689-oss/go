@@ -23,6 +23,7 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover";
 import { pakistanCities, type City } from '@/lib/pakistan-cities';
+import { useTranslation } from '@/hooks/use-translation';
 
 type Prayer = {
     name: string;
@@ -34,13 +35,7 @@ type PrayerData = {
     date: { readable: string };
 };
 
-const prayerNames = [
-    { key: 'Fajr', name: 'Fajr', description: 'Dawn Prayer', icon: 'wb_sunny' },
-    { key: 'Dhuhr', name: 'Dhuhr', description: 'Noon Prayer', icon: 'sunny' },
-    { key: 'Asr', name: 'Asr', description: 'Afternoon Prayer', icon: 'wb_twilight' },
-    { key: 'Maghrib', name: 'Maghrib', description: 'Sunset Prayer', icon: 'clear_night' },
-    { key: 'Isha', name: 'Isha', description: 'Night Prayer', icon: 'bedtime' },
-];
+const prayerNameKeys = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
 
 const parseTimeToDate = (timeStr: string, date: Date = new Date()) => {
     const [hours, minutes] = timeStr.split(':').map(Number);
@@ -51,6 +46,16 @@ const parseTimeToDate = (timeStr: string, date: Date = new Date()) => {
 
 export default function PrayerTimesPage() {
     const router = useRouter();
+    const { t } = useTranslation();
+
+    const prayerNames = useMemo(() => [
+        { key: 'Fajr', name: t('prayer.fajr'), description: t('prayer.dawn'), icon: 'wb_sunny' },
+        { key: 'Dhuhr', name: t('prayer.dhuhr'), description: t('prayer.noon'), icon: 'sunny' },
+        { key: 'Asr', name: t('prayer.asr'), description: t('prayer.afternoon'), icon: 'wb_twilight' },
+        { key: 'Maghrib', name: t('prayer.maghrib'), description: t('prayer.sunset'), icon: 'clear_night' },
+        { key: 'Isha', name: t('prayer.isha'), description: t('prayer.night'), icon: 'bedtime' },
+    ], [t]);
+
     const [selectedCity, setSelectedCity] = useState<City | null>(null);
     const [prayerTimes, setPrayerTimes] = useState<Prayer[]>([]);
     const [nextPrayerInfo, setNextPrayerInfo] = useState({ name: '', minutesUntil: -1, time: '' });
@@ -128,17 +133,19 @@ export default function PrayerTimesPage() {
             
             const minutesUntil = Math.max(0, Math.round((nextPrayerTime.getTime() - now.getTime()) / (1000 * 60)));
             
-            if (nextPrayerInfo.name !== nextPrayer.name || nextPrayerInfo.minutesUntil !== minutesUntil) {
+            const nextPrayerName = prayerNames.find(p => p.key === nextPrayer.name)?.name || nextPrayer.name;
+
+            if (nextPrayerInfo.name !== nextPrayerName || nextPrayerInfo.minutesUntil !== minutesUntil) {
                 setNextPrayerInfo({
-                    name: nextPrayer.name,
+                    name: nextPrayerName,
                     minutesUntil: minutesUntil,
                     time: nextPrayer.time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: timeFormat === '12h' })
                 });
 
                 if (minutesUntil === 0 && notificationsEnabled && notificationPermission === 'granted') {
                     playAdhan();
-                    new Notification(`It's time for ${nextPrayer.name} prayer.`, {
-                        body: `The time for ${nextPrayer.name} has begun.`,
+                    new Notification(`It's time for ${nextPrayerName} prayer.`, {
+                        body: `The time for ${nextPrayerName} has begun.`,
                         icon: '/icon.png' 
                     });
                 }
@@ -148,7 +155,7 @@ export default function PrayerTimesPage() {
         const interval = setInterval(calculateNextPrayer, 1000);
         return () => clearInterval(interval);
 
-    }, [prayerTimes, nextPrayerInfo, notificationsEnabled, notificationPermission, timeFormat]);
+    }, [prayerTimes, nextPrayerInfo, notificationsEnabled, notificationPermission, timeFormat, prayerNames]);
     
     const fetchPrayerTimes = async (lat: number, lng: number) => {
         setIsLoading(true);
@@ -158,16 +165,16 @@ export default function PrayerTimesPage() {
             const url = `https://api.aladhan.com/v1/timings/${dateString}?latitude=${lat}&longitude=${lng}&method=${calculationMethod}`;
             
             const response = await fetch(url);
-            if (!response.ok) throw new Error('Failed to fetch prayer times');
+            if (!response.ok) throw new Error(t('prayer.error'));
             
             const data: { data: PrayerData } = await response.json();
             const timings = data.data.timings;
             
             localStorage.setItem(`prayerTimes_${lat}_${lng}`, JSON.stringify(timings));
 
-            const mappedPrayers = prayerNames.map(p => ({
-                name: p.key,
-                time: timings[p.key]
+            const mappedPrayers = prayerNameKeys.map(p => ({
+                name: p,
+                time: timings[p]
             }));
 
             setPrayerTimes(mappedPrayers);
@@ -176,9 +183,9 @@ export default function PrayerTimesPage() {
             const cachedTimings = localStorage.getItem(`prayerTimes_${lat}_${lng}`);
             if (cachedTimings) {
                 const timings = JSON.parse(cachedTimings);
-                const mappedPrayers = prayerNames.map(p => ({
-                    name: p.key,
-                    time: timings[p.key]
+                const mappedPrayers = prayerNameKeys.map(p => ({
+                    name: p,
+                    time: timings[p]
                 }));
                 setPrayerTimes(mappedPrayers);
             }
@@ -189,17 +196,17 @@ export default function PrayerTimesPage() {
     
     const handleGeoLocation = () => {
         if (!navigator.geolocation) {
-            alert('Geolocation is not supported by your browser.');
+            alert(t('prayer.geoError'));
             return;
         }
         setIsGpsLoading(true);
         navigator.geolocation.getCurrentPosition((position) => {
             const { latitude, longitude } = position.coords;
-             const city: City = { city: "Current Location", lat: latitude, lng: longitude, country: "...", admin_name: "" };
+             const city: City = { city: t('prayer.location'), lat: latitude, lng: longitude, country: "...", admin_name: "" };
              setSelectedCity(city);
              setIsGpsLoading(false);
         }, () => {
-            alert('Unable to retrieve your location. Please enable location services.');
+            alert(t('prayer.geoPermissionError'));
             setIsGpsLoading(false);
         });
     };
@@ -243,7 +250,7 @@ export default function PrayerTimesPage() {
             }
              return { ...prayerInfo, time, period: '' };
         });
-    }, [prayerTimes, timeFormat]);
+    }, [prayerTimes, timeFormat, prayerNames]);
 
     return (
         <div className="bg-surface font-body text-on-surface antialiased">
@@ -253,7 +260,7 @@ export default function PrayerTimesPage() {
                     <button onClick={() => router.back()} className="flex items-center justify-center p-2 rounded-full hover:bg-surface-container-high transition-colors active:scale-95 duration-200">
                         <span className="material-symbols-outlined text-on-surface">arrow_back</span>
                     </button>
-                    <Link href="/home" className="text-primary font-manrope font-extrabold tracking-tighter text-xl">Islamic Companion</Link>
+                    <Link href="/home" className="text-primary font-manrope font-extrabold tracking-tighter text-xl">{t('common.appName')}</Link>
                 </div>
                  <div className="flex items-center gap-2">
                     <button className="flex items-center justify-center p-2 rounded-full hover:bg-surface-container-high transition-colors active:scale-95 duration-200">
@@ -268,7 +275,7 @@ export default function PrayerTimesPage() {
             <main className="pt-24 pb-32 px-6 max-w-2xl mx-auto min-h-screen">
                 <section className="mb-10 grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
                     <div className="flex flex-col gap-1">
-                        <span className="text-label-md font-medium text-secondary tracking-widest uppercase opacity-80">Current Location</span>
+                        <span className="text-label-md font-medium text-secondary tracking-widest uppercase opacity-80">{t('prayer.location')}</span>
                          <Popover open={open} onOpenChange={setOpen}>
                             <PopoverTrigger asChild>
                                 <Button
@@ -280,7 +287,7 @@ export default function PrayerTimesPage() {
                                     <div className="flex items-center gap-3">
                                         <span className="material-symbols-outlined text-primary">location_on</span>
                                         <span className="font-headline font-bold text-lg text-left">
-                                            {selectedCity ? `${selectedCity.city}, ${selectedCity.admin_name}` : "Select city..."}
+                                            {selectedCity ? `${selectedCity.city}, ${selectedCity.admin_name}` : t('prayer.selectCity')}
                                         </span>
                                     </div>
                                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -318,7 +325,7 @@ export default function PrayerTimesPage() {
                     </div>
                      <Button onClick={handleGeoLocation} disabled={isGpsLoading} className="w-full md:w-auto">
                         {isGpsLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <span className="material-symbols-outlined mr-2">my_location</span>}
-                        Use my location
+                        {t('prayer.useMyLocation')}
                     </Button>
                 </section>
 
@@ -329,10 +336,10 @@ export default function PrayerTimesPage() {
                         </div>
                     ) : (
                         <div className="relative z-10">
-                            <p className="font-label text-label-md uppercase tracking-[0.2em] mb-2 opacity-90">Up Next</p>
+                            <p className="font-label text-label-md uppercase tracking-[0.2em] mb-2 opacity-90">{t('prayer.upNext')}</p>
                             <h2 className="font-headline font-extrabold text-4xl mb-1 leading-none">{nextPrayerInfo.name}</h2>
                             <p className="font-body text-xl font-medium opacity-80">
-                                {nextPrayerInfo.minutesUntil > 0 ? `in ${nextPrayerInfo.minutesUntil} minutes` : (nextPrayerInfo.minutesUntil === 0 ? 'Now' : '...')}
+                                {nextPrayerInfo.minutesUntil > 0 ? t('prayer.inMinutes').replace('{minutes}', String(nextPrayerInfo.minutesUntil)) : (nextPrayerInfo.minutesUntil === 0 ? t('prayer.now') : '...')}
                             </p>
                         </div>
                     )}
@@ -356,7 +363,7 @@ export default function PrayerTimesPage() {
                         ))
                     ) : (
                         formattedPrayerTimes.map(prayer => {
-                            const isActive = nextPrayerInfo.name === prayer.key;
+                            const isActive = nextPrayerInfo.name === prayer.name;
                             return (
                                 <div key={prayer.key} className={`relative overflow-hidden p-5 rounded-lg flex items-center justify-between transition-all group ${isActive ? 'bg-primary text-on-primary shadow-xl shadow-primary/10 ring-2 ring-primary' : 'bg-surface-container-lowest hover:bg-surface-container-low'}`}>
                                     <div className="flex items-center gap-5 z-10">
@@ -382,7 +389,7 @@ export default function PrayerTimesPage() {
                 <div className="mt-12 p-6 rounded-lg bg-surface-container-high flex items-center justify-between">
                     <div className="flex items-center gap-4">
                         <span className="material-symbols-outlined text-primary">notifications_active</span>
-                        <span className="font-headline font-bold text-on-surface">Adhan Notifications</span>
+                        <span className="font-headline font-bold text-on-surface">{t('prayer.adhan')}</span>
                     </div>
                     <Switch checked={notificationsEnabled} onCheckedChange={handleNotificationToggle} />
                 </div>
@@ -391,23 +398,23 @@ export default function PrayerTimesPage() {
              <nav className="fixed bottom-0 w-full z-50 pb-safe bg-surface/80 backdrop-blur-2xl flex justify-around items-center h-20 px-4 max-w-2xl mx-auto left-0 right-0">
                 <Link href="/home" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 tap-highlight-none active:scale-90 transition-transform">
                     <span className="material-symbols-outlined">home</span>
-                    <span className="font-label text-sm font-medium tracking-wide">Home</span>
+                    <span className="font-label text-sm font-medium tracking-wide">{t('nav.home')}</span>
                 </Link>
                 <Link href="/prayer-times" className="flex flex-col items-center justify-center bg-primary text-on-primary rounded-full px-5 py-1.5 transition-all tap-highlight-none active:scale-90">
                     <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>schedule</span>
-                    <span className="font-label text-sm font-medium tracking-wide">Prayer</span>
+                    <span className="font-label text-sm font-medium tracking-wide">{t('nav.prayer')}</span>
                 </Link>
                 <Link href="/tasbeeh" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90">
                     <span className="material-symbols-outlined">adjust</span>
-                    <span className="font-label text-sm font-medium tracking-wide">Tasbeeh</span>
+                    <span className="font-label text-sm font-medium tracking-wide">{t('nav.tasbeeh')}</span>
                 </Link>
                 <Link href="/islamic-calendar" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90">
                     <span className="material-symbols-outlined">calendar_month</span>
-                    <span className="font-label text-sm font-medium tracking-wide">Calendar</span>
+                    <span className="font-label text-sm font-medium tracking-wide">{t('nav.calendar')}</span>
                 </Link>
                 <Link href="/settings" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 tap-highlight-none active:scale-90 transition-transform">
                     <span className="material-symbols-outlined">settings</span>
-                    <span className="font-label text-sm font-medium tracking-wide">Settings</span>
+                    <span className="font-label text-sm font-medium tracking-wide">{t('nav.settings')}</span>
                 </Link>
             </nav>
         </div>

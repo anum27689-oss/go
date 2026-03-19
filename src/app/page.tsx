@@ -2,9 +2,11 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from '@/hooks/use-translation';
 
 export default function Splash() {
   const router = useRouter();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -39,8 +41,8 @@ export default function Splash() {
             {/* Branding Text Cluster */}
             <div className="space-y-3">
                 <h1 className="font-headline tracking-tighter text-on-surface">
-                    <span className="block text-3xl font-extrabold text-primary leading-tight">Islamic Daily</span>
-                    <span className="block text-base font-light tracking-widest text-on-surface-variant uppercase">Companion</span>
+                    <span className="block text-3xl font-extrabold text-primary leading-tight">{t('splash.title1')}</span>
+                    <span className="block text-base font-light tracking-widest text-on-surface-variant uppercase">{t('splash.title2')}</span>
                 </h1>
                 {/* Editorial Accent Line */}
                 <div className="flex justify-center pt-2">
@@ -51,7 +53,7 @@ export default function Splash() {
 
         {/* Footer / Metadata (Editorial Style) */}
         <div className="absolute bottom-16 left-0 w-full flex flex-col items-center gap-6">
-            <p className="font-body text-xs text-on-surface-variant/60 tracking-[0.2em] font-medium">EST. 2024</p>
+            <p className="font-body text-xs text-on-surface-variant/60 tracking-[0.2em] font-medium">{t('splash.est')}</p>
             {/* Subtle Loading Indicator */}
             <div className="flex gap-2 animate-pulse">
                 <div className="w-1.5 h-1.5 rounded-full bg-primary/20"></div>

@@ -2,15 +2,32 @@
 "use client";
 
 import Link from 'next/link';
+import { useTranslation } from '@/hooks/use-translation';
+import { useMemo } from 'react';
 
 export default function HomePage() {
+  const { t } = useTranslation();
+
+  const title = useMemo(() => {
+    const translated = t('home.title');
+    const parts = translated.split(/<1>|<\/1>/);
+    return (
+        <>
+            {parts[0]}
+            <span className="text-primary">{parts[1]}</span>
+            {parts[2]}
+        </>
+    )
+  }, [t]);
+
+
   return (
     <div className="bg-surface font-body text-on-surface antialiased">
       {/* TopAppBar */}
       <header className="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl flex justify-between items-center px-6 h-16 max-w-2xl mx-auto left-0 right-0">
         <Link href="/home" className="flex items-center gap-2">
             <span className="material-symbols-outlined text-primary">brightness_3</span>
-            <h1 className="font-headline font-bold text-xl tracking-tight text-primary">Islamic Companion</h1>
+            <h1 className="font-headline font-bold text-xl tracking-tight text-primary">{t('common.appName')}</h1>
         </Link>
         <button className="hover:bg-surface-container-high transition-colors p-2 rounded-full active:scale-95 duration-200">
             <span className="material-symbols-outlined text-on-surface-variant">account_circle</span>
@@ -21,8 +38,8 @@ export default function HomePage() {
       <main className="pt-24 pb-44 px-6 max-w-2xl mx-auto w-full min-h-screen">
         {/* Hero Section: Dynamic Greeting */}
         <section className="mb-10">
-            <p className="text-label-md font-medium text-secondary tracking-widest uppercase mb-2">As-salaam-alaikum</p>
-            <h2 className="font-headline font-extrabold text-4xl text-on-surface leading-tight">Your path to <br/><span className="text-primary">peace and devotion</span></h2>
+            <p className="text-label-md font-medium text-secondary tracking-widest uppercase mb-2">{t('home.greeting')}</p>
+            <h2 className="font-headline font-extrabold text-4xl text-on-surface leading-tight">{title}</h2>
         </section>
 
         {/* Bento Grid Navigation */}
@@ -32,8 +49,8 @@ export default function HomePage() {
                 <div className="z-10 flex flex-col items-start h-full justify-between">
                     <span className="material-symbols-outlined text-4xl">schedule</span>
                     <div className="text-left">
-                        <p className="font-headline font-bold text-2xl">Prayer Times</p>
-                        <p className="opacity-80 text-sm">Next: Asr at 3:45 PM</p>
+                        <p className="font-headline font-bold text-2xl">{t('home.prayerTimes')}</p>
+                        <p className="opacity-80 text-sm">{t('home.nextPrayer').replace('{prayer}', 'Asr').replace('{time}', '3:45 PM')}</p>
                     </div>
                 </div>
                 {/* Abstract Pattern background */}
@@ -43,25 +60,25 @@ export default function HomePage() {
             {/* 2. Tasbeeh Counter */}
             <Link href="/tasbeeh" className="flex flex-col items-center justify-center p-6 bg-surface-container-low rounded-lg h-44 hover:bg-surface-container-high transition-colors active:scale-95 duration-200">
                 <span className="material-symbols-outlined text-secondary text-3xl mb-4">adjust</span>
-                <span className="font-headline font-bold text-lg text-on-surface">Tasbeeh</span>
+                <span className="font-headline font-bold text-lg text-on-surface">{t('home.tasbeeh')}</span>
             </Link>
 
             {/* 3. Qibla Direction */}
             <Link href="/qibla" className="flex flex-col items-center justify-center p-6 bg-surface-container-low rounded-lg h-44 hover:bg-surface-container-high transition-colors active:scale-95 duration-200">
                 <span className="material-symbols-outlined text-secondary text-3xl mb-4">explore</span>
-                <span className="font-headline font-bold text-lg text-on-surface">Qibla</span>
+                <span className="font-headline font-bold text-lg text-on-surface">{t('home.qibla')}</span>
             </Link>
 
             {/* 4. Quran Audio */}
             <Link href="/quran-audio" className="flex flex-col items-center justify-center p-6 bg-surface-container-low rounded-lg h-44 hover:bg-surface-container-high transition-colors active:scale-95 duration-200">
                 <span className="material-symbols-outlined text-secondary text-3xl mb-4">volume_up</span>
-                <span className="font-headline font-bold text-lg text-on-surface">Quran Audio</span>
+                <span className="font-headline font-bold text-lg text-on-surface">{t('home.quranAudio')}</span>
             </Link>
 
             {/* 5. Islamic Calendar */}
             <Link href="/islamic-calendar" className="flex flex-col items-center justify-center p-6 bg-surface-container-low rounded-lg h-44 hover:bg-surface-container-high transition-colors active:scale-95 duration-200">
                 <span className="material-symbols-outlined text-secondary text-3xl mb-4">calendar_month</span>
-                <span className="font-headline font-bold text-lg text-on-surface">Calendar</span>
+                <span className="font-headline font-bold text-lg text-on-surface">{t('home.calendar')}</span>
             </Link>
         </div>
 
@@ -69,14 +86,14 @@ export default function HomePage() {
         <section className="mt-10 mb-6">
             <div className="w-full h-24 bg-surface-container-highest rounded-lg flex items-center justify-center overflow-hidden border border-outline-variant/15">
                 <div className="text-center">
-                    <p className="text-[10px] text-on-surface-variant uppercase tracking-widest mb-1">Sponsored Content</p>
+                    <p className="text-[10px] text-on-surface-variant uppercase tracking-widest mb-1">{t('home.sponsored')}</p>
                     <div className="flex items-center gap-3">
                         <div className="w-12 h-12 rounded bg-primary/10 flex items-center justify-center">
                             <span className="material-symbols-outlined text-primary text-xl">card_giftcard</span>
                         </div>
                         <div className="text-left">
-                            <p className="text-xs font-bold text-on-surface">Support your local Masjid</p>
-                            <p className="text-[10px] text-on-surface-variant">Donate today to help the community</p>
+                            <p className="text-xs font-bold text-on-surface">{t('home.masjidAdTitle')}</p>
+                            <p className="text-[10px] text-on-surface-variant">{t('home.masjidAdSubtitle')}</p>
                         </div>
                     </div>
                 </div>
@@ -88,23 +105,23 @@ export default function HomePage() {
       <nav className="fixed bottom-0 w-full z-50 pb-safe bg-surface/80 backdrop-blur-2xl flex justify-around items-center h-20 px-4 max-w-2xl mx-auto left-0 right-0">
         <Link href="/home" className="flex flex-col items-center justify-center bg-primary text-on-primary rounded-full px-5 py-1.5 transition-all active:scale-90">
             <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>home</span>
-            <span className="font-label text-sm font-medium tracking-wide">Home</span>
+            <span className="font-label text-sm font-medium tracking-wide">{t('nav.home')}</span>
         </Link>
         <Link href="/prayer-times" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90">
             <span className="material-symbols-outlined">schedule</span>
-            <span className="font-label text-sm font-medium tracking-wide">Prayer</span>
+            <span className="font-label text-sm font-medium tracking-wide">{t('nav.prayer')}</span>
         </Link>
         <Link href="/tasbeeh" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90">
             <span className="material-symbols-outlined">adjust</span>
-            <span className="font-label text-sm font-medium tracking-wide">Tasbeeh</span>
+            <span className="font-label text-sm font-medium tracking-wide">{t('nav.tasbeeh')}</span>
         </Link>
         <Link href="/islamic-calendar" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90">
             <span className="material-symbols-outlined">calendar_month</span>
-            <span className="font-label text-sm font-medium tracking-wide">Calendar</span>
+            <span className="font-label text-sm font-medium tracking-wide">{t('nav.calendar')}</span>
         </Link>
         <Link href="/settings" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 transition-transform active:scale-90">
             <span className="material-symbols-outlined">settings</span>
-            <span className="font-label text-sm font-medium tracking-wide">Settings</span>
+            <span className="font-label text-sm font-medium tracking-wide">{t('nav.settings')}</span>
         </Link>
       </nav>
 
