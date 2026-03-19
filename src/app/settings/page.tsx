@@ -18,9 +18,6 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from '@/hooks/use-translation';
 import { cn } from '@/lib/utils';
-import { useUser } from '@/firebase';
-import { signOut } from '@/firebase/auth/actions';
-import { UserAvatar } from '@/components/auth/UserAvatar';
 
 const calculationMethods = [
     { value: '1', label: 'Jafari (Ithna Ashari)' },
@@ -48,7 +45,6 @@ export default function SettingsPage() {
     const [timeFormat, setTimeFormat] = useState('12h');
     const [notificationsEnabled, setNotificationsEnabled] = useState(false);
     const { toast } = useToast();
-    const { user } = useUser();
 
     useEffect(() => {
         setMounted(true);
@@ -103,12 +99,6 @@ export default function SettingsPage() {
     const handleRateApp = () => {
         window.open('https://play.google.com/store/apps/details?id=com.islamicdailycompanion.app', '_blank');
     };
-
-    const handleSignOut = async () => {
-        await signOut();
-        toast({ title: t('settings.toast.signedOut'), description: t('settings.toast.signedOutDesc') });
-        router.push('/home');
-    };
     
     if (!mounted) {
         return null; // Avoid hydration mismatch
@@ -125,23 +115,13 @@ export default function SettingsPage() {
                         <h1 className="font-manrope font-bold text-xl tracking-tight text-primary">{t('common.appName')}</h1>
                     </Link>
                 </div>
-                 <UserAvatar />
             </header>
 
             <main className="pt-24 pb-28 px-6 max-w-2xl mx-auto space-y-8">
-                 <section className="bg-surface-container-low p-6 rounded-lg flex items-center gap-5">
-                    <div className="w-16 h-16 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container">
-                        <span className="material-symbols-outlined text-4xl" style={{fontVariationSettings: "'FILL' 1"}}>person</span>
-                    </div>
-                    <div>
-                        <h2 className={cn("font-headline font-bold text-xl", language === 'en' ? 'tracking-tight' : '')}>{t('settings.greeting').replace('{name}', user?.displayName || t('common.guest'))}</h2>
-                        <p className="text-on-surface-variant text-sm font-medium">{user?.email || t('settings.subtitle')}</p>
-                    </div>
-                </section>
                 
-                <section className="space-y-4">
-                    <h3 className={cn("text-secondary font-headline font-bold text-sm uppercase px-2", language === 'en' ? 'tracking-wider' : 'tracking-widest')}>{t('settings.general')}</h3>
-                    <div className="bg-surface-container-lowest rounded-lg overflow-hidden divide-y divide-outline-variant/10">
+                <section className="space-y-4 md:space-y-0 md:flex md:gap-4 md:items-start">
+                    <h3 className={cn("text-secondary font-headline font-bold text-sm uppercase px-2 md:w-1/3", language === 'en' ? 'tracking-wider' : 'tracking-widest')}>{t('settings.general')}</h3>
+                    <div className="bg-surface-container-lowest rounded-lg overflow-hidden divide-y divide-outline-variant/10 flex-1">
                         <div className="flex flex-col items-start gap-4 p-5 md:flex-row md:items-center md:justify-between">
                             <div className="flex items-center gap-4">
                                 <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-secondary">
@@ -152,9 +132,9 @@ export default function SettingsPage() {
                                     <p className="text-xs text-on-surface-variant font-medium">{t('settings.currentLanguage').replace('{lang}', language === 'en' ? t('settings.english') : t('settings.urdu'))}</p>
                                 </div>
                             </div>
-                            <div className="flex bg-surface-container p-1 rounded-full">
-                                <button onClick={() => handleLanguageChange('en')} className={`px-4 py-1.5 rounded-full text-xs font-bold transition-colors ${language === 'en' ? 'bg-primary text-on-primary' : 'text-on-surface-variant'}`}>{t('settings.english')}</button>
-                                <button onClick={() => handleLanguageChange('ur')} className={`px-4 py-1.5 rounded-full text-xs font-bold transition-colors ${language === 'ur' ? 'bg-primary text-on-primary' : 'text-on-surface-variant'}`}>{t('settings.urdu')}</button>
+                            <div className="flex bg-surface-container p-1 rounded-full self-stretch md:self-center">
+                                <button onClick={() => handleLanguageChange('en')} className={`flex-1 text-center px-4 py-1.5 rounded-full text-xs font-bold transition-colors ${language === 'en' ? 'bg-primary text-on-primary' : 'text-on-surface-variant'}`}>{t('settings.english')}</button>
+                                <button onClick={() => handleLanguageChange('ur')} className={`flex-1 text-center px-4 py-1.5 rounded-full text-xs font-bold transition-colors ${language === 'ur' ? 'bg-primary text-on-primary' : 'text-on-surface-variant'}`}>{t('settings.urdu')}</button>
                             </div>
                         </div>
 
@@ -168,10 +148,10 @@ export default function SettingsPage() {
                                     <p className="text-xs text-on-surface-variant font-medium capitalize">{theme === 'system' ? t('settings.themeSystem') : t(theme === 'light' ? 'settings.themeLight' : 'settings.themeDark')}</p>
                                 </div>
                             </div>
-                            <div className="flex flex-wrap items-center gap-1 bg-surface-container p-1 rounded-full">
-                                <button onClick={() => setTheme('light')} className={`px-3 py-1.5 text-xs font-bold rounded-full transition-colors ${theme === 'light' ? 'bg-primary text-on-primary' : 'text-on-surface-variant'}`}>{t('settings.themeLight')}</button>
-                                <button onClick={() => setTheme('dark')} className={`px-3 py-1.5 text-xs font-bold rounded-full transition-colors ${theme === 'dark' ? 'bg-primary text-on-primary' : 'text-on-surface-variant'}`}>{t('settings.themeDark')}</button>
-                                <button onClick={() => setTheme('system')} className={`px-3 py-1.5 text-xs font-bold rounded-full transition-colors ${theme === 'system' ? 'bg-primary text-on-primary' : 'text-on-surface-variant'}`}>{t('settings.themeSystem')}</button>
+                            <div className="flex flex-wrap items-center gap-1 bg-surface-container p-1 rounded-full self-stretch md:self-center">
+                                <button onClick={() => setTheme('light')} className={`flex-1 text-center px-3 py-1.5 text-xs font-bold rounded-full transition-colors ${theme === 'light' ? 'bg-primary text-on-primary' : 'text-on-surface-variant'}`}>{t('settings.themeLight')}</button>
+                                <button onClick={() => setTheme('dark')} className={`flex-1 text-center px-3 py-1.5 text-xs font-bold rounded-full transition-colors ${theme === 'dark' ? 'bg-primary text-on-primary' : 'text-on-surface-variant'}`}>{t('settings.themeDark')}</button>
+                                <button onClick={() => setTheme('system')} className={`flex-1 text-center px-3 py-1.5 text-xs font-bold rounded-full transition-colors ${theme === 'system' ? 'bg-primary text-on-primary' : 'text-on-surface-variant'}`}>{t('settings.themeSystem')}</button>
                             </div>
                         </div>
                     </div>
@@ -265,30 +245,6 @@ export default function SettingsPage() {
                     </div>
                 </section>
                 
-                 <section>
-                    {user ? (
-                        <button onClick={handleSignOut} className="w-full flex items-center justify-between p-5 bg-surface-container-lowest rounded-lg hover:bg-surface-container-high transition-colors group">
-                            <div className="flex items-center gap-4 text-destructive">
-                                <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center">
-                                    <span className="material-symbols-outlined">logout</span>
-                                </div>
-                                <p className="font-semibold text-left">{t('settings.signOut')}</p>
-                            </div>
-                            <span className="material-symbols-outlined text-destructive/80 group-hover:translate-x-1 transition-transform">chevron_right</span>
-                        </button>
-                    ) : (
-                        <Link href="/login" className="w-full flex items-center justify-between p-5 bg-surface-container-lowest rounded-lg hover:bg-surface-container-high transition-colors group">
-                            <div className="flex items-center gap-4 text-primary">
-                                <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center">
-                                    <span className="material-symbols-outlined">login</span>
-                                </div>
-                                <p className="font-semibold text-left">{t('settings.signIn')}</p>
-                            </div>
-                            <span className="material-symbols-outlined text-primary/80 group-hover:translate-x-1 transition-transform">chevron_right</span>
-                        </Link>
-                    )}
-                </section>
-
                 <div className="pt-8 text-center space-y-2">
                     <span className="material-symbols-outlined text-4xl text-primary">brightness_3</span>
                     <p className="font-manrope font-black tracking-tighter text-on-surface-variant">Version 2026 — v1.0.0</p>
