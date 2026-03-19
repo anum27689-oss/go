@@ -18,7 +18,7 @@
   },
   "home": {
     "greeting": "As-salaam-alaikum",
-    "title": "Your daily path to <1>peace</1>",
+    "title": "Your daily path to peace.",
     "prayerTimes": "Prayer Times",
     "nextPrayer": "Next: {prayer} at {time}",
     "tasbeeh": "Tasbeeh",
@@ -50,7 +50,8 @@
     "adhan": "Adhan Notifications",
     "error": "Failed to fetch prayer times",
     "geoError": "Geolocation is not supported by your browser.",
-    "geoPermissionError": "Unable to retrieve your location. Please enable location services."
+    "geoPermissionError": "Unable to retrieve your location. Please enable location services.",
+    "notificationTitle": "Prayer Time Reminder"
   },
   "tasbeeh": {
     "title": "Digital Tasbeeh",

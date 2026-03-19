@@ -77,22 +77,29 @@ export default function SettingsPage() {
     const handleNotificationToggle = async (checked: boolean) => {
         setNotificationsEnabled(checked);
         localStorage.setItem('adhanNotifications', String(checked));
-
-        if (checked && 'Notification' in window && Notification.permission !== 'granted') {
-            const permission = await Notification.requestPermission();
-            if (permission !== 'granted') {
-                setNotificationsEnabled(false);
-                localStorage.setItem('adhanNotifications', 'false');
-                toast({
-                    variant: "destructive",
-                    title: t('settings.toast.permissionDenied'),
-                    description: t('settings.toast.permissionDeniedDesc')
-                });
-            } else {
-                 toast({ title: t('settings.toast.notificationsEnabled'), description: t('settings.toast.notificationsEnabledDesc') });
+    
+        if (checked) {
+            if ('Notification' in window && Notification.permission !== 'granted') {
+                const permission = await Notification.requestPermission();
+                if (permission !== 'granted') {
+                    setNotificationsEnabled(false);
+                    localStorage.setItem('adhanNotifications', 'false');
+                    toast({
+                        variant: "destructive",
+                        title: t('settings.toast.permissionDenied'),
+                        description: t('settings.toast.permissionDeniedDesc')
+                    });
+                } else {
+                     toast({ title: t('settings.toast.notificationsEnabled'), description: t('settings.toast.notificationsEnabledDesc') });
+                }
+            } else if (Notification.permission === 'granted') {
+                toast({ title: t('settings.toast.settingsSaved'), description: t('settings.toast.notificationsEnabled') });
             }
         } else {
-            toast({ title: t('settings.toast.settingsSaved'), description: t(checked ? 'settings.toast.notificationsEnabled' : 'settings.toast.notificationsDisabled') });
+            if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+                navigator.serviceWorker.controller.postMessage({ type: 'CANCEL_PRAYERS' });
+            }
+            toast({ title: t('settings.toast.settingsSaved'), description: t('settings.toast.notificationsDisabled') });
         }
     };
     

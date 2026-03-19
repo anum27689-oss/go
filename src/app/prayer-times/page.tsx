@@ -145,10 +145,6 @@ export default function PrayerTimesPage() {
 
                 if (minutesUntil === 0 && notificationsEnabled && notificationPermission === 'granted') {
                     playAdhan();
-                    new Notification(`It's time for ${nextPrayerName} prayer.`, {
-                        body: `The time for ${nextPrayerName} has begun.`,
-                        icon: '/icon.png' 
-                    });
                 }
             }
         };
@@ -179,6 +175,33 @@ export default function PrayerTimesPage() {
             }));
 
             setPrayerTimes(mappedPrayers);
+            
+            // Schedule notifications if enabled
+            const adhanEnabled = localStorage.getItem('adhanNotifications') === 'true';
+            const perm = 'Notification' in window ? Notification.permission : 'denied';
+
+            if (adhanEnabled && perm === 'granted') {
+                const prayerDates = prayerNameKeys.map(p => {
+                    const prayerInfo = prayerNames.find(pi => pi.key === p);
+                    return {
+                        name: prayerInfo?.name || p,
+                        date: parseTimeToDate(timings[p]).toISOString()
+                    }
+                });
+
+                if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+                    navigator.serviceWorker.controller.postMessage({
+                        type: 'SCHEDULE_PRAYERS',
+                        payload: {
+                            prayers: prayerDates,
+                            translations: {
+                                title: t('prayer.notificationTitle'),
+                            }
+                        }
+                    });
+                }
+            }
+
         } catch (error) {
             console.error("Error fetching prayer times:", error);
             const cachedTimings = localStorage.getItem(`prayerTimes_${lat}_${lng}`);
@@ -213,18 +236,32 @@ export default function PrayerTimesPage() {
     };
 
     const handleNotificationToggle = async (checked: boolean) => {
-        setNotificationsEnabled(checked);
         localStorage.setItem('adhanNotifications', String(checked));
+        setNotificationsEnabled(checked);
 
-        if (checked && 'Notification' in window) {
-            if (notificationPermission !== 'granted') {
-                const permission = await Notification.requestPermission();
-                setNotificationPermission(permission);
-                if (permission !== 'granted') {
-                    setNotificationsEnabled(false);
-                    localStorage.setItem('adhanNotifications', 'false');
-                    alert("You have disabled notifications. Please enable them in your browser settings to receive Azan alerts.");
+        if (checked) {
+            if ('Notification' in window) {
+                let permission = Notification.permission;
+                if (permission === 'default') {
+                    permission = await Notification.requestPermission();
                 }
+                setNotificationPermission(permission);
+
+                if (permission === 'granted') {
+                    // Force a refetch and reschedule of prayer times
+                    if(selectedCity) {
+                       fetchPrayerTimes(selectedCity.lat, selectedCity.lng);
+                    }
+                } else {
+                    localStorage.setItem('adhanNotifications', 'false');
+                    setNotificationsEnabled(false);
+                    alert(t('settings.toast.permissionDeniedDesc'));
+                }
+            }
+        } else {
+            // When toggled off, cancel all scheduled notifications
+            if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+                navigator.serviceWorker.controller.postMessage({ type: 'CANCEL_PRAYERS' });
             }
         }
     };
@@ -267,7 +304,6 @@ export default function PrayerTimesPage() {
                     <button className="flex items-center justify-center p-2 rounded-full hover:bg-surface-container-high transition-colors active:scale-95 duration-200">
                         <span className="material-symbols-outlined text-on-surface">brightness_3</span>
                     </button>
-                    <UserAvatar />
                 </div>
             </header>
 

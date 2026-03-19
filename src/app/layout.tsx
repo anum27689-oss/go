@@ -1,3 +1,4 @@
+
 import type { Metadata } from 'next';
 import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
@@ -5,6 +6,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { LanguageProvider } from '@/hooks/use-translation';
 import { FirebaseClientProvider } from '@/firebase/client-provider';
 import { FirebaseErrorListener } from '@/components/FirebaseErrorListener';
+import { ServiceWorkerRegistrar } from '@/components/ServiceWorkerRegistrar';
 
 export const metadata: Metadata = {
   title: 'Islamic Daily Companion',
@@ -38,6 +40,7 @@ export default function RootLayout({
               </div>
               <Toaster />
               <FirebaseErrorListener />
+              <ServiceWorkerRegistrar />
             </ThemeProvider>
           </LanguageProvider>
         </FirebaseClientProvider>
