@@ -188,7 +188,7 @@ export default function HomePage() {
             </Link>
 
             {/* 4. Quran Audio */}
-            <Link href="/quran-audio" className="flex flex-col items-center justify-center p-6 bg-surface-container-low rounded-lg h-44 hover:bg-surface-container-high transition-colors active:scale-95 duration-200">
+            <Link href="/quran-audio" className="flex flex-col items-center justify-center p-6 bg-surface-container-low rounded-lg h-44 hover:bg-surface-container-high transition-colors active:scale-95 duration-200 text-center">
                 <span className="material-symbols-outlined text-secondary text-3xl mb-4">volume_up</span>
                 <span className="font-headline font-bold text-lg text-on-surface">{t('home.quranAudio')}</span>
             </Link>
@@ -202,26 +202,26 @@ export default function HomePage() {
       </main>
 
       {/* BottomNavBar */}
-      <nav className="fixed bottom-0 w-full z-50 bg-surface/80 backdrop-blur-2xl flex justify-around items-center h-20 px-4 max-w-2xl mx-auto left-0 right-0 pb-[env(safe-area-inset-bottom)]">
-        <Link href="/home" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 tap-highlight-none active:scale-90 transition-transform">
-            <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>home</span>
-            <span className="font-inter text-label-md font-medium tracking-wide">{t('nav.home')}</span>
+      <nav className="fixed bottom-0 w-full z-50 bg-surface/80 backdrop-blur-2xl flex justify-around items-center h-20 px-2 max-w-2xl mx-auto left-0 right-0 pb-[env(safe-area-inset-bottom)]">
+        <Link href="/home" className="flex flex-col items-center justify-center gap-1 bg-primary text-on-primary rounded-xl p-2 h-14 w-16 transition-all duration-200 active:scale-90 tap-highlight-none">
+            <span className="material-symbols-outlined" style={{fontVariationSettings: "'FILL' 1"}}>home</span>
+            <span className="text-xs font-bold">{t('nav.home')}</span>
         </Link>
-        <Link href="/prayer-times" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 tap-highlight-none active:scale-90 transition-transform">
+        <Link href="/prayer-times" className="flex flex-col items-center justify-center gap-1 text-on-surface-variant rounded-xl p-2 h-14 w-16 transition-all duration-200 active:scale-90 tap-highlight-none hover:bg-surface-container-high">
             <span className="material-symbols-outlined">schedule</span>
-            <span className="font-inter text-label-md font-medium tracking-wide">{t('nav.prayer')}</span>
+            <span className="text-xs font-medium">{t('nav.prayer')}</span>
         </Link>
-        <Link href="/tasbeeh" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 tap-highlight-none active:scale-90 transition-transform">
+        <Link href="/tasbeeh" className="flex flex-col items-center justify-center gap-1 text-on-surface-variant rounded-xl p-2 h-14 w-16 transition-all duration-200 active:scale-90 tap-highlight-none hover:bg-surface-container-high">
             <span className="material-symbols-outlined">adjust</span>
-            <span className="font-inter text-label-md font-medium tracking-wide">{t('nav.tasbeeh')}</span>
+            <span className="text-xs font-medium">{t('nav.tasbeeh')}</span>
         </Link>
-        <Link href="/islamic-calendar" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 tap-highlight-none active:scale-90 transition-transform">
+        <Link href="/islamic-calendar" className="flex flex-col items-center justify-center gap-1 text-on-surface-variant rounded-xl p-2 h-14 w-16 transition-all duration-200 active:scale-90 tap-highlight-none hover:bg-surface-container-high">
             <span className="material-symbols-outlined">calendar_month</span>
-            <span className="font-inter text-label-md font-medium tracking-wide">{t('nav.calendar')}</span>
+            <span className="text-xs font-medium">{t('nav.calendar')}</span>
         </Link>
-        <Link href="/settings" className="flex flex-col items-center justify-center text-on-surface-variant opacity-70 hover:opacity-100 tap-highlight-none active:scale-90 transition-transform">
+        <Link href="/settings" className="flex flex-col items-center justify-center gap-1 text-on-surface-variant rounded-xl p-2 h-14 w-16 transition-all duration-200 active:scale-90 tap-highlight-none hover:bg-surface-container-high">
             <span className="material-symbols-outlined">settings</span>
-            <span className="font-inter text-label-md font-medium tracking-wide">{t('nav.settings')}</span>
+            <span className="text-xs font-medium">{t('nav.settings')}</span>
         </Link>
       </nav>
 
