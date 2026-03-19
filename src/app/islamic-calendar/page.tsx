@@ -56,19 +56,10 @@ export default function IslamicCalendarPage() {
         const isToday = day === todayDayOfMonth;
         const dateForDay = new Date(viewedDate.getFullYear(), viewedDate.getMonth(), day);
         
-        let hijriDay, isMonthEnd = false;
+        let hijriDay;
 
         try {
             hijriDay = hijriDayFormatter.format(dateForDay);
-            const nextGregorianDay = new Date(dateForDay);
-            nextGregorianDay.setDate(dateForDay.getDate() + 1);
-            const currentHijriMonth = hijriMonthFormatterNum.format(dateForDay);
-            const nextHijriMonth = hijriMonthFormatterNum.format(nextGregorianDay);
-
-            if (currentHijriMonth !== nextHijriMonth) {
-                isMonthEnd = true;
-            }
-
         } catch {
             hijriDay = '-';
         }
@@ -96,14 +87,6 @@ export default function IslamicCalendarPage() {
                 )}>
                     {hijriDay}
                 </span>
-                {isMonthEnd && (
-                    <span className={cn(
-                        'absolute bottom-1.5 text-[9px] font-bold',
-                        isToday ? 'text-on-primary/90' : 'text-secondary'
-                    )}>
-                        {t('calendar.monthEnd')}
-                    </span>
-                )}
             </div>
         );
     }
@@ -122,13 +105,13 @@ export default function IslamicCalendarPage() {
                 </button>
             </header>
 
-            <main className="pt-24 px-6 max-w-2xl mx-auto">
+            <main className="pt-24 pb-28 px-6 max-w-2xl mx-auto">
                 <section className="mb-10">
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                         <div>
                             <span className="text-secondary font-semibold tracking-wider text-sm uppercase">{t('calendar.title')}</span>
                             {hijriHeaderParts ? (
-                                <h2 className="font-manrope font-extrabold text-4xl md:text-5xl text-on-surface mt-2 tracking-tight">{hijriHeaderParts.month} {hijriHeaderParts.year} AH</h2>
+                                <h2 className={cn("font-manrope font-extrabold text-on-surface mt-2 tracking-tight", language === 'en' ? 'text-3xl md:text-4xl' : 'text-4xl md:text-5xl')}>{hijriHeaderParts.month} {hijriHeaderParts.year} AH</h2>
                             ): (
                                 <h2 className="font-manrope font-extrabold text-4xl md:text-5xl text-on-surface mt-2 tracking-tight">{t('common.loading')}</h2>
                             )}

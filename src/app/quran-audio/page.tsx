@@ -5,6 +5,7 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useTranslation } from '@/hooks/use-translation';
+import { cn } from '@/lib/utils';
 
 // Define the type for a single Surah
 type Surah = {
@@ -29,7 +30,7 @@ const FAVORITE_SURAHS_KEY = 'quran_favorites';
 
 export default function QuranAudioPage() {
     const router = useRouter();
-    const { t } = useTranslation();
+    const { t, language } = useTranslation();
     const [allSurahs, setAllSurahs] = useState<Surah[]>([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [isLoading, setIsLoading] = useState(true);
@@ -179,9 +180,9 @@ export default function QuranAudioPage() {
                 </button>
             </header>
 
-            <main className="pt-24 pb-56 px-6 max-w-2xl mx-auto">
+            <main className="pt-24 pb-40 px-6 max-w-2xl mx-auto">
                 <section className="mb-10">
-                    <h2 className="font-headline font-extrabold text-4xl mb-6 tracking-tight">{t('quran.title')}</h2>
+                    <h2 className={cn("font-headline font-extrabold text-4xl mb-6 tracking-tight", language === 'en' && 'text-3xl')}>{t('quran.title')}</h2>
                     <div className="relative flex items-center">
                         <div className="absolute left-4 pointer-events-none">
                             <span className="material-symbols-outlined text-secondary">search</span>
@@ -279,7 +280,7 @@ export default function QuranAudioPage() {
             </main>
 
             {currentlyPlaying && (
-                 <div className="fixed bottom-24 left-0 right-0 z-40 px-4 max-w-2xl mx-auto">
+                 <div className="fixed bottom-20 left-0 right-0 z-40 px-4 max-w-2xl mx-auto">
                     <div className="bg-surface/90 backdrop-blur-2xl p-4 rounded-xl flex items-center gap-4 shadow-xl border border-outline-variant/10">
                         <div className="w-12 h-12 rounded-lg bg-primary shrink-0 flex items-center justify-center relative overflow-hidden group cursor-pointer">
                             <div className="absolute inset-0 bg-gradient-to-br from-primary to-primary-container"></div>

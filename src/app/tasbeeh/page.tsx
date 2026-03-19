@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useTranslation } from '@/hooks/use-translation';
+import { cn } from '@/lib/utils';
 
 const TASBEEH_COUNT_KEY = 'tasbeeh_count';
 const STREAK_START_DATE_KEY = 'tasbeeh_streak_start_date';
@@ -16,7 +17,7 @@ export default function TasbeehCounterPage() {
   const [lastSessionTaps, setLastSessionTaps] = useState(0);
   const [showHistory, setShowHistory] = useState(false);
   const router = useRouter();
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
 
   useEffect(() => {
     const savedCount = localStorage.getItem(TASBEEH_COUNT_KEY);
@@ -86,11 +87,11 @@ export default function TasbeehCounterPage() {
         </header>
 
         {/* Main Content Canvas */}
-        <main className="flex-grow pt-24 pb-32 px-6 flex flex-col items-center justify-center max-w-lg mx-auto w-full">
+        <main className="flex-grow pt-24 pb-28 px-6 flex flex-col items-center justify-center max-w-lg mx-auto w-full">
             {/* Editorial Header Section */}
             <section className="w-full text-center mb-12">
                 <p className="text-secondary font-headline font-bold tracking-widest uppercase text-xs mb-2">{t('tasbeeh.header')}</p>
-                <h2 className="text-on-surface font-headline font-extrabold text-4xl mb-4 leading-tight">{t('tasbeeh.title')}</h2>
+                <h2 className={cn("text-on-surface font-headline font-extrabold text-4xl mb-4 leading-tight", language === 'en' && 'text-3xl')}>{t('tasbeeh.title')}</h2>
                 <div className="inline-flex items-center gap-2 bg-surface-container-low px-4 py-2 rounded-full">
                     <span className="material-symbols-outlined text-secondary text-sm" style={{fontVariationSettings: "'FILL' 1"}}>auto_awesome</span>
                     <span className="text-on-surface-variant text-label-md font-medium">{t('tasbeeh.dhikr')}</span>

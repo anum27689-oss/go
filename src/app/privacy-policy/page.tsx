@@ -1,13 +1,15 @@
+
 "use client";
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTranslation } from '@/hooks/use-translation';
+import { cn } from '@/lib/utils';
 
 export default function PrivacyPolicyPage() {
   const router = useRouter();
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
 
   return (
     <div className="bg-surface text-on-surface min-h-screen">
@@ -23,10 +25,10 @@ export default function PrivacyPolicyPage() {
           </button>
       </header>
 
-      <main className="pt-24 pb-12 px-6 max-w-2xl mx-auto">
+      <main className="pt-24 pb-28 px-6 max-w-2xl mx-auto">
         <Card>
           <CardHeader>
-            <CardTitle>{t('privacy.title')}</CardTitle>
+            <CardTitle className={cn(language === 'en' && 'text-xl')}>{t('privacy.title')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 prose dark:prose-invert max-w-none">
             <p>{t('privacy.lastUpdated').replace('{date}', new Date().toLocaleDateString())}</p>

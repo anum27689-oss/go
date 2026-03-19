@@ -46,7 +46,7 @@ const parseTimeToDate = (timeStr: string, date: Date = new Date()) => {
 
 export default function PrayerTimesPage() {
     const router = useRouter();
-    const { t } = useTranslation();
+    const { t, language } = useTranslation();
 
     const prayerNames = useMemo(() => [
         { key: 'Fajr', name: t('prayer.fajr'), description: t('prayer.dawn'), icon: 'wb_sunny' },
@@ -272,8 +272,8 @@ export default function PrayerTimesPage() {
                 </div>
             </header>
 
-            <main className="pt-24 pb-32 px-6 max-w-2xl mx-auto min-h-screen">
-                <section className="mb-10 grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
+            <main className="pt-24 pb-28 px-6 max-w-2xl mx-auto min-h-screen">
+                <section className={cn("mb-10 grid grid-cols-1 md:grid-cols-2 gap-4 items-end", language === 'en' && 'mb-8')}>
                     <div className="flex flex-col gap-1">
                         <span className="text-label-md font-medium text-secondary tracking-widest uppercase opacity-80">{t('prayer.location')}</span>
                          <Popover open={open} onOpenChange={setOpen}>
@@ -329,16 +329,16 @@ export default function PrayerTimesPage() {
                     </Button>
                 </section>
 
-                <section className="mb-12 relative overflow-hidden rounded-lg bg-primary-container p-8 text-on-primary-container">
+                <section className={cn("mb-12 relative overflow-hidden rounded-lg bg-primary-container text-on-primary-container", language === 'en' ? "p-6 mb-10" : "p-8")}>
                     {isLoading ? (
                          <div className="flex items-center justify-center h-24">
                             <Loader2 className="h-8 w-8 animate-spin text-on-primary-container" />
                         </div>
                     ) : (
                         <div className="relative z-10">
-                            <p className="font-label text-label-md uppercase tracking-[0.2em] mb-2 opacity-90">{t('prayer.upNext')}</p>
-                            <h2 className="font-headline font-extrabold text-4xl mb-1 leading-none">{nextPrayerInfo.name}</h2>
-                            <p className="font-body text-xl font-medium opacity-80">
+                            <p className={cn("font-label text-label-md uppercase mb-2 opacity-90", language === 'en' ? "tracking-widest" : "tracking-[0.2em]")}>{t('prayer.upNext')}</p>
+                            <h2 className={cn("font-headline font-extrabold text-4xl mb-1 leading-none", language === 'en' && 'text-3xl')}>{nextPrayerInfo.name}</h2>
+                            <p className={cn("font-body text-xl font-medium opacity-80", language === 'en' && 'text-base')}>
                                 {nextPrayerInfo.minutesUntil > 0 ? t('prayer.inMinutes').replace('{minutes}', String(nextPrayerInfo.minutesUntil)) : (nextPrayerInfo.minutesUntil === 0 ? t('prayer.now') : '...')}
                             </p>
                         </div>

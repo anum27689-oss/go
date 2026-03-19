@@ -5,10 +5,11 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTranslation } from '@/hooks/use-translation';
+import { cn } from '@/lib/utils';
 
 export default function AboutPage() {
   const router = useRouter();
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
 
   return (
     <div className="bg-surface text-on-surface min-h-screen">
@@ -24,10 +25,10 @@ export default function AboutPage() {
           </button>
       </header>
 
-      <main className="pt-24 pb-12 px-6 max-w-2xl mx-auto">
+      <main className="pt-24 pb-28 px-6 max-w-2xl mx-auto">
         <Card>
           <CardHeader>
-            <CardTitle>{t('settings.about')}</CardTitle>
+            <CardTitle className={cn(language === 'en' && 'text-xl')}>{t('settings.about')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 prose dark:prose-invert max-w-none">
             <p>

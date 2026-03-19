@@ -3,6 +3,7 @@
 
 import Link from 'next/link';
 import { useTranslation } from '@/hooks/use-translation';
+import { cn } from "@/lib/utils";
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { pakistanCities, type City } from '@/lib/pakistan-cities';
 
@@ -18,7 +19,7 @@ const parseTimeToDate = (timeStr: string, date: Date = new Date()) => {
 const prayerNameKeys = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
 
 export default function HomePage() {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const [nextPrayerInfo, setNextPrayerInfo] = useState<{ name: string; countdown: string }>({ name: t('common.loading'), countdown: '' });
   const [isLoading, setIsLoading] = useState(true);
 
@@ -150,11 +151,11 @@ export default function HomePage() {
       </header>
 
       {/* Main Content */}
-      <main className="pt-24 pb-44 px-6 max-w-2xl mx-auto w-full min-h-screen">
+      <main className="pt-24 pb-28 px-6 max-w-2xl mx-auto w-full min-h-screen">
         {/* Hero Section: Dynamic Greeting */}
-        <section className="mb-10">
+        <section className={cn("mb-10", language === 'en' && "mb-8")}>
             <p className="text-label-md font-medium text-secondary tracking-widest uppercase mb-2">{t('home.greeting')}</p>
-            <h2 className="font-headline font-extrabold text-4xl text-on-surface leading-tight">{title}</h2>
+            <h2 className={cn("font-headline font-extrabold text-4xl text-on-surface leading-tight", language === 'en' && "tracking-tight")}>{title}</h2>
         </section>
 
         {/* Bento Grid Navigation */}

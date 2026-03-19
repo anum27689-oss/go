@@ -17,6 +17,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from '@/hooks/use-translation';
+import { cn } from '@/lib/utils';
 
 const calculationMethods = [
     { value: '1', label: 'Jafari (Ithna Ashari)' },
@@ -119,19 +120,19 @@ export default function SettingsPage() {
                 </button>
             </header>
 
-            <main className="pt-24 pb-32 px-6 max-w-2xl mx-auto space-y-8">
+            <main className="pt-24 pb-28 px-6 max-w-2xl mx-auto space-y-8">
                  <section className="bg-surface-container-low p-6 rounded-lg flex items-center gap-5">
                     <div className="w-16 h-16 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container">
                         <span className="material-symbols-outlined text-4xl" style={{fontVariationSettings: "'FILL' 1"}}>person</span>
                     </div>
                     <div>
-                        <h2 className="font-headline font-bold text-xl tracking-tight">{t('settings.greeting').replace('{name}', t('common.guest'))}</h2>
+                        <h2 className={cn("font-headline font-bold text-xl", language === 'en' ? 'tracking-tight' : '')}>{t('settings.greeting').replace('{name}', t('common.guest'))}</h2>
                         <p className="text-on-surface-variant text-sm font-medium">{t('settings.subtitle')}</p>
                     </div>
                 </section>
                 
                 <section className="space-y-4">
-                    <h3 className="text-secondary font-headline font-bold text-sm uppercase tracking-widest px-2">{t('settings.general')}</h3>
+                    <h3 className={cn("text-secondary font-headline font-bold text-sm uppercase px-2", language === 'en' ? 'tracking-wider' : 'tracking-widest')}>{t('settings.general')}</h3>
                     <div className="bg-surface-container-lowest rounded-lg overflow-hidden divide-y divide-outline-variant/10">
                         <div className="flex items-center justify-between p-5">
                             <div className="flex items-center gap-4">
@@ -169,7 +170,7 @@ export default function SettingsPage() {
                 </section>
                 
                 <section className="space-y-4">
-                    <h3 className="text-secondary font-headline font-bold text-sm uppercase tracking-widest px-2">{t('settings.prayerPrefs')}</h3>
+                    <h3 className={cn("text-secondary font-headline font-bold text-sm uppercase px-2", language === 'en' ? 'tracking-wider' : 'tracking-widest')}>{t('settings.prayerPrefs')}</h3>
                     <div className="bg-surface-container-lowest rounded-lg divide-y divide-outline-variant/10">
                          <div className="p-5">
                             <div className="flex items-center justify-between">
@@ -224,7 +225,7 @@ export default function SettingsPage() {
                 </section>
 
                  <section className="space-y-4">
-                    <h3 className="text-secondary font-headline font-bold text-sm uppercase tracking-widest px-2">{t('settings.support')}</h3>
+                    <h3 className={cn("text-secondary font-headline font-bold text-sm uppercase px-2", language === 'en' ? 'tracking-wider' : 'tracking-widest')}>{t('settings.support')}</h3>
                     <div className="bg-surface-container-lowest rounded-lg divide-y divide-outline-variant/10">
                         <Link href="/privacy-policy" className="w-full flex items-center justify-between p-5 hover:bg-surface-container-high transition-colors group">
                             <div className="flex items-center gap-4">

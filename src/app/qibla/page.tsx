@@ -175,7 +175,7 @@ export default function QiblaDirectionPage() {
                 </div>
             </header>
 
-            <main className="min-h-screen pt-24 pb-32 px-6 flex flex-col items-center max-w-xl mx-auto">
+            <main className="min-h-screen pt-24 pb-28 px-6 flex flex-col items-center max-w-xl mx-auto">
                  <section className="w-full mb-8">
                      <div className="flex flex-col gap-1">
                         <span className="text-label-md font-medium text-secondary tracking-widest uppercase opacity-80">{t('qibla.location')}</span>
