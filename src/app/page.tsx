@@ -23,7 +23,7 @@ export default function Splash() {
         </div>
         
         {/* Centerpiece Container */}
-        <div className="relative z-10 flex flex-col items-center gap-12 max-w-xs text-center">
+        <div className="relative z-10 flex flex-col items-center text-center">
             {/* Minimalist Crescent Icon */}
             <div className="relative flex items-center justify-center">
                 {/* Outer Glow */}
@@ -34,39 +34,6 @@ export default function Splash() {
                         brightness_3
                     </span>
                 </div>
-            </div>
-            
-            {/* Branding Text Cluster */}
-            <div className="space-y-3">
-                <h1 className="font-headline tracking-tighter text-on-surface">
-                    <span className="block text-4xl font-extrabold text-primary leading-tight">Islamic Daily</span>
-                    <span className="block text-xl font-light tracking-widest text-on-surface-variant uppercase">Companion</span>
-                </h1>
-                 {/* Editorial Accent Line */}
-                <div className="flex justify-center pt-2">
-                    <div className="h-[1px] w-8 bg-outline-variant/30"></div>
-                </div>
-            </div>
-        </div>
-
-        {/* Footer / Metadata (Editorial Style) */}
-        <div className="absolute bottom-16 left-0 w-full flex flex-col items-center gap-6">
-            <p className="font-body text-label-md text-on-surface-variant/60 tracking-[0.2em] font-medium">EST. 2024</p>
-            {/* Subtle Loading Indicator */}
-            <div className="flex gap-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-primary/20"></div>
-                <div className="w-1.5 h-1.5 rounded-full bg-primary/40"></div>
-                <div className="w-1.5 h-1.5 rounded-full bg-primary/20"></div>
-            </div>
-        </div>
-
-        {/* Decorative Pattern (Asymmetric Editorial Touch) */}
-        <div className="absolute top-12 left-12 opacity-5 pointer-events-none">
-            <div className="grid grid-cols-2 gap-4">
-                <div className="w-1 h-1 bg-on-surface rounded-full"></div>
-                <div className="w-1 h-1 bg-on-surface rounded-full"></div>
-                <div className="w-1 h-1 bg-on-surface rounded-full"></div>
-                <div className="w-1 h-1 bg-on-surface rounded-full"></div>
             </div>
         </div>
     </main>
