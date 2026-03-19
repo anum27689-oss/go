@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect } from 'react';
@@ -33,9 +32,22 @@ export default function Splash() {
                 <div className="absolute w-32 h-32 rounded-full bg-secondary-container/10 blur-3xl animate-pulse"></div>
                 {/* Icon Shell */}
                 <div className="relative w-24 h-24 bg-surface-container-lowest flex items-center justify-center rounded-full shadow-lg">
-                    <span className="material-symbols-outlined text-[64px] text-secondary" style={{fontVariationSettings: "'FILL' 0, 'wght' 100"}}>
-                        brightness_3
-                    </span>
+                    <svg
+                      width="56"
+                      height="56"
+                      viewBox="0 0 100 100"
+                      className="text-secondary"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        fill="currentColor"
+                        d="M80.6,23.1C65.5,6.5,43.2-1.9,23.1,3.8c-1.8,0.5-3,2.4-2.5,4.2c0.5,1.8,2.4,3,4.2,2.5c16.3-4.7,34.1,2.1,46.3,16.5 c13.2,15.5,15.6,36.5,6,54.2C67.3,95.7,53,101.8,39,100.8c-1.8-0.2-3.5,1.1-3.7,2.9c-0.2,1.8,1.1,3.5,2.9,3.7 c15.9,1.1,32.3-5.7,43.3-22.1C93.7,65.8,92.9,43.1,80.6,23.1z"
+                      />
+                      <polygon
+                        fill="currentColor"
+                        points="69.4,36.7 63.5,47.9 51.6,47.9 60.6,55.1 57.2,66.6 66.5,59.9 75.8,66.6 72.4,55.1 81.4,47.9 69.4,47.9"
+                      />
+                    </svg>
                 </div>
             </div>
             
