@@ -145,6 +145,8 @@
     "rate": "Rate App",
     "about": "About App",
     "version": "VERSION 1.0.0 (2024)",
+    "signIn": "Sign In / Sign Up",
+    "signOut": "Sign Out",
     "toast": {
         "settingsSaved": "Settings Saved",
         "calcMethodUpdated": "Prayer calculation method updated.",
@@ -157,7 +159,9 @@
         "permissionDenied": "Permission Denied",
         "permissionDeniedDesc": "Please enable notifications in your browser settings.",
         "comingSoon": "Coming Soon!",
-        "featureNotAvailable": "This feature is not yet available."
+        "featureNotAvailable": "This feature is not yet available.",
+        "signedOut": "Signed Out",
+        "signedOutDesc": "You have been successfully signed out."
     }
   }
 }

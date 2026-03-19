@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { cn } from "@/lib/utils";
 import { useTranslation } from '@/hooks/use-translation';
+import { UserAvatar } from '@/components/auth/UserAvatar';
 
 export default function IslamicCalendarPage() {
     const router = useRouter();
@@ -100,9 +101,7 @@ export default function IslamicCalendarPage() {
                 <Link href="/home">
                     <h1 className="text-primary font-manrope font-extrabold tracking-tighter text-xl">{t('common.appName')}</h1>
                 </Link>
-                <button className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors active:scale-95 duration-200">
-                    <span className="material-symbols-outlined text-on-surface">account_circle</span>
-                </button>
+                <UserAvatar />
             </header>
 
             <main className="pt-24 pb-28 px-6 max-w-2xl mx-auto">

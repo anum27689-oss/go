@@ -18,6 +18,9 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from '@/hooks/use-translation';
 import { cn } from '@/lib/utils';
+import { useUser } from '@/firebase';
+import { signOut } from '@/firebase/auth/actions';
+import { UserAvatar } from '@/components/auth/UserAvatar';
 
 const calculationMethods = [
     { value: '1', label: 'Jafari (Ithna Ashari)' },
@@ -45,6 +48,7 @@ export default function SettingsPage() {
     const [timeFormat, setTimeFormat] = useState('12h');
     const [notificationsEnabled, setNotificationsEnabled] = useState(false);
     const { toast } = useToast();
+    const { user } = useUser();
 
     useEffect(() => {
         setMounted(true);
@@ -99,6 +103,12 @@ export default function SettingsPage() {
     const handleRateApp = () => {
         window.open('https://play.google.com/store/apps/details?id=com.islamicdailycompanion.app', '_blank');
     };
+
+    const handleSignOut = async () => {
+        await signOut();
+        toast({ title: t('settings.toast.signedOut'), description: t('settings.toast.signedOutDesc') });
+        router.push('/home');
+    };
     
     if (!mounted) {
         return null; // Avoid hydration mismatch
@@ -115,9 +125,7 @@ export default function SettingsPage() {
                         <h1 className="font-manrope font-bold text-xl tracking-tight text-primary">{t('common.appName')}</h1>
                     </Link>
                 </div>
-                 <button className="flex items-center justify-center p-2 rounded-full hover:bg-surface-container-high transition-colors active:scale-95 duration-200">
-                    <span className="material-symbols-outlined text-on-surface">account_circle</span>
-                </button>
+                 <UserAvatar />
             </header>
 
             <main className="pt-24 pb-28 px-6 max-w-2xl mx-auto space-y-8">
@@ -126,15 +134,15 @@ export default function SettingsPage() {
                         <span className="material-symbols-outlined text-4xl" style={{fontVariationSettings: "'FILL' 1"}}>person</span>
                     </div>
                     <div>
-                        <h2 className={cn("font-headline font-bold text-xl", language === 'en' ? 'tracking-tight' : '')}>{t('settings.greeting').replace('{name}', t('common.guest'))}</h2>
-                        <p className="text-on-surface-variant text-sm font-medium">{t('settings.subtitle')}</p>
+                        <h2 className={cn("font-headline font-bold text-xl", language === 'en' ? 'tracking-tight' : '')}>{t('settings.greeting').replace('{name}', user?.displayName || t('common.guest'))}</h2>
+                        <p className="text-on-surface-variant text-sm font-medium">{user?.email || t('settings.subtitle')}</p>
                     </div>
                 </section>
                 
                 <section className="space-y-4">
                     <h3 className={cn("text-secondary font-headline font-bold text-sm uppercase px-2", language === 'en' ? 'tracking-wider' : 'tracking-widest')}>{t('settings.general')}</h3>
                     <div className="bg-surface-container-lowest rounded-lg overflow-hidden divide-y divide-outline-variant/10">
-                        <div className="flex flex-col items-start gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="flex flex-col items-start gap-4 p-5 md:flex-row md:items-center md:justify-between">
                             <div className="flex items-center gap-4">
                                 <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-secondary">
                                     <span className="material-symbols-outlined">language</span>
@@ -150,7 +158,7 @@ export default function SettingsPage() {
                             </div>
                         </div>
 
-                        <div className="flex flex-col items-start gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="flex flex-col items-start gap-4 p-5 md:flex-row md:items-center md:justify-between">
                             <div className="flex items-center gap-4">
                                 <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-secondary">
                                     <span className="material-symbols-outlined">dark_mode</span>
@@ -257,6 +265,30 @@ export default function SettingsPage() {
                     </div>
                 </section>
                 
+                 <section>
+                    {user ? (
+                        <button onClick={handleSignOut} className="w-full flex items-center justify-between p-5 bg-surface-container-lowest rounded-lg hover:bg-surface-container-high transition-colors group">
+                            <div className="flex items-center gap-4 text-destructive">
+                                <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center">
+                                    <span className="material-symbols-outlined">logout</span>
+                                </div>
+                                <p className="font-semibold text-left">{t('settings.signOut')}</p>
+                            </div>
+                            <span className="material-symbols-outlined text-destructive/80 group-hover:translate-x-1 transition-transform">chevron_right</span>
+                        </button>
+                    ) : (
+                        <Link href="/login" className="w-full flex items-center justify-between p-5 bg-surface-container-lowest rounded-lg hover:bg-surface-container-high transition-colors group">
+                            <div className="flex items-center gap-4 text-primary">
+                                <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center">
+                                    <span className="material-symbols-outlined">login</span>
+                                </div>
+                                <p className="font-semibold text-left">{t('settings.signIn')}</p>
+                            </div>
+                            <span className="material-symbols-outlined text-primary/80 group-hover:translate-x-1 transition-transform">chevron_right</span>
+                        </Link>
+                    )}
+                </section>
+
                 <div className="pt-8 text-center space-y-2">
                     <span className="material-symbols-outlined text-4xl text-primary">brightness_3</span>
                     <p className="font-manrope font-black tracking-tighter text-on-surface-variant">Version 2026 — v1.0.0</p>

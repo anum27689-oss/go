@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useTranslation } from '@/hooks/use-translation';
 import { cn } from '@/lib/utils';
+import { UserAvatar } from '@/components/auth/UserAvatar';
 
 // Define the type for a single Surah
 type Surah = {
@@ -175,9 +176,7 @@ export default function QuranAudioPage() {
                         <h1 className="text-primary font-headline font-extrabold tracking-tighter text-xl md:text-2xl">{t('common.appName')}</h1>
                     </Link>
                 </div>
-                 <button className="hover:bg-surface-container-high transition-colors p-2 rounded-full active:scale-95 duration-200">
-                    <span className="material-symbols-outlined text-on-surface-variant">account_circle</span>
-                </button>
+                 <UserAvatar />
             </header>
 
             <main className="pt-24 pb-40 px-6 max-w-2xl mx-auto">

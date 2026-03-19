@@ -6,6 +6,7 @@ import { useTranslation } from '@/hooks/use-translation';
 import { cn } from "@/lib/utils";
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { pakistanCities, type City } from '@/lib/pakistan-cities';
+import { UserAvatar } from '@/components/auth/UserAvatar';
 
 // Helper function to parse time string
 const parseTimeToDate = (timeStr: string, date: Date = new Date()) => {
@@ -145,9 +146,7 @@ export default function HomePage() {
             <span className="material-symbols-outlined text-primary">brightness_3</span>
             <h1 className="font-headline font-bold text-xl tracking-tight text-primary">{t('common.appName')}</h1>
         </Link>
-        <button className="hover:bg-surface-container-high transition-colors p-2 rounded-full active:scale-95 duration-200">
-            <span className="material-symbols-outlined text-on-surface-variant">account_circle</span>
-        </button>
+        <UserAvatar />
       </header>
 
       {/* Main Content */}

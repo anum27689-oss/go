@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useTranslation } from '@/hooks/use-translation';
 import { cn } from '@/lib/utils';
+import { UserAvatar } from '@/components/auth/UserAvatar';
 
 const TASBEEH_COUNT_KEY = 'tasbeeh_count';
 const STREAK_START_DATE_KEY = 'tasbeeh_streak_start_date';
@@ -80,9 +81,7 @@ export default function TasbeehCounterPage() {
                 <button className="hover:bg-surface-container-high transition-colors p-2 rounded-full active:scale-95 duration-200">
                     <span className="material-symbols-outlined text-on-surface-variant">brightness_3</span>
                 </button>
-                <button className="hover:bg-surface-container-high transition-colors p-2 rounded-full active:scale-95 duration-200">
-                    <span className="material-symbols-outlined text-on-surface-variant">account_circle</span>
-                </button>
+                <UserAvatar />
             </div>
         </header>
 

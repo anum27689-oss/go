@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/popover";
 import { pakistanCities, type City } from '@/lib/pakistan-cities';
 import { useTranslation } from '@/hooks/use-translation';
+import { UserAvatar } from '@/components/auth/UserAvatar';
 
 type Prayer = {
     name: string;
@@ -266,9 +267,7 @@ export default function PrayerTimesPage() {
                     <button className="flex items-center justify-center p-2 rounded-full hover:bg-surface-container-high transition-colors active:scale-95 duration-200">
                         <span className="material-symbols-outlined text-on-surface">brightness_3</span>
                     </button>
-                    <button className="flex items-center justify-center p-2 rounded-full hover:bg-surface-container-high transition-colors active:scale-95 duration-200">
-                        <span className="material-symbols-outlined text-on-surface">account_circle</span>
-                    </button>
+                    <UserAvatar />
                 </div>
             </header>
 

@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTranslation } from '@/hooks/use-translation';
 import { cn } from '@/lib/utils';
+import { UserAvatar } from '@/components/auth/UserAvatar';
 
 export default function PrivacyPolicyPage() {
   const router = useRouter();
@@ -20,9 +21,7 @@ export default function PrivacyPolicyPage() {
               </button>
               <Link href="/home" className="text-primary font-manrope font-extrabold tracking-tighter text-xl">{t('common.appName')}</Link>
           </div>
-            <button className="flex items-center justify-center p-2 rounded-full hover:bg-surface-container-high transition-colors active:scale-95 duration-200">
-              <span className="material-symbols-outlined text-on-surface">account_circle</span>
-          </button>
+            <UserAvatar />
       </header>
 
       <main className="pt-24 pb-28 px-6 max-w-2xl mx-auto">
