@@ -134,7 +134,7 @@ export default function SettingsPage() {
                 <section className="space-y-4">
                     <h3 className={cn("text-secondary font-headline font-bold text-sm uppercase px-2", language === 'en' ? 'tracking-wider' : 'tracking-widest')}>{t('settings.general')}</h3>
                     <div className="bg-surface-container-lowest rounded-lg overflow-hidden divide-y divide-outline-variant/10">
-                        <div className="flex items-center justify-between p-5">
+                        <div className="flex flex-col items-start gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
                             <div className="flex items-center gap-4">
                                 <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-secondary">
                                     <span className="material-symbols-outlined">language</span>
@@ -150,7 +150,7 @@ export default function SettingsPage() {
                             </div>
                         </div>
 
-                        <div className="flex items-center justify-between p-5">
+                        <div className="flex flex-col items-start gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
                             <div className="flex items-center gap-4">
                                 <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-secondary">
                                     <span className="material-symbols-outlined">dark_mode</span>
@@ -160,7 +160,7 @@ export default function SettingsPage() {
                                     <p className="text-xs text-on-surface-variant font-medium capitalize">{theme === 'system' ? t('settings.themeSystem') : t(theme === 'light' ? 'settings.themeLight' : 'settings.themeDark')}</p>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-1 bg-surface-container p-1 rounded-full">
+                            <div className="flex flex-wrap items-center gap-1 bg-surface-container p-1 rounded-full">
                                 <button onClick={() => setTheme('light')} className={`px-3 py-1.5 text-xs font-bold rounded-full transition-colors ${theme === 'light' ? 'bg-primary text-on-primary' : 'text-on-surface-variant'}`}>{t('settings.themeLight')}</button>
                                 <button onClick={() => setTheme('dark')} className={`px-3 py-1.5 text-xs font-bold rounded-full transition-colors ${theme === 'dark' ? 'bg-primary text-on-primary' : 'text-on-surface-variant'}`}>{t('settings.themeDark')}</button>
                                 <button onClick={() => setTheme('system')} className={`px-3 py-1.5 text-xs font-bold rounded-full transition-colors ${theme === 'system' ? 'bg-primary text-on-primary' : 'text-on-surface-variant'}`}>{t('settings.themeSystem')}</button>
